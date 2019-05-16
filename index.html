@@ -4,114 +4,108 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans|Playfair+Display" rel="stylesheet">
+    <style type="text/css">
+      .playfair { font-family: 'Playfair Display', serif; }
+      .pt-sans-narrow { font-family: 'PT Sans', sans-serif; }
+      a:hover { background-color: gold; }
+    </style>
 
-    <title>Michelle Fullwood by michelleful</title>
+    <title>Michelle Fullwood</title>
   </head>
 
-  <body>
+  <body class="w-two-thirds ph5 pt2 pb5 pt-sans-narrow">
 
-    <header>
-      <div class="container">
-        <h1>Michelle Fullwood</h1>
-        <h2></h2>
+    <h1 class="f1 lh-title playfair">Michelle Fullwood</h1>
 
-        <section id="downloads">
-          <a href="https://github.com/michelleful" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="main_content">
-        <p>My life revolves around words, language, stories. My projects are usually tools to help language learners or data science projects that help me explore my passions.</p>
-
-<h2>
-<a id="current-projects" class="anchor" href="#current-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current projects</h2>
-
-<ul>
-<li>Linguistic Magic (under construction). Khan Academy for language learning. Initial target language: Mandarin Chinese. Features:
-
-<ul>
-<li>Promotes correct mental models and language learning strategies</li>
-<li>A novel way of learning characters that breaks them into components from the very beginning</li>
-<li>Pronunciation training (especially of tones) from day 1, using High Variability Phonetic Training</li>
-<li>Plenty of reading and listening input</li>
-<li>Vocabulary is re-introduced in spaced repetition cycles so that learner sees vocabulary multiple times in different contexts</li>
-<li>A mix of different activities so that the learner never gets bored</li>
-<li>Tools used: Flask, Elm, PostgreSQL, JavaScript</li>
-</ul>
-</li>
-<li>Writing advice advice (data collection stage)
-
-<ul>
-<li>Empirically determine whether writing advice (e.g. adverbs are evil) actually works, using a database of fan fiction.</li>
-<li>Also explore other factors that make a story more or less popular in fandom (e.g. are slash stories better reviewed?)</li>
-<li>Tools used: requests, BeautifulSoup, Pandas, R, scikit-learn, PyMC3, NLTK, TextBlob, pattern.en, spaCy, gensim</li>
-</ul>
-</li>
-</ul>
-
-<h2>
-<a id="past-projects" class="anchor" href="#past-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Past projects</h2>
-
-<ul>
-<li>
-<a href="http://fuzzyarabic.herokuapp.com/">Fuzzy Arabic Dictionary</a>
-
-<ul>
-<li>A dictionary of Arabic you can use even if you don't know how to spell</li>
-<li><a href="http://michelleful.github.io/code-blog/2014/03/25/fuzzy-arabic-dictionary/">Blog</a></li>
-<li>Tools: Yamli, Buckwalter Morphological Analyzer, JavaScript, Flask</li>
-</ul>
-</li>
-<li>
-<a href="https://michelleful.cartodb.com/viz/b722485c-dbf6-11e4-9a7e-0e0c41326911/embed_map">A linguistic street map of Singapore</a>
-
-<ul>
-<li>A street map of Singapore in which every road is colour-coded with the language of origin of its road name</li>
-<li>
-<a href="http://michelleful.github.io/code-blog/2015/04/24/sgmap/">Blog</a> (7 posts)</li>
-<li>Tools: GeoPandas, scikit-learn, OpenStreetMap, mplleaflet, CartoDB</li>
-</ul>
-</li>
-<li>
-<a href="https://rawgit.com/michelleful/NaNoGenMo/master/twide_and_twejudice.html">Twide and Twejudice</a>
-
-<ul>
-<li>Pride and Prejudice with the dialogue replaced by a word used in a similar way on Twitter</li>
-<li>My entry into NaNoGenMo 2014</li>
-<li><a href="http://michelleful.github.io/code-blog/2014/12/07/nanogenmo-2014/">Blog</a></li>
-<li>Tools used: TweetNLP, Python</li>
-<li>Sample paragraph: <em>"Miss Elizabeth Bennet!" repeated Miss Bingley. "I am all neurosis. How loooooooong has shhe been suuuch a sxey?"</em>
-</li>
-</ul>
-</li>
-<li>
-<a href="http://stressifier.herokuapp.com/">Stressifier</a>
-
-<ul>
-<li>A tool that helps English learners figure out where to put primary stress</li>
-<li><a href="http://michelleful.github.io/code-blog/2014/07/23/stressifier/">Blog</a></li>
-<li>Tools: CMU pronouncing dictionary (syllabified by Penn Phonetics Laboratory), m2m-aligner, Flask</li>
-</ul>
-</li>
-</ul>
-      </section>
+    <div class="explainer">
+      My life revolves around words, language, and stories.
+      Oh, and I also love maps.
+      <br/>
+      You'll see this in my projects:
     </div>
 
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-48100444-6");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
+    <div class="project pv3">
+      <h3 class="f3 playfair">Fiction Science <span class="pt-sans-narrow f6 bg-light-red ph1 ttu tracked">In progress</span></h3>
+
+      <div class="explainer">
+        What makes some pieces of fiction more popular than others?
+        More slash, fewer adverbs? A data science project, based on fanfiction corpora.
+      </div>
+    </div>
+
+    <div class="project pv3">
+      <h3 class="f3 playfair">Maps that look like other maps <span class="pt-sans-narrow f6 bg-light-red ph1 ttu tracked">Gallery coming soon</span></h3>
+
+      <div class="explainer">
+        An experiment applying neural style transfer to, well, maps.
+      </div>
+    </div>
+
+    <div class="project pv3">
+      <h3 class="f3 playfair"><a class="no-underline" href="http://fuzzyarabic.herokuapp.com/">Fuzzy Arabic Dictionary</a></h3>
+
+      <div class="explainer">
+        Look up Arabic words, even when you don't know how to spell them.
+        <a href="http://michelleful.github.io/code-blog/2014/03/25/fuzzy-arabic-dictionary/">Read more.</a></
+      </div>
+    </div>
+
+    <div class="project pv3">
+      <h3 class="f3 playfair"><a class="no-underline" href="https://michelleful.cartodb.com/viz/b722485c-dbf6-11e4-9a7e-0e0c41326911/embed_map">A linguistic street map of Singapore</a></h3>
+
+      <div class="explainer">
+        A street map of Singapore in which every road is colour-coded with the language of origin of its road name.
+        <a href="http://michelleful.github.io/code-blog/2015/04/24/sgmap/">Read more.</a> (7 posts)</li>
+      </div>
+    </div>
+
+    <div class="project pv3">
+      <h3 class="f3 playfair"><a class="no-underline" href="http://htmlpreview.github.io/?https://github.com/michelleful/NaNoGenMo/blob/master/2014/twide_and_twejudice.html">Twide and Twejudice</a></h3>
+
+      <div class="explainer">
+        My entry into NanoGenMo 2014: A version of <em>Pride and Prejudice</em> in which every word
+        of dialogue is replaced with a word used in a similar context...on Twitter. For example:
+      </div>
+
+      <div class="pv3 ph4">
+        <bq>
+          <em>"Miss Elizabeth Bennet!" repeated Miss Bingley. "I am all neurosis. How loooooooong has shhe been suuuch a sxey?"</em>
+        </bq>
+      </div>
+
+      <div class="explainer">
+        This received some media coverage on
+          <a href="https://www.theverge.com/2014/11/25/7276157/nanogenmo-robot-author-novel">Verge</a>,
+          <a href="http://clarkesworldmagazine.com/another_word_01_16/">Clarkesworld</a>,
+          <a href="https://www.ozy.com/fast-forward/the-future-of-language/78946">ozy.com</a>.
+      </div>
+    </div>
+
+    <div class="project pv3">
+      <h3 class="f3 playfair"><a class="no-underline" href="http://stressifier.herokuapp.com/">Stressifier</a></h3>
+
+      <div class="explainer">
+        A tool that helps English learners figure out which syllables to stress.
+        <a href="http://michelleful.github.io/code-blog/2014/07/23/stressifier/">Read more.</a>
+      </div>
+    </div>
+
+    <div class="pt5">
+      See more on my <a href="https://github.com/michelleful">github</a>, or <a href="http://michelleful.github.io/code-blog">read my blog</a>.
+    </div>
+
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-48100444-6");
+      pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
 
   </body>
 </html>
