@@ -1,0 +1,75 @@
+---
+interface Props {
+  title: string;
+  author: string;
+  year?: string;
+  isbn: string;
+  imgurl?: string;
+  statusRead?: boolean;
+}
+
+const { title, author, year, isbn, imgurl, statusRead = false } = Astro.props;
+
+const img = imgurl ? imgurl : `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`;
+const link = `https://www.worldcat.org/isbn/${isbn}`;
+---
+
+<div class="book">
+    <img src={img} alt={`Cover of ${title}`}>
+    <div class="text-container">
+    <div class="book-title">
+      <a href={link}>{title}</a>
+      {statusRead && <div class="status-read">&check; read</div>}
+    </div>
+    <div class="book-author">{author} {year && <>({year})</>}</div>
+    <div class="book-comment">
+      <slot />
+    </div>
+    </div>
+</div>
+
+<style>
+  img {
+    float: left;
+    margin-right: 20px;
+    width: 120px;
+  }
+  .book {
+    font-family: 'Jost', sans-serif;
+    margin-top: 10px;
+  }
+  .book::after {
+    content: "";
+    display: table;
+    clear: both;
+    margin-bottom: 10px;
+  }
+  .book-title {
+    font-size: 1.8rem;
+    line-height: 1.2em;
+  }
+  .book-title a:link { text-decoration: none; }
+  .book-title a:visited { text-decoration: none; }
+  .book-title a:hover { text-decoration: none; }
+  .book-title a:active { text-decoration: none; }
+
+  .book-author {
+    font-size: 1.4rem;
+  }
+  .book-comment {
+    font-size: 1.2rem;
+  }
+  .text-container {
+    margin-left: 20px;
+  }
+  .status-read {
+    font-size: 1rem;
+    background-color: green;
+    color: white;
+    font-variant: small-caps;
+    padding: 3px 10px;
+    border-radius: 5px;
+    display: inline;
+    vertical-align: 5px;
+  }
+</style>

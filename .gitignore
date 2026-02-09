@@ -25,3 +25,4 @@ pnpm-debug.log*
 
 # aramorph source data (converted to JSON in public/)
 scripts/aramorph-data/
+scripts-old/
