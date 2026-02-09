@@ -1,3 +1,11 @@
+---
+interface Props {
+	title?: string;
+}
+
+const { title = "Michelle Fullwood" } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -6,18 +14,63 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:wght@200;400&family=Kalam:wght@300&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="/hieroglyphs/hierojax.css" />
+		<script is:inline src="/hieroglyphs/hierojax.js"></script>
+		<title>{title}</title>
 	</head>
 	<body>
 		<slot />
 	</body>
 </html>
 
-<style>
+<style is:global>
 	html,
 	body {
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+	body {
+		font-family: 'Jost', sans-serif;
+		font-size: 1.3rem;
+		width: 60%;
+		margin-left: auto;
+		margin-right: auto;
+		background-color: #ececec;
+	}
+	@media (max-width: 600px) {
+		body {
+			width: 80%;
+		}
+	}
+	h1 {
+		font-family: 'IM Fell English', serif;
+		font-size: 3.5rem;
+	}
+	h2 {
+		font-family: 'IM Fell English', serif;
+		font-size: 2.5rem;
+		margin-top: 3rem;
+		margin-bottom: 0.5rem;
+	}
+	h3 {
+		font-size: 1.7rem;
+	}
+	.lettering {
+		font-family: 'Kalam', cursive;
+	}
+	.emphasis {
+		font-family: 'IM Fell English', serif;
+		color: rgb(213, 117, 0);
+	}
+	.chunk {
+		display: inline-block;
+		vertical-align: top;
 	}
 </style>
