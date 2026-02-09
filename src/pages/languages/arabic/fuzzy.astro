@@ -1,0 +1,287 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Fuzzy Arabic Dictionary">
+
+<h1>Fuzzy Arabic Dictionary</h1>
+<div class="intro">
+  <p>
+    Look up Arabic words without needing to know how to spell.<br />
+    Powered by <a href="https://yamli.com">Yamli</a> and the
+    <a href="https://catalog.ldc.upenn.edu/LDC2002L49">Buckwalter Morphological Analyzer</a>.<br />
+    Glued together by <a href="/">Michelle Fullwood</a>.
+  </p>
+
+  <div class="input-area">
+  <input type="text" id="arabictextbox" placeholder="Type here..." />
+  <div class="samples">
+    Try: <a href="#" class="sample" data-word="3raby">3raby</a>,
+    <a href="#" class="sample" data-word="kitab">kitab</a>,
+    <a href="#" class="sample" data-word="madrasa">madrasa</a>,
+    <a href="#" class="sample" data-word="afrit">afrit</a>,
+    <a href="#" class="sample" data-word="istaktab">istaktab</a>
+  </div>
+  </div>
+</div>
+
+<div id="analysis-area">
+  <p id="analysis-loading" hidden>Loading analyzer...</p>
+  <table id="analysis-table" hidden>
+    <thead>
+      <tr>
+        <th>Word</th>
+        <th>Vowelled</th>
+        <th>Transliteration</th>
+        <th>Root</th>
+        <th>POS</th>
+        <th>Gloss</th>
+      </tr>
+    </thead>
+    <tbody id="analysis-body"></tbody>
+  </table>
+  <p id="analysis-notfound" hidden>No matching words found</p>
+</div>
+
+<script is:inline src="//api.yamli.com/js/yamli_api.js"></script>
+<script is:inline>
+  if (typeof Yamli === "object" && Yamli.init({ uiLanguage: "en", startMode: "onOrUserDefault" })) {
+    Yamli.yamlify("arabictextbox");
+  }
+
+  // Sample word links
+  document.querySelectorAll(".sample").forEach(function(link) {
+    link.addEventListener("click", function(e) {
+      e.preventDefault();
+      var textbox = document.getElementById("arabictextbox");
+      textbox.value = this.dataset.word;
+      textbox.focus();
+      textbox.dispatchEvent(new Event("click"));
+    });
+  });
+
+  // Step 1: Use a body observer ONLY to find Yamli's dyn div, then disconnect it.
+  // Step 2: Once found, observe only the narrow suggestions menu element.
+  var bodyObserver = new MutationObserver(function() {
+    var dynDiv = document.getElementById("yamliapi_dyn_div");
+    if (!dynDiv) return;
+
+    var menus = dynDiv.querySelectorAll(".yamliapi_menuContent");
+    var suggestionsMenu = menus.length > 0 ? menus[menus.length - 1] : null;
+    if (!suggestionsMenu) return;
+
+    bodyObserver.disconnect();
+
+    var debounceTimer = null;
+    var textbox = document.getElementById("arabictextbox");
+
+    function updateSuggestions() {
+      if (!textbox.value.trim()) {
+        document.dispatchEvent(new CustomEvent("analyze-word", { detail: { words: [] } }));
+        return;
+      }
+
+      var divs = suggestionsMenu.children;
+      var suggestions = [];
+
+      for (var j = 0; j < divs.length; j++) {
+        var div = divs[j];
+        if (div.style.direction === "rtl" && div.style.display !== "none") {
+          var text = div.textContent.trim();
+          if (text) suggestions.push(text);
+        }
+      }
+
+      // First RTL entry is the transliterated input echo, skip it
+      if (suggestions.length > 1) {
+        suggestions = suggestions.slice(1);
+      } else {
+        suggestions = [];
+      }
+
+      if (suggestions.length > 0) {
+        document.dispatchEvent(new CustomEvent("analyze-word", { detail: { words: suggestions } }));
+      }
+    }
+
+    new MutationObserver(function() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(updateSuggestions, 150);
+    }).observe(suggestionsMenu, { childList: true, subtree: true, attributes: true });
+
+    textbox.addEventListener("input", function() {
+      if (!textbox.value.trim()) {
+        clearTimeout(debounceTimer);
+        updateSuggestions();
+      }
+    });
+  });
+
+  bodyObserver.observe(document.body, { childList: true, subtree: false });
+</script>
+
+<script>
+  import { init, analyze, infoForWord } from '../../../lib/aramorph/aramorph.js';
+
+  const loading = document.getElementById("analysis-loading");
+  const table = document.getElementById("analysis-table");
+  const tbody = document.getElementById("analysis-body");
+  const notfound = document.getElementById("analysis-notfound");
+
+  let analyzerReady = false;
+
+  async function ensureReady() {
+    if (analyzerReady) return;
+    loading.hidden = false;
+    await init();
+    analyzerReady = true;
+    loading.hidden = true;
+  }
+
+  function showResults(results) {
+    tbody.innerHTML = "";
+
+    if (results.length === 0) {
+      table.hidden = true;
+      notfound.hidden = false;
+      return;
+    }
+
+    notfound.hidden = true;
+    table.hidden = false;
+
+    for (const r of results) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        `<td class="arabic">${esc(r.word)}</td>` +
+        `<td class="arabic">${esc(r.vowelled)}</td>` +
+        `<td>${esc(r.transliteration)}</td>` +
+        `<td class="arabic">${esc(r.root)}</td>` +
+        `<td>${esc(r.pos)}</td>` +
+        `<td>${esc(r.gloss)}</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function esc(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  document.addEventListener("analyze-word", async (e) => {
+    const words = e.detail.words;
+
+    if (!words || words.length === 0) {
+      table.hidden = true;
+      notfound.hidden = true;
+      tbody.innerHTML = "";
+      return;
+    }
+
+    await ensureReady();
+
+    const allResults = [];
+    for (const word of words) {
+      const results = analyze(word);
+      if (results.length > 0) {
+        allResults.push(...results);
+      } else {
+        allResults.push(infoForWord(word));
+      }
+    }
+
+    showResults(allResults);
+  });
+</script>
+
+</Layout>
+
+<style is:global>
+  /* Hide Yamli's suggestion dropdown but keep it rendered so the observer can read it */
+  #yamliapi_dyn_div > div:last-of-type {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  /* Hide the Yamli on/off settings bar */
+  #yamli_div {
+    display: none !important;
+  }
+  .arabic {
+    direction: rtl;
+    font-size: 1.6rem;
+  }
+  #analysis-table td:nth-child(3) {
+    padding-left: 1.5rem;
+  }
+  #analysis-table td:nth-child(4) {
+    white-space: nowrap;
+  }
+  #analysis-table td:nth-child(5) {
+    padding-left: 1.5rem;
+  }
+  #analysis-area {
+    padding-bottom: 4rem;
+  }
+</style>
+
+<style>
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 0;
+  }
+  .input-area {
+    margin: 1.5rem 0;
+  }
+  .intro {
+    width: fit-content;
+  }
+  #arabictextbox {
+    font-size: 1.8rem;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .samples {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+  .samples a {
+    font-family: monospace;
+  }
+  #analysis-loading {
+    color: #666;
+    font-style: italic;
+  }
+  #analysis-notfound {
+    color: #999;
+    font-style: italic;
+  }
+  #analysis-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+  #analysis-table th {
+    text-align: left;
+    border-bottom: 2px solid #999;
+    padding: 0.4rem 0.6rem;
+    font-family: 'IM Fell English', serif;
+  }
+  #analysis-table th:nth-child(1),
+  #analysis-table th:nth-child(2),
+  #analysis-table th:nth-child(4) {
+    text-align: right;
+  }
+  #analysis-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 0.4rem 0.6rem;
+    vertical-align: top;
+  }
+  #analysis-table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+</style>
