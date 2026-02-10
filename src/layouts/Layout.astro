@@ -34,7 +34,7 @@ const { title = "Michelle Fullwood" } = Astro.props;
 	body {
 		margin: 0;
 		width: 100%;
-		height: 100%;
+		min-height: 100%;
 	}
 	body {
 		font-family: 'Jost', sans-serif;
@@ -43,6 +43,7 @@ const { title = "Michelle Fullwood" } = Astro.props;
 		margin-left: auto;
 		margin-right: auto;
 		background-color: #ececec;
+		padding-bottom: 4rem;
 	}
 	@media (max-width: 600px) {
 		body {

@@ -6,17 +6,12 @@ import Hieroglyph from '../components/Hieroglyph.astro';
 <Layout title="Michelle Fullwood">
 
 <h1>Michelle Fullwood</h1>
-<p>
-  Hello! I'm a linguist working in the natural language processing space.
-  My life revolves around words, language, and stories.
-  I'm also very into maps and puzzles.
-</p>
-<p>
-  Below, you'll find tools, projects, and lists that I've made.
-  I hope you'll find something among it useful.
-</p>
 
-<h2>Language tools and explainers</h2>
+<nav class="section-nav">
+  <a href="#languages">Languages</a> | <a href="#maps">Maps</a> | <a href="#miscellany">Miscellany</a>
+</nav>
+
+<h2 id="languages">Language tools and explainers</h2>
 
 <div>
 <h3><a href="/languages/arabic/fuzzy/">Fuzzy Arabic Dictionary</a></h3>
@@ -25,16 +20,7 @@ import Hieroglyph from '../components/Hieroglyph.astro';
 </p>
 </div>
 
-<div>
-<h3>Dictionary of Ancient Egyptian Grammar</h3>
-
-<p>
-  A quick reference companion to Hoch's Middle Egyptian Grammar, inspired
-  by the <em>Dictionary of Japanese Grammar</em> series.
-</p>
-</div>
-
-<h2>Projects</h2>
+<h2 id="maps">Maps</h2>
 
 <div>
 <h3><a href="/maps/singapore-roads/">A linguistic street map of Singapore</a></h3>
@@ -44,6 +30,8 @@ import Hieroglyph from '../components/Hieroglyph.astro';
   with the language of origin of its road name. This was
   <a href="https://graphics.straitstimes.com/STI/STIMEDIA/Interactives/2019/06/singapore-street-names/index.html">remade by the Straits Times digital team</a> in 2021.</p>
 </div>
+
+<h2 id="miscellany">Miscellany</h2>
 
 <div>
 <h3><a href="/misc/twide-and-twejudice/">Twide and Twejudice</a></h3>
@@ -57,20 +45,14 @@ import Hieroglyph from '../components/Hieroglyph.astro';
 This received some media coverage on <a href="https://www.theverge.com/2014/11/25/7276157/nanogenmo-robot-author-novel">Verge</a> and <a href="https://clarkesworldmagazine.com/another_word_01_16/">Clarkesworld</a>. The "Making Of ..." blogpost is <a href="https://michelleful.github.io/code-blog/2014/12/07/nanogenmo-2014/">here</a>.
 </div>
 
-<h2>Lists</h2>
-
 <div>
-  <h3><a href="/lists/books/felt-like-discoveries">Books that felt like discoveries</a></h3>
+  <h3><a href="/lists/books/felt-like-discoveries">Lesser-known book recommendations</a></h3>
 
   <p>
-    Books that I think are less read than they should be,
-    or that I stumbled on serendipitously,
-    or that I only know about through being in a
-    specialised subcommunity, etc.</p>
+    A list of books I think should be on lists of book recs more often  
+  </p>
 </div>
 
-
-<Hieroglyph text="i-mn:n-R4:t*p*t:N1"/>
 
 </Layout>
 
@@ -78,12 +60,26 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
   h1 {
     font-size: 4.2rem;
     margin-bottom: -10px;
+    text-align: center;
   }
   h2, h3 {
     margin-bottom: -10px;
   }
   blockquote {
     font-family: 'Kalam', cursive;
+  }
+  .section-nav {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+  }
+  .section-nav a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .section-nav a:hover {
+    color: rgb(213, 117, 0);
   }
   .project-img {
     display: block;
