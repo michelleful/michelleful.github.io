@@ -16,7 +16,7 @@ import Hieroglyph from '../components/Hieroglyph.astro';
   I hope you'll find something among it useful.
 </p>
 
-<h2>Language tools</h2>
+<h2>Language tools and explainers</h2>
 
 <div>
 <h3><a href="/languages/arabic/fuzzy/">Fuzzy Arabic Dictionary</a></h3>
@@ -37,11 +37,12 @@ import Hieroglyph from '../components/Hieroglyph.astro';
 <h2>Projects</h2>
 
 <div>
-<h3>A linguistic street map of Singapore</h3>
+<h3><a href="/maps/singapore-roads/">A linguistic street map of Singapore</a></h3>
+<a href="/maps/singapore-roads/"><img src="/data/maps/singapore_linguistic_map.png" alt="A linguistic street map of Singapore" class="project-img" /></a>
 <p>
   A street map of Singapore in which every road is colour-coded
-  with the language of origin of its road name.</p>
-<p>This was remade by the Straits Times digital team in 2021.</p>
+  with the language of origin of its road name. This was
+  <a href="https://graphics.straitstimes.com/STI/STIMEDIA/Interactives/2019/06/singapore-street-names/index.html">remade by the Straits Times digital team</a> in 2021.</p>
 </div>
 
 <div>
@@ -83,5 +84,11 @@ This received some media coverage on Verge, Clarkesworld, and ozy.com. The "Maki
   }
   blockquote {
     font-family: 'Kalam', cursive;
+  }
+  .project-img {
+    display: block;
+    width: 80%;
+    border-radius: 4px;
+    margin: 1rem auto 0;
   }
 </style>
