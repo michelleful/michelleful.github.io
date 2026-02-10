@@ -1,0 +1,458 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import correspondences from './correspondences.json';
+
+function cellColor(pct: number) {
+  if (pct === 0) return 'transparent';
+  const alpha = Math.min(pct / 80, 1) * 0.85 + 0.1;
+  return `rgba(180, 90, 0, ${alpha})`;
+}
+
+function textColor(pct: number) {
+  return pct > 40 ? '#fff' : '#333';
+}
+
+const components = ['initial', 'final', 'tone'] as const;
+const directions = [
+  { key: 'c2m', matrixKey: 'matrix_c2m', dirKey: 'cantonese_to_mandarin', srcLabel: 'Cantonese', tgtLabel: 'Mandarin', label: 'Cantonese → Mandarin' },
+  { key: 'm2c', matrixKey: 'matrix_m2c', dirKey: 'mandarin_to_cantonese', srcLabel: 'Mandarin', tgtLabel: 'Cantonese', label: 'Mandarin → Cantonese' },
+] as const;
+---
+
+<Layout title="Cantonese-Mandarin Sound Correspondences">
+
+<h1>Cantonese-Mandarin Sound Correspondences</h1>
+<p>
+  I heard Cantonese from a young age but never learned to speak it,
+  and I learned Mandarin at school. So when I attempt to say a Cantonese word
+  I don't already know, I'm often trying to take a Mandarin character and
+  map it to its most likely Cantonese equivalent. And vice versa.
+</p>
+<p>
+  This tool shows how successful this approach is likely to be
+  in either direction, with tables demonstrating the
+  phonological correspondences between the two languages.
+  Data is from the
+  <a href="https://www.unicode.org/reports/tr38/">Unihan database</a>
+  which contains Mandarin (pinyin) and Cantonese (jyutping) readings.
+</p>
+<p>Prepared by <a href="/">Michelle Fullwood</a>.
+
+<hr/>
+
+<p>
+  Select a direction and component to explore how initials, finals, tones,
+  and full syllables map between the two languages.
+</p>
+
+<div class="controls">
+  <div class="direction-toggle">
+    {directions.map(d => (
+      <button class={`dir-btn ${d.key === 'c2m' ? 'active' : ''}`} data-dir={d.key}>
+        {d.label}
+      </button>
+    ))}
+  </div>
+  <div class="component-tabs">
+    {['initial', 'final', 'tone', 'syllable'].map((tab, i) => (
+      <button class={`tab-btn ${i === 0 ? 'active' : ''}`} data-tab={tab}>
+        {tab[0].toUpperCase() + tab.slice(1)}
+      </button>
+    ))}
+  </div>
+</div>
+
+<!-- Pre-rendered heatmap tables for initial, final, tone × 2 directions -->
+{components.map(comp =>
+  directions.map(dir => {
+    const matrix = (correspondences as any)[comp][dir.matrixKey];
+    return (
+      <div class="heatmap-section" id={`heatmap-${dir.key}-${comp}`} hidden>
+        <p class="matrix-caption">
+          Rows: <span class="lang-name">{dir.srcLabel}</span> {comp}s.
+          Columns: <span class="lang-name">{dir.tgtLabel}</span> {comp}s.
+          <br/>Cell values show the percentage of characters with a given
+          <span class="lang-name">{dir.srcLabel}</span> {comp} that have that <span class="lang-name">{dir.tgtLabel}</span> {comp}.
+        </p>
+        <div class="heatmap-scroll">
+          <table class="heatmap">
+            <thead>
+              <tr>
+                <th class="corner" colspan="2"></th>
+                <th class="top-label" colspan={matrix.targets.length}>{dir.tgtLabel}</th>
+              </tr>
+              <tr>
+                <th class="corner" colspan="2"></th>
+                {matrix.targets.map((tgt: string) => (
+                  <th class="col-header">{tgt || '∅'}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {matrix.sources.map((src: string, i: number) => (
+                <tr>
+                  {i === 0 && (
+                    <th class="side-label" rowspan={matrix.sources.length}>
+                      <div class="side-label-text">{dir.srcLabel}</div>
+                    </th>
+                  )}
+                  <th class="row-header">{src || '∅'}</th>
+                  {matrix.matrix[i].map((pct: number, j: number) => (
+                    <td
+                      class="cell"
+                      style={`background-color: ${cellColor(pct)}; color: ${textColor(pct)}`}
+                      title={`${src || '∅'} → ${matrix.targets[j] || '∅'}: ${pct}%`}
+                    >
+                      {pct >= 1 ? Math.round(pct) : ''}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="scroll-hint" hidden>Scroll right to see more →</p>
+      </div>
+    );
+  })
+)}
+
+<!-- Syllable section (populated by JS) -->
+{directions.map(dir => (
+  <div class="syllable-section" id={`syllable-${dir.key}`} hidden>
+    <div class="syllable-picker">
+      <label>Select a {dir.srcLabel} syllable:</label>
+      <select class="syllable-select" data-dir={dir.key}></select>
+    </div>
+    <div class="syllable-results"></div>
+  </div>
+))}
+
+<script is:inline define:vars={{ syllableData: correspondences.syllable }}>
+  const state = { direction: 'c2m', component: 'initial' };
+
+  function updateView() {
+    // Update button active states
+    document.querySelectorAll('.dir-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.dir === state.direction);
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === state.component);
+    });
+
+    // Hide all sections
+    document.querySelectorAll('.heatmap-section, .syllable-section').forEach(el => {
+      el.hidden = true;
+    });
+
+    // Show the active section
+    if (state.component === 'syllable') {
+      const section = document.getElementById(`syllable-${state.direction}`);
+      if (section) section.hidden = false;
+    } else {
+      const section = document.getElementById(`heatmap-${state.direction}-${state.component}`);
+      if (section) {
+        section.hidden = false;
+        const scroller = section.querySelector('.heatmap-scroll');
+        const hint = section.querySelector('.scroll-hint');
+        if (scroller && hint) {
+          hint.hidden = scroller.scrollWidth <= scroller.clientWidth;
+        }
+      }
+    }
+  }
+
+  // Direction buttons
+  document.querySelectorAll('.dir-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.direction = btn.dataset.dir;
+      updateView();
+    });
+  });
+
+  // Component tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.component = btn.dataset.tab;
+      updateView();
+    });
+  });
+
+  // Populate syllable dropdowns
+  const dirKeys = {
+    m2c: 'mandarin_to_cantonese',
+    c2m: 'cantonese_to_mandarin',
+  };
+
+  document.querySelectorAll('.syllable-select').forEach(select => {
+    const dir = select.dataset.dir;
+    const lookup = syllableData[dirKeys[dir]];
+    const syllables = Object.keys(lookup).sort();
+
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = '-- choose --';
+    select.appendChild(defaultOpt);
+
+    syllables.forEach(syl => {
+      const opt = document.createElement('option');
+      opt.value = syl;
+      opt.textContent = syl;
+      select.appendChild(opt);
+    });
+
+    select.addEventListener('change', () => {
+      const resultsDiv = select.closest('.syllable-section').querySelector('.syllable-results');
+      const syl = select.value;
+      if (!syl) {
+        resultsDiv.innerHTML = '';
+        return;
+      }
+      const entry = lookup[syl];
+      const srcLabel = dir === 'm2c' ? 'Mandarin' : 'Cantonese';
+
+      let html = `<p class="syllable-total">${entry.total} characters with ${srcLabel} syllable <strong>${syl}</strong></p>`;
+      html += '<div class="bar-chart">';
+      entry.correspondences.forEach(corr => {
+        const width = Math.max(corr.pct, 0.5);
+        html += `<div class="bar-row">
+          <span class="bar-label">${corr.target || '(none)'}</span>
+          <div class="bar-track"><div class="bar-fill" style="width: ${width}%"></div></div>
+          <span class="bar-value">${corr.pct}%</span>
+          <span class="bar-count">(${corr.count})</span>
+        </div>`;
+      });
+      html += '</div>';
+      resultsDiv.innerHTML = html;
+    });
+  });
+
+  // Hide scroll hints once user scrolls
+  document.querySelectorAll('.heatmap-scroll').forEach(scroller => {
+    scroller.addEventListener('scroll', () => {
+      const hint = scroller.closest('.heatmap-section').querySelector('.scroll-hint');
+      if (hint && scroller.scrollLeft > 0) hint.hidden = true;
+    }, { passive: true });
+  });
+
+  // Show initial view
+  updateView();
+</script>
+
+</Layout>
+
+<style is:global>
+  .byline {
+    margin-top: -1.5rem;
+    font-size: 1rem;
+    color: #666;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .direction-toggle, .component-tabs {
+    display: flex;
+    gap: 0;
+  }
+
+  .direction-toggle button, .component-tabs button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #999;
+    background: #fff;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    transition: background-color 0.15s;
+  }
+
+  .direction-toggle button:first-child, .component-tabs button:first-child {
+    border-radius: 4px 0 0 4px;
+  }
+
+  .direction-toggle button:last-child, .component-tabs button:last-child {
+    border-radius: 0 4px 4px 0;
+  }
+
+  .direction-toggle button + button, .component-tabs button + button {
+    border-left: none;
+  }
+
+  .direction-toggle button.active, .component-tabs button.active {
+    background: rgb(213, 117, 0);
+    color: #fff;
+    border-color: rgb(213, 117, 0);
+  }
+
+  /* Heatmap */
+  .matrix-caption {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  .matrix-caption .lang-name {
+    font-weight: bold;
+    color: #444;
+  }
+
+  .scroll-hint {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+    text-align: right;
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+  }
+
+  .heatmap-scroll {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+
+  .heatmap {
+    border-collapse: collapse;
+    font-size: 0.7rem;
+  }
+
+  .heatmap th, .heatmap td {
+    padding: 2px 4px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .heatmap .corner {
+    background: #ececec;
+    border: none;
+  }
+
+  .heatmap .top-label {
+    background: #ececec;
+    font-size: 1.3rem;
+    font-family: 'IM Fell English', serif;
+    color: rgb(213, 117, 0);
+    text-align: center;
+    padding-bottom: 2px;
+    border: none;
+  }
+
+  .heatmap .side-label {
+    background: #ececec;
+    vertical-align: middle;
+    padding: 0 2px;
+    border: none;
+  }
+
+  .heatmap .side-label-text {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 1.3rem;
+    font-family: 'IM Fell English', serif;
+    color: rgb(213, 117, 0);
+    white-space: nowrap;
+  }
+
+  .heatmap .col-header {
+    font-weight: bold;
+    background: #ececec;
+    font-size: 0.8rem;
+  }
+
+  .heatmap .row-header {
+    font-weight: bold;
+    background: #ececec;
+    text-align: right;
+    padding-right: 8px;
+    font-size: 0.8rem;
+  }
+
+  .heatmap .cell {
+    min-width: 28px;
+    height: 24px;
+    border: 1px solid #e0e0e0;
+    cursor: default;
+  }
+
+  /* Syllable section */
+  .syllable-picker {
+    margin-bottom: 1rem;
+  }
+
+  .syllable-picker label {
+    margin-right: 0.5rem;
+  }
+
+  .syllable-picker select {
+    padding: 0.4rem 0.6rem;
+    font-size: 1rem;
+    font-family: 'Jost', sans-serif;
+    border: 1px solid #999;
+    border-radius: 4px;
+  }
+
+  .syllable-total {
+    color: #666;
+    margin-bottom: 0.75rem;
+  }
+
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .bar-label {
+    width: 60px;
+    text-align: right;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: rgb(213, 117, 0);
+    border-radius: 3px;
+  }
+
+  .bar-value {
+    width: 45px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-count {
+    width: 50px;
+    color: #999;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .direction-toggle, .component-tabs {
+      flex-wrap: wrap;
+    }
+    .direction-toggle button, .component-tabs button {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+    }
+  }
+</style>
