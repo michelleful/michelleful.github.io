@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Twide & Twejudice">
+<div class="twide" id="content"></div>
+</Layout>
+
+<script is:inline>
+	fetch('/data/misc/twide-and-twejudice.html')
+		.then(r => r.text())
+		.then(html => { document.getElementById('content').innerHTML = html; });
+</script>
+
+<style>
+	.twide {
+		line-height: 1.8;
+	}
+	.twide :global(h1) {
+		font-size: 3.5rem;
+		text-align: center;
+	}
+	.twide :global(span[data-original]) {
+		position: relative;
+		cursor: pointer;
+		border-bottom: 1px dotted #999;
+	}
+	.twide :global(span[data-original]:hover) {
+		background-color: rgba(213, 117, 0, 0.15);
+	}
+	.twide :global(span[data-original]:hover::after) {
+		content: attr(data-original);
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		background: #333;
+		color: #fff;
+		padding: 2px 8px;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		white-space: nowrap;
+		z-index: 10;
+		pointer-events: none;
+	}
+</style>
