@@ -1,6 +1,7 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import correspondences from './correspondences.json';
+import fs from 'node:fs';
 
 function cellColor(pct: number) {
   if (pct === 0) return 'transparent';
@@ -17,6 +18,69 @@ const directions = [
   { key: 'c2m', matrixKey: 'matrix_c2m', dirKey: 'cantonese_to_mandarin', srcLabel: 'Cantonese', tgtLabel: 'Mandarin', label: 'Cantonese → Mandarin' },
   { key: 'm2c', matrixKey: 'matrix_m2c', dirKey: 'mandarin_to_cantonese', srcLabel: 'Mandarin', tgtLabel: 'Cantonese', label: 'Mandarin → Cantonese' },
 ] as const;
+
+// Compute prediction accuracy stats from readings data
+import path from 'node:path';
+const tsvPath = path.join(process.cwd(), 'src/pages/languages/cantonese/readings.tsv');
+const tsvContent = fs.readFileSync(tsvPath, 'utf-8');
+const tsvLines = tsvContent.trim().split('\n');
+const headers = tsvLines[0].split('\t');
+const readings = tsvLines.slice(1).map(line => {
+  const cols = line.split('\t');
+  const row: Record<string, string> = {};
+  headers.forEach((h, i) => row[h] = cols[i] || '');
+  row.mandarin_syllable = row.mandarin_initial + row.mandarin_final;
+  row.cantonese_syllable = row.cantonese_initial + row.cantonese_final;
+  return row;
+});
+
+function buildMostLikely(srcKey: string, tgtKey: string) {
+  const counts: Record<string, Record<string, number>> = {};
+  for (const r of readings) {
+    const s = r[srcKey], t = r[tgtKey];
+    if (!counts[s]) counts[s] = {};
+    counts[s][t] = (counts[s][t] || 0) + 1;
+  }
+  const best: Record<string, string> = {};
+  for (const [s, tgts] of Object.entries(counts)) {
+    best[s] = Object.entries(tgts).sort((a, b) => b[1] - a[1])[0][0];
+  }
+  return best;
+}
+
+function accuracy(best: Record<string, string>, srcKey: string, tgtKey: string) {
+  const correct = readings.filter(r => best[r[srcKey]] === r[tgtKey]).length;
+  return (100 * correct / readings.length).toFixed(1);
+}
+
+const total = readings.length;
+
+const stats = {
+  m2c: {
+    initial: accuracy(buildMostLikely('mandarin_initial', 'cantonese_initial'), 'mandarin_initial', 'cantonese_initial'),
+    final: accuracy(buildMostLikely('mandarin_final', 'cantonese_final'), 'mandarin_final', 'cantonese_final'),
+    initialFinal: (() => {
+      const bi = buildMostLikely('mandarin_initial', 'cantonese_initial');
+      const bf = buildMostLikely('mandarin_final', 'cantonese_final');
+      const correct = readings.filter(r => bi[r.mandarin_initial] === r.cantonese_initial && bf[r.mandarin_final] === r.cantonese_final).length;
+      return (100 * correct / total).toFixed(1);
+    })(),
+    syllable: accuracy(buildMostLikely('mandarin_syllable', 'cantonese_syllable'), 'mandarin_syllable', 'cantonese_syllable'),
+    tone: accuracy(buildMostLikely('mandarin_tone', 'cantonese_tone'), 'mandarin_tone', 'cantonese_tone'),
+  },
+  c2m: {
+    initial: accuracy(buildMostLikely('cantonese_initial', 'mandarin_initial'), 'cantonese_initial', 'mandarin_initial'),
+    final: accuracy(buildMostLikely('cantonese_final', 'mandarin_final'), 'cantonese_final', 'mandarin_final'),
+    initialFinal: (() => {
+      const bi = buildMostLikely('cantonese_initial', 'mandarin_initial');
+      const bf = buildMostLikely('cantonese_final', 'mandarin_final');
+      const correct = readings.filter(r => bi[r.cantonese_initial] === r.mandarin_initial && bf[r.cantonese_final] === r.mandarin_final).length;
+      return (100 * correct / total).toFixed(1);
+    })(),
+    syllable: accuracy(buildMostLikely('cantonese_syllable', 'mandarin_syllable'), 'cantonese_syllable', 'mandarin_syllable'),
+    tone: accuracy(buildMostLikely('cantonese_tone', 'mandarin_tone'), 'cantonese_tone', 'mandarin_tone'),
+  },
+};
 ---
 
 <Layout title="Cantonese-Mandarin Sound Correspondences">
@@ -37,6 +101,86 @@ const directions = [
   which contains Mandarin (pinyin) and Cantonese (jyutping) readings.
 </p>
 <p>Prepared by <a href="/">Michelle Fullwood</a>.
+
+<hr/>
+
+<h3>How predictable are the correspondences?</h3>
+<p>
+  If you always guess the most likely correspondence, how often would you
+  be right?
+</p>
+<p>
+  Across {total.toLocaleString()} character readings:
+</p>
+<table class="stats-table">
+  <thead>
+    <tr>
+      <th>Strategy</th>
+      <th>M→C</th>
+      <th>C→M</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Guess most likely <strong>initial</strong></td>
+      <td>{stats.m2c.initial}%</td>
+      <td>{stats.c2m.initial}%</td>
+    </tr>
+    <tr>
+      <td>Guess most likely <strong>final</strong></td>
+      <td>{stats.m2c.final}%</td>
+      <td>{stats.c2m.final}%</td>
+    </tr>
+    <tr>
+      <td>Guess <strong>syllable</strong> from most likely initial + most likely final</td>
+      <td>{stats.m2c.initialFinal}%</td>
+      <td>{stats.c2m.initialFinal}%</td>
+    </tr>
+    <tr>
+      <td>Guess <strong>syllable</strong> from most likely whole syllable</td>
+      <td>{stats.m2c.syllable}%</td>
+      <td>{stats.c2m.syllable}%</td>
+    </tr>
+    <tr>
+      <td>Guess most likely <strong>tone</strong></td>
+      <td>{stats.m2c.tone}%</td>
+      <td>{stats.c2m.tone}%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  This strategy is more successful in the Cantonese → Mandarin direction
+  overall. Generally, Cantonese has been more conservative in preserving
+  finals and tones from Middle Chinese, hence there are more possibilities
+  for Cantonese finals and tones than in Mandarin. Choosing 
+  from among more options is always going to be more difficult.
+</p>
+
+<p>
+  The exception is in the initials, where Mandarin actually has more
+  distinctions than Cantonese. For example, Mandarin palatalized
+  its velars (g/k/h) and sibilants (z/c/s) into j/q/x before
+  front vowels, creating a third series that Cantonese lacks.
+  So going from Cantonese → Mandarin, each Cantonese initial
+  like /g/ or /z/ could either stay as-is or become /j/ &mdash;
+  more options to choose from, and thus harder to predict.
+</p>
+
+<p>
+  Since the palatalization depends on the following vowel,
+  knowing the final helps predict the initial. Similarly,
+  knowing the initial helps predict the final.
+  Which is why guessing the syllable as a unit does much better
+  than guessing the initial and final independently.
+</p>
+
+<p>
+  Having said that, this guessing approach isn't a dead-end. 
+  There <strong>are</strong> reliable correspondences,
+  you just need to have an instinct for which.
+  The following tables may help!
+</p>
 
 <hr/>
 
@@ -242,6 +386,28 @@ const directions = [
 </Layout>
 
 <style is:global>
+  .stats-table {
+    border-collapse: collapse;
+    font-size: 1rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .stats-table th, .stats-table td {
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  .stats-table th {
+    border-bottom: 2px solid #999;
+    font-family: 'IM Fell English', serif;
+  }
+  .stats-table td:nth-child(2), .stats-table td:nth-child(3),
+  .stats-table th:nth-child(2), .stats-table th:nth-child(3) {
+    text-align: right;
+  }
+  .stats-table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+
   .byline {
     margin-top: -1.5rem;
     font-size: 1rem;
