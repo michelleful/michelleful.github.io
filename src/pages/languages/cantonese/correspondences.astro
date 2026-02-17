@@ -95,7 +95,8 @@ const stats = {
 <p>
   This tool shows how successful this approach is likely to be
   in either direction, with tables demonstrating the
-  phonological correspondences between the two languages.
+  phonological correspondences between the two languages,
+  followed by a statistical analysis.
   Data is from the
   <a href="https://www.unicode.org/reports/tr38/">Unihan database</a>
   which contains Mandarin (pinyin) and Cantonese (jyutping) readings.
@@ -104,7 +105,98 @@ const stats = {
 
 <hr/>
 
-<h3>How predictable are the correspondences?</h3>
+<p>
+  Select a direction and component to explore how initials, finals, tones,
+  and full syllables map between the two languages.
+</p>
+
+<div class="controls">
+  <div class="direction-toggle">
+    {directions.map(d => (
+      <button class={`dir-btn ${d.key === 'c2m' ? 'active' : ''}`} data-dir={d.key}>
+        {d.label}
+      </button>
+    ))}
+  </div>
+  <div class="component-tabs">
+    {['initial', 'final', 'tone', 'syllable'].map((tab, i) => (
+      <button class={`tab-btn ${i === 0 ? 'active' : ''}`} data-tab={tab}>
+        {tab[0].toUpperCase() + tab.slice(1)}
+      </button>
+    ))}
+  </div>
+</div>
+
+<!-- Pre-rendered heatmap tables for initial, final, tone × 2 directions -->
+{components.map(comp =>
+  directions.map(dir => {
+    const matrix = (correspondences as any)[comp][dir.matrixKey];
+    return (
+      <div class="heatmap-section" id={`heatmap-${dir.key}-${comp}`} hidden>
+        <p class="matrix-caption">
+          Rows: <span class="lang-name">{dir.srcLabel}</span> {comp}s.
+          Columns: <span class="lang-name">{dir.tgtLabel}</span> {comp}s.
+          <br/>Cell values show the percentage of characters with a given
+          <span class="lang-name">{dir.srcLabel}</span> {comp} that have that <span class="lang-name">{dir.tgtLabel}</span> {comp}.
+          <p class="mobile-hint">These tables are best viewed on a wider screen.</p>
+        </p>
+        <div class="heatmap-scroll">
+          <table class="heatmap">
+            <thead>
+              <tr>
+                <th class="corner" colspan="2"></th>
+                <th class="top-label" colspan={matrix.targets.length}>{dir.tgtLabel}</th>
+              </tr>
+              <tr>
+                <th class="corner" colspan="2"></th>
+                {matrix.targets.map((tgt: string) => (
+                  <th class="col-header">{tgt || '∅'}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {matrix.sources.map((src: string, i: number) => (
+                <tr>
+                  {i === 0 && (
+                    <th class="side-label" rowspan={matrix.sources.length}>
+                      <div class="side-label-text">{dir.srcLabel}</div>
+                    </th>
+                  )}
+                  <th class="row-header">{src || '∅'}</th>
+                  {matrix.matrix[i].map((pct: number, j: number) => (
+                    <td
+                      class="cell"
+                      style={`background-color: ${cellColor(pct)}; color: ${textColor(pct)}`}
+                      title={`${src || '∅'} → ${matrix.targets[j] || '∅'}: ${pct}%`}
+                    >
+                      {pct >= 1 ? Math.round(pct) : ''}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="scroll-hint" hidden>Scroll right to see more →</p>
+      </div>
+    );
+  })
+)}
+
+<!-- Syllable section (populated by JS) -->
+{directions.map(dir => (
+  <div class="syllable-section" id={`syllable-${dir.key}`} hidden>
+    <div class="syllable-picker">
+      <label>Select a {dir.srcLabel} syllable:</label>
+      <select class="syllable-select" data-dir={dir.key}></select>
+    </div>
+    <div class="syllable-results"></div>
+  </div>
+))}
+
+<hr/>
+
+<h3>How predictable are the correspondences overall?</h3>
 <p>
   If you always guess the most likely correspondence, how often would you
   be right?
@@ -178,99 +270,12 @@ const stats = {
 <p>
   Having said that, this guessing approach isn't a dead-end. 
   There <strong>are</strong> reliable correspondences,
-  you just need to have an instinct for which.
-  The following tables may help!
+  you just need to have an instinct (or memory) for which.
+  Studying the tables may help, but ultimately there is no
+  substitute for actual language practice &mdash; listening or speaking.
 </p>
 
-<hr/>
 
-<p>
-  Select a direction and component to explore how initials, finals, tones,
-  and full syllables map between the two languages.
-</p>
-
-<div class="controls">
-  <div class="direction-toggle">
-    {directions.map(d => (
-      <button class={`dir-btn ${d.key === 'c2m' ? 'active' : ''}`} data-dir={d.key}>
-        {d.label}
-      </button>
-    ))}
-  </div>
-  <div class="component-tabs">
-    {['initial', 'final', 'tone', 'syllable'].map((tab, i) => (
-      <button class={`tab-btn ${i === 0 ? 'active' : ''}`} data-tab={tab}>
-        {tab[0].toUpperCase() + tab.slice(1)}
-      </button>
-    ))}
-  </div>
-</div>
-
-<!-- Pre-rendered heatmap tables for initial, final, tone × 2 directions -->
-{components.map(comp =>
-  directions.map(dir => {
-    const matrix = (correspondences as any)[comp][dir.matrixKey];
-    return (
-      <div class="heatmap-section" id={`heatmap-${dir.key}-${comp}`} hidden>
-        <p class="matrix-caption">
-          Rows: <span class="lang-name">{dir.srcLabel}</span> {comp}s.
-          Columns: <span class="lang-name">{dir.tgtLabel}</span> {comp}s.
-          <br/>Cell values show the percentage of characters with a given
-          <span class="lang-name">{dir.srcLabel}</span> {comp} that have that <span class="lang-name">{dir.tgtLabel}</span> {comp}.
-        </p>
-        <div class="heatmap-scroll">
-          <table class="heatmap">
-            <thead>
-              <tr>
-                <th class="corner" colspan="2"></th>
-                <th class="top-label" colspan={matrix.targets.length}>{dir.tgtLabel}</th>
-              </tr>
-              <tr>
-                <th class="corner" colspan="2"></th>
-                {matrix.targets.map((tgt: string) => (
-                  <th class="col-header">{tgt || '∅'}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {matrix.sources.map((src: string, i: number) => (
-                <tr>
-                  {i === 0 && (
-                    <th class="side-label" rowspan={matrix.sources.length}>
-                      <div class="side-label-text">{dir.srcLabel}</div>
-                    </th>
-                  )}
-                  <th class="row-header">{src || '∅'}</th>
-                  {matrix.matrix[i].map((pct: number, j: number) => (
-                    <td
-                      class="cell"
-                      style={`background-color: ${cellColor(pct)}; color: ${textColor(pct)}`}
-                      title={`${src || '∅'} → ${matrix.targets[j] || '∅'}: ${pct}%`}
-                    >
-                      {pct >= 1 ? Math.round(pct) : ''}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p class="scroll-hint" hidden>Scroll right to see more →</p>
-      </div>
-    );
-  })
-)}
-
-<!-- Syllable section (populated by JS) -->
-{directions.map(dir => (
-  <div class="syllable-section" id={`syllable-${dir.key}`} hidden>
-    <div class="syllable-picker">
-      <label>Select a {dir.srcLabel} syllable:</label>
-      <select class="syllable-select" data-dir={dir.key}></select>
-    </div>
-    <div class="syllable-results"></div>
-  </div>
-))}
 
 <script is:inline define:vars={{ syllableData: correspondences.syllable }}>
   const state = { direction: 'c2m', component: 'initial' };
@@ -612,7 +617,18 @@ const stats = {
     flex-shrink: 0;
   }
 
+  .mobile-hint {
+    display: none;
+  }
+
   @media (max-width: 600px) {
+    .mobile-hint {
+      display: block;
+      font-size: 0.9rem;
+      color: #999;
+      font-style: italic;
+      margin-top: -0.5rem;
+    }
     h1 {
       font-size: 2.3rem;
     }
