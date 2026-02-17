@@ -11,7 +11,7 @@ interface Props {
 const { title, author, year, isbn, imgurl, statusRead = false } = Astro.props;
 
 const img = imgurl ? imgurl : `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`;
-const link = `https://www.worldcat.org/isbn/${isbn}`;
+const link = `https://openlibrary.org/isbn/${isbn}`;
 ---
 
 <div class="book">
@@ -37,12 +37,12 @@ const link = `https://www.worldcat.org/isbn/${isbn}`;
   .book {
     font-family: 'Jost', sans-serif;
     margin-top: 10px;
+    margin-bottom: 1.5rem;
   }
   .book::after {
     content: "";
     display: table;
     clear: both;
-    margin-bottom: 10px;
   }
   .book-title {
     font-size: 1.8rem;
