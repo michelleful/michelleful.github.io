@@ -339,7 +339,7 @@ import Layout from '../../layouts/Layout.astro';
 			});
 			*/
 
-			// Temporary interpolation graphs
+			/* Temporary interpolation graphs
 			const graphDefs = [
 				{ label: 'Outer width', expr: map.getPaintProperty('roads-glow-outer', 'line-width') },
 				{ label: 'Outer opacity', expr: map.getPaintProperty('roads-glow-outer', 'line-opacity') },
@@ -582,6 +582,7 @@ import Layout from '../../layouts/Layout.astro';
 				});
 			});
 			container.appendChild(logBtn);
+			*/
 
 			map.on('mouseenter', 'roads-layer', () => {
 				map.getCanvas().style.cursor = 'pointer';
