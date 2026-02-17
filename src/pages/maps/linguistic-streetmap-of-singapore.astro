@@ -14,17 +14,20 @@ import Layout from '../../layouts/Layout.astro';
 		<div class="legend-item"><span class="swatch" style="background: #999999;"></span> Generic</div>
 	</div>
 	<div id="attribution">Developed by <a href="/">Michelle Fullwood</a></div>
-	<!-- TODO: re-enable glow controls for experimentation
+	<!-- Glow controls (temporarily hidden)
 	<div id="glow-controls">
 		<div id="zoom-display">Zoom: --</div>
 		<button id="glow-toggle">Glow: ON</button>
-		<label>Outer width: <input type="range" id="ctrl-outer-width" min="0" max="40" step="1" value="14"><span id="val-outer-width">14</span></label>
+		<label>Outer width: <input type="range" id="ctrl-outer-width" min="0" max="40" step="0.1" value="3"><span id="val-outer-width">3</span></label>
 		<label>Outer opacity: <input type="range" id="ctrl-outer-opacity" min="0" max="0.4" step="0.01" value="0.12"><span id="val-outer-opacity">0.12</span></label>
-		<label>Outer blur: <input type="range" id="ctrl-outer-blur" min="0" max="30" step="1" value="10"><span id="val-outer-blur">10</span></label>
-		<label>Inner width: <input type="range" id="ctrl-inner-width" min="0" max="20" step="1" value="6"><span id="val-inner-width">6</span></label>
+		<label>Outer blur: <input type="range" id="ctrl-outer-blur" min="0" max="30" step="0.1" value="10"><span id="val-outer-blur">10</span></label>
+		<label>Inner width: <input type="range" id="ctrl-inner-width" min="0" max="20" step="0.1" value="6"><span id="val-inner-width">6</span></label>
 		<label>Inner opacity: <input type="range" id="ctrl-inner-opacity" min="0" max="0.6" step="0.01" value="0.3"><span id="val-inner-opacity">0.3</span></label>
-		<label>Inner blur: <input type="range" id="ctrl-inner-blur" min="0" max="20" step="1" value="4"><span id="val-inner-blur">4</span></label>
+		<label>Inner blur: <input type="range" id="ctrl-inner-blur" min="0" max="20" step="0.1" value="4"><span id="val-inner-blur">4</span></label>
 	</div>
+	-->
+	<!-- Temporary interpolation graphs
+	<div id="interp-graphs"></div>
 	-->
 </Layout>
 
@@ -133,6 +136,29 @@ import Layout from '../../layouts/Layout.astro';
 		color: #fff;
 		margin-bottom: 4px;
 	}
+	#interp-graphs {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+		background: rgba(20, 20, 40, 0.9);
+		padding: 12px;
+		border-radius: 8px;
+		font-family: 'Jost', sans-serif;
+		font-size: 0.7rem;
+		color: #ccc;
+	}
+	#interp-graphs .graph-box {
+		width: 200px;
+	}
+	#interp-graphs canvas {
+		display: block;
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 4px;
+	}
 </style>
 
 <script is:inline>
@@ -195,11 +221,12 @@ import Layout from '../../layouts/Layout.astro';
 				id: 'roads-glow-outer',
 				type: 'line',
 				source: 'roads',
+				layout: { 'line-cap': 'round', 'line-join': 'round' },
 				paint: {
 					'line-color': roadColors,
-					'line-width': ['interpolate', ['linear'], ['zoom'], 10, 14, 14, 18, 18, 22],
-					'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.12, 14, 0.08, 18, 0.06],
-					'line-blur': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 10, 18, 12],
+					'line-width': ['interpolate', ['linear'], ['zoom'], 10, 3, 11, 8.03, 12, 10.8, 14, 18, 18, 22],
+					'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.12, 13, 0.13, 16, 0.24, 18, 0.24],
+					'line-blur': ['interpolate', ['linear'], ['zoom'], 10, 10, 15.5, 4.55, 16.5, 3.15, 18, 0.6],
 				},
 			});
 
@@ -208,10 +235,11 @@ import Layout from '../../layouts/Layout.astro';
 				id: 'roads-glow-inner',
 				type: 'line',
 				source: 'roads',
+				layout: { 'line-cap': 'round', 'line-join': 'round' },
 				paint: {
 					'line-color': roadColors,
-					'line-width': ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 8, 18, 10],
-					'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.3, 14, 0.2, 18, 0.15],
+					'line-width': ['interpolate', ['linear'], ['zoom'], 10, 6, 12, 8.29, 13, 10.02, 14, 12, 18, 18],
+					'line-opacity': ['interpolate', ['linear'], ['zoom'], 10.5, 0, 13, 0.14, 16, 0.32, 18, 0.32],
 					'line-blur': ['interpolate', ['linear'], ['zoom'], 10, 4, 14, 4, 18, 5],
 				},
 			});
@@ -221,6 +249,7 @@ import Layout from '../../layouts/Layout.astro';
 				id: 'roads-layer',
 				type: 'line',
 				source: 'roads',
+				layout: { 'line-cap': 'round', 'line-join': 'round' },
 				paint: {
 					'line-color': roadColors,
 					'line-width': 1.5,
@@ -233,7 +262,7 @@ import Layout from '../../layouts/Layout.astro';
 				closeOnClick: false,
 			});
 
-			/* TODO: re-enable glow controls
+			/* Glow controls (temporarily hidden)
 			// Zoom display
 			const zoomDisplay = document.getElementById('zoom-display');
 			function updateZoom() {
@@ -251,6 +280,44 @@ import Layout from '../../layouts/Layout.astro';
 				{ id: 'ctrl-inner-opacity', layer: 'roads-glow-inner', prop: 'line-opacity' },
 				{ id: 'ctrl-inner-blur', layer: 'roads-glow-inner', prop: 'line-blur' },
 			];
+
+			// Manual interpolation helper
+			function evalInterpolation(expr, zoom) {
+				if (typeof expr === 'number') return expr;
+				if (!Array.isArray(expr) || expr[0] !== 'interpolate') return null;
+				const stops = expr.slice(3);
+				for (let i = 0; i < stops.length - 2; i += 2) {
+					if (zoom <= stops[i]) return stops[i + 1];
+					if (zoom <= stops[i + 2]) {
+						const t = (zoom - stops[i]) / (stops[i + 2] - stops[i]);
+						return stops[i + 1] + t * (stops[i + 3] - stops[i + 1]);
+					}
+				}
+				return stops[stops.length - 1];
+			}
+
+			// Store original expressions for syncing
+			const originalExprs = {};
+			sliders.forEach(({ id, layer, prop }) => {
+				originalExprs[id] = map.getPaintProperty(layer, prop);
+			});
+
+			function updateSliderValues() {
+				const zoom = map.getZoom();
+				sliders.forEach(({ id }) => {
+					const expr = originalExprs[id];
+					const val = evalInterpolation(expr, zoom);
+					if (val !== null) {
+						const input = document.getElementById(id);
+						const valSpan = document.getElementById(id.replace('ctrl-', 'val-'));
+						input.value = val;
+						valSpan.textContent = parseFloat(val.toFixed(2));
+					}
+				});
+			}
+			map.on('zoom', updateSliderValues);
+			updateSliderValues();
+
 			sliders.forEach(({ id, layer, prop }) => {
 				const input = document.getElementById(id);
 				const valSpan = document.getElementById(id.replace('ctrl-', 'val-'));
@@ -271,6 +338,250 @@ import Layout from '../../layouts/Layout.astro';
 				document.getElementById('glow-toggle').textContent = 'Glow: ' + (glowOn ? 'ON' : 'OFF');
 			});
 			*/
+
+			// Temporary interpolation graphs
+			const graphDefs = [
+				{ label: 'Outer width', expr: map.getPaintProperty('roads-glow-outer', 'line-width') },
+				{ label: 'Outer opacity', expr: map.getPaintProperty('roads-glow-outer', 'line-opacity') },
+				{ label: 'Outer blur', expr: map.getPaintProperty('roads-glow-outer', 'line-blur') },
+				{ label: 'Inner width', expr: map.getPaintProperty('roads-glow-inner', 'line-width') },
+				{ label: 'Inner opacity', expr: map.getPaintProperty('roads-glow-inner', 'line-opacity') },
+				{ label: 'Inner blur', expr: map.getPaintProperty('roads-glow-inner', 'line-blur') },
+			];
+
+			function evalInterp(expr, zoom) {
+				if (typeof expr === 'number') return expr;
+				if (!Array.isArray(expr) || expr[0] !== 'interpolate') return null;
+				const stops = expr.slice(3);
+				for (let i = 0; i < stops.length - 2; i += 2) {
+					if (zoom <= stops[i]) return stops[i + 1];
+					if (zoom <= stops[i + 2]) {
+						const t = (zoom - stops[i]) / (stops[i + 2] - stops[i]);
+						return stops[i + 1] + t * (stops[i + 3] - stops[i + 1]);
+					}
+				}
+				return stops[stops.length - 1];
+			}
+
+			const container = document.getElementById('interp-graphs');
+			const graphs = [];
+			const zoomMin = 10, zoomMax = 18;
+			const HIT_RADIUS = 8;
+
+			graphDefs.forEach(({ label, expr }, gi) => {
+				const box = document.createElement('div');
+				box.className = 'graph-box';
+				const title = document.createElement('div');
+				title.textContent = label;
+				title.style.marginBottom = '2px';
+				const canvas = document.createElement('canvas');
+				canvas.width = 200;
+				canvas.height = 80;
+				box.appendChild(title);
+				box.appendChild(canvas);
+				container.appendChild(box);
+				// Store a mutable copy of stops
+				const stops = Array.isArray(expr) ? expr.slice(3) : [];
+				graphs.push({ canvas, stops, label, layer: graphDefs[gi].label, gi });
+			});
+
+			// Map graph index to layer+prop for live updates
+			const layerProps = [
+				{ layer: 'roads-glow-outer', prop: 'line-width' },
+				{ layer: 'roads-glow-outer', prop: 'line-opacity' },
+				{ layer: 'roads-glow-outer', prop: 'line-blur' },
+				{ layer: 'roads-glow-inner', prop: 'line-width' },
+				{ layer: 'roads-glow-inner', prop: 'line-opacity' },
+				{ layer: 'roads-glow-inner', prop: 'line-blur' },
+			];
+
+			function buildExpr(stops) {
+				return ['interpolate', ['linear'], ['zoom'], ...stops];
+			}
+
+			function applyStops(gi) {
+				const { layer, prop } = layerProps[gi];
+				map.setPaintProperty(layer, prop, buildExpr(graphs[gi].stops));
+			}
+
+			function getRange(stops) {
+				let minVal = Infinity, maxVal = -Infinity;
+				for (let z = zoomMin; z <= zoomMax; z += 0.1) {
+					const v = evalInterp(buildExpr(stops), z);
+					if (v < minVal) minVal = v;
+					if (v > maxVal) maxVal = v;
+				}
+				const pad = (maxVal - minVal) * 0.15 || 0.1;
+				return { minVal: minVal - pad, maxVal: maxVal + pad };
+			}
+
+			function drawGraph(g) {
+				const { canvas, stops } = g;
+				const ctx = canvas.getContext('2d');
+				const w = canvas.width, h = canvas.height;
+				ctx.clearRect(0, 0, w, h);
+				const expr = buildExpr(stops);
+				const { minVal, maxVal } = getRange(stops);
+
+				function xFor(z) { return ((z - zoomMin) / (zoomMax - zoomMin)) * w; }
+				function yFor(v) { return h - ((v - minVal) / (maxVal - minVal)) * h; }
+
+				// Grid
+				ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+				ctx.lineWidth = 1;
+				ctx.font = '9px Jost, sans-serif';
+				ctx.fillStyle = 'rgba(255,255,255,0.4)';
+				for (let z = zoomMin; z <= zoomMax; z += 2) {
+					const x = xFor(z);
+					ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+					ctx.fillText(z.toString(), x + 2, h - 2);
+				}
+
+				// Curve
+				ctx.strokeStyle = '#ff9900';
+				ctx.lineWidth = 2;
+				ctx.beginPath();
+				for (let z = zoomMin; z <= zoomMax; z += 0.1) {
+					const v = evalInterp(expr, z);
+					const x = xFor(z), y = yFor(v);
+					z === zoomMin ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+				}
+				ctx.stroke();
+
+				// Stop points
+				ctx.fillStyle = '#ff9900';
+				for (let i = 0; i < stops.length; i += 2) {
+					const x = xFor(stops[i]), y = yFor(stops[i + 1]);
+					ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+					ctx.fillStyle = 'rgba(255,255,255,0.7)';
+					ctx.font = '9px Jost, sans-serif';
+					ctx.fillText(parseFloat(stops[i + 1].toFixed(2)).toString(), x + 6, y - 5);
+					ctx.fillStyle = '#ff9900';
+				}
+
+				// Current zoom
+				const currentZoom = map.getZoom();
+				const cx = xFor(currentZoom);
+				const cv = evalInterp(expr, currentZoom);
+				const cy = yFor(cv);
+				ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+				ctx.lineWidth = 1;
+				ctx.setLineDash([3, 3]);
+				ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+				ctx.setLineDash([]);
+				ctx.fillStyle = '#fff';
+				ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+				ctx.font = 'bold 10px Jost, sans-serif';
+				ctx.fillText(cv.toFixed(2), cx + 6, cy - 6);
+			}
+
+			function drawAllGraphs() { graphs.forEach(drawGraph); }
+			drawAllGraphs();
+			map.on('zoom', drawAllGraphs);
+
+			// Interaction state
+			let dragging = null; // { gi, stopIdx }
+
+			function canvasCoords(canvas, e) {
+				const rect = canvas.getBoundingClientRect();
+				return { mx: e.clientX - rect.left, my: e.clientY - rect.top };
+			}
+
+			function hitTest(g, mx, my) {
+				const { stops, canvas } = g;
+				const w = canvas.width, h = canvas.height;
+				const { minVal, maxVal } = getRange(stops);
+				function xFor(z) { return ((z - zoomMin) / (zoomMax - zoomMin)) * w; }
+				function yFor(v) { return h - ((v - minVal) / (maxVal - minVal)) * h; }
+				for (let i = 0; i < stops.length; i += 2) {
+					const dx = mx - xFor(stops[i]), dy = my - yFor(stops[i + 1]);
+					if (Math.sqrt(dx * dx + dy * dy) < HIT_RADIUS) return i;
+				}
+				return -1;
+			}
+
+			function pxToZoomVal(g, mx, my) {
+				const { stops, canvas } = g;
+				const w = canvas.width, h = canvas.height;
+				const { minVal, maxVal } = getRange(stops);
+				const z = zoomMin + (mx / w) * (zoomMax - zoomMin);
+				const v = minVal + (1 - my / h) * (maxVal - minVal);
+				return { z: Math.round(z * 2) / 2, v: Math.round(v * 100) / 100 };
+			}
+
+			graphs.forEach((g, gi) => {
+				const canvas = g.canvas;
+				canvas.style.cursor = 'crosshair';
+
+				canvas.addEventListener('mousedown', (e) => {
+					e.preventDefault();
+					const { mx, my } = canvasCoords(canvas, e);
+					const idx = hitTest(g, mx, my);
+					if (idx >= 0) {
+						dragging = { gi, stopIdx: idx };
+					}
+				});
+
+				canvas.addEventListener('mousemove', (e) => {
+					if (!dragging || dragging.gi !== gi) return;
+					const { mx, my } = canvasCoords(canvas, e);
+					const { z, v } = pxToZoomVal(g, mx, my);
+					const stops = g.stops;
+					const idx = dragging.stopIdx;
+					// Constrain zoom to stay between neighbors
+					const prevZ = idx >= 2 ? stops[idx - 2] + 0.5 : zoomMin;
+					const nextZ = idx + 2 < stops.length ? stops[idx + 2] - 0.5 : zoomMax;
+					stops[idx] = Math.max(prevZ, Math.min(nextZ, z));
+					stops[idx + 1] = Math.max(0, v);
+					applyStops(gi);
+					drawGraph(g);
+				});
+
+				canvas.addEventListener('mouseup', () => { dragging = null; });
+				canvas.addEventListener('mouseleave', () => { dragging = null; });
+
+				// Click to add a point (only if not on existing point)
+				canvas.addEventListener('dblclick', (e) => {
+					e.preventDefault();
+					const { mx, my } = canvasCoords(canvas, e);
+					const idx = hitTest(g, mx, my);
+					if (idx >= 0) return; // on existing point, ignore
+					const { z, v } = pxToZoomVal(g, mx, my);
+					// Insert in sorted order
+					const stops = g.stops;
+					let insertAt = stops.length;
+					for (let i = 0; i < stops.length; i += 2) {
+						if (z < stops[i]) { insertAt = i; break; }
+					}
+					stops.splice(insertAt, 0, z, Math.max(0, v));
+					applyStops(gi);
+					drawGraph(g);
+				});
+
+				// Right-click to remove a point (need at least 2 stops)
+				canvas.addEventListener('contextmenu', (e) => {
+					e.preventDefault();
+					const { mx, my } = canvasCoords(canvas, e);
+					const idx = hitTest(g, mx, my);
+					if (idx >= 0 && g.stops.length > 4) { // keep at least 2 stops
+						g.stops.splice(idx, 2);
+						applyStops(gi);
+						drawGraph(g);
+					}
+				});
+			});
+
+			// Log current values button
+			const logBtn = document.createElement('button');
+			logBtn.textContent = 'Log values to console';
+			logBtn.style.cssText = 'grid-column: span 2; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; border: 1px solid #666; background: #333; color: #ccc; border-radius: 4px;';
+			logBtn.addEventListener('click', () => {
+				const names = ['Outer width', 'Outer opacity', 'Outer blur', 'Inner width', 'Inner opacity', 'Inner blur'];
+				graphs.forEach((g, i) => {
+					console.log(names[i] + ':', JSON.stringify(buildExpr(g.stops)));
+				});
+			});
+			container.appendChild(logBtn);
 
 			map.on('mouseenter', 'roads-layer', () => {
 				map.getCanvas().style.cursor = 'pointer';
