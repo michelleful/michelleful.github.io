@@ -1,0 +1,295 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Linguistic Streetmap of Singapore">
+	<div id="map"></div>
+	<div id="legend">
+		<h3>Classification</h3>
+		<div class="legend-item"><span class="swatch" style="background: #ff4444;"></span> Chinese</div>
+		<div class="legend-item"><span class="swatch" style="background: #44cc44;"></span> Malay</div>
+		<div class="legend-item"><span class="swatch" style="background: #ffdd44;"></span> Indian</div>
+		<div class="legend-item"><span class="swatch" style="background: #4444ff;"></span> British</div>
+		<div class="legend-item"><span class="swatch" style="background: #cc44cc;"></span> Other</div>
+		<div class="legend-item"><span class="swatch" style="background: #999999;"></span> Generic</div>
+	</div>
+	<div id="attribution">Developed by <a href="/">Michelle Fullwood</a></div>
+	<!-- TODO: re-enable glow controls for experimentation
+	<div id="glow-controls">
+		<div id="zoom-display">Zoom: --</div>
+		<button id="glow-toggle">Glow: ON</button>
+		<label>Outer width: <input type="range" id="ctrl-outer-width" min="0" max="40" step="1" value="14"><span id="val-outer-width">14</span></label>
+		<label>Outer opacity: <input type="range" id="ctrl-outer-opacity" min="0" max="0.4" step="0.01" value="0.12"><span id="val-outer-opacity">0.12</span></label>
+		<label>Outer blur: <input type="range" id="ctrl-outer-blur" min="0" max="30" step="1" value="10"><span id="val-outer-blur">10</span></label>
+		<label>Inner width: <input type="range" id="ctrl-inner-width" min="0" max="20" step="1" value="6"><span id="val-inner-width">6</span></label>
+		<label>Inner opacity: <input type="range" id="ctrl-inner-opacity" min="0" max="0.6" step="0.01" value="0.3"><span id="val-inner-opacity">0.3</span></label>
+		<label>Inner blur: <input type="range" id="ctrl-inner-blur" min="0" max="20" step="1" value="4"><span id="val-inner-blur">4</span></label>
+	</div>
+	-->
+</Layout>
+
+<style is:global>
+	body {
+		width: 100% !important;
+		margin: 0 !important;
+		background-color: #1a1a2e !important;
+	}
+	#map {
+		width: 100%;
+		height: 100vh;
+	}
+	#legend {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		background: rgba(20, 20, 40, 0.85);
+		color: #ccc;
+		padding: 12px 16px;
+		border-radius: 8px;
+		font-family: 'Jost', sans-serif;
+		font-size: 0.9rem;
+		z-index: 1;
+	}
+	#legend h3 {
+		margin: 0 0 8px 0;
+		font-size: 1rem;
+		color: #fff;
+	}
+	.legend-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 4px;
+	}
+	.swatch {
+		width: 20px;
+		height: 4px;
+		border-radius: 2px;
+		display: inline-block;
+	}
+	#attribution {
+		position: absolute;
+		top: 16px;
+		left: 16px;
+		background: rgba(230, 230, 230, 0.9);
+		color: #333;
+		padding: 8px 12px;
+		border-radius: 8px;
+		font-family: 'Jost', sans-serif;
+		font-size: 0.85rem;
+		z-index: 1;
+	}
+	#attribution a {
+		color: #333;
+		text-decoration: underline;
+	}
+	#attribution a:hover {
+		color: #000;
+	}
+	#glow-toggle {
+		background: rgba(40, 40, 60, 0.7);
+		color: #ccc;
+		border: 1px solid #555;
+		padding: 6px 12px;
+		border-radius: 4px;
+		font-family: 'Jost', sans-serif;
+		font-size: 0.8rem;
+		cursor: pointer;
+		margin-bottom: 4px;
+	}
+	#glow-toggle:hover {
+		background: rgba(60, 60, 80, 0.8);
+	}
+	#glow-controls {
+		position: absolute;
+		bottom: 16px;
+		left: 16px;
+		background: rgba(20, 20, 40, 0.9);
+		color: #ccc;
+		padding: 12px 16px;
+		border-radius: 8px;
+		font-family: 'Jost', sans-serif;
+		font-size: 0.8rem;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+	#glow-controls label {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	#glow-controls input[type="range"] {
+		width: 100px;
+	}
+	#glow-controls span {
+		width: 35px;
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+	#zoom-display {
+		font-weight: bold;
+		color: #fff;
+		margin-bottom: 4px;
+	}
+</style>
+
+<script is:inline>
+	const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json';
+
+	function loadCSS(url) {
+		const link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = url;
+		document.head.appendChild(link);
+	}
+
+	function loadScript(url) {
+		return new Promise((resolve, reject) => {
+			const script = document.createElement('script');
+			script.src = url;
+			script.onload = resolve;
+			script.onerror = reject;
+			document.head.appendChild(script);
+		});
+	}
+
+	loadCSS('https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css');
+	loadScript('https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js').then(() => {
+		const map = new maplibregl.Map({
+			container: 'map',
+			style: MAP_STYLE,
+			center: [103.82, 1.35],
+			zoom: 11,
+		});
+
+		map.on('load', () => {
+			// Hide everything except land, water, and buildings
+			const keep = ['background', 'landcover', 'landuse', 'water', 'waterway', 'boundary'];
+			map.getStyle().layers.forEach((layer) => {
+				if (!keep.some((k) => layer.id.includes(k))) {
+					map.setLayoutProperty(layer.id, 'visibility', 'none');
+				}
+			});
+
+			map.addSource('roads', {
+				type: 'geojson',
+				data: '/data/maps/singapore-roads-classified.geojson',
+			});
+
+			const roadColors = [
+				'match',
+				['get', 'classification'],
+				'British', '#4444ff',
+				'Chinese', '#ff4444',
+				'Generic', '#999999',
+				'Indian', '#ffdd44',
+				'Malay', '#44cc44',
+				'Other', '#cc44cc',
+				'#ffffff',
+			];
+
+			// Wide soft glow
+			map.addLayer({
+				id: 'roads-glow-outer',
+				type: 'line',
+				source: 'roads',
+				paint: {
+					'line-color': roadColors,
+					'line-width': ['interpolate', ['linear'], ['zoom'], 10, 14, 14, 18, 18, 22],
+					'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.12, 14, 0.08, 18, 0.06],
+					'line-blur': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 10, 18, 12],
+				},
+			});
+
+			// Inner glow
+			map.addLayer({
+				id: 'roads-glow-inner',
+				type: 'line',
+				source: 'roads',
+				paint: {
+					'line-color': roadColors,
+					'line-width': ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 8, 18, 10],
+					'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.3, 14, 0.2, 18, 0.15],
+					'line-blur': ['interpolate', ['linear'], ['zoom'], 10, 4, 14, 4, 18, 5],
+				},
+			});
+
+			// Main line layer
+			map.addLayer({
+				id: 'roads-layer',
+				type: 'line',
+				source: 'roads',
+				paint: {
+					'line-color': roadColors,
+					'line-width': 1.5,
+					'line-opacity': 0.85,
+				},
+			});
+
+			const popup = new maplibregl.Popup({
+				closeButton: false,
+				closeOnClick: false,
+			});
+
+			/* TODO: re-enable glow controls
+			// Zoom display
+			const zoomDisplay = document.getElementById('zoom-display');
+			function updateZoom() {
+				zoomDisplay.textContent = 'Zoom: ' + map.getZoom().toFixed(1);
+			}
+			map.on('zoom', updateZoom);
+			updateZoom();
+
+			// Glow sliders
+			const sliders = [
+				{ id: 'ctrl-outer-width', layer: 'roads-glow-outer', prop: 'line-width' },
+				{ id: 'ctrl-outer-opacity', layer: 'roads-glow-outer', prop: 'line-opacity' },
+				{ id: 'ctrl-outer-blur', layer: 'roads-glow-outer', prop: 'line-blur' },
+				{ id: 'ctrl-inner-width', layer: 'roads-glow-inner', prop: 'line-width' },
+				{ id: 'ctrl-inner-opacity', layer: 'roads-glow-inner', prop: 'line-opacity' },
+				{ id: 'ctrl-inner-blur', layer: 'roads-glow-inner', prop: 'line-blur' },
+			];
+			sliders.forEach(({ id, layer, prop }) => {
+				const input = document.getElementById(id);
+				const valSpan = document.getElementById(id.replace('ctrl-', 'val-'));
+				input.addEventListener('input', () => {
+					const val = parseFloat(input.value);
+					valSpan.textContent = val;
+					map.setPaintProperty(layer, prop, val);
+				});
+			});
+
+			// Glow toggle
+			let glowOn = true;
+			document.getElementById('glow-toggle').addEventListener('click', () => {
+				glowOn = !glowOn;
+				const vis = glowOn ? 'visible' : 'none';
+				map.setLayoutProperty('roads-glow-outer', 'visibility', vis);
+				map.setLayoutProperty('roads-glow-inner', 'visibility', vis);
+				document.getElementById('glow-toggle').textContent = 'Glow: ' + (glowOn ? 'ON' : 'OFF');
+			});
+			*/
+
+			map.on('mouseenter', 'roads-layer', () => {
+				map.getCanvas().style.cursor = 'pointer';
+			});
+
+			map.on('mouseleave', 'roads-layer', () => {
+				map.getCanvas().style.cursor = '';
+				popup.remove();
+			});
+
+			map.on('mousemove', 'roads-layer', (e) => {
+				const feature = e.features[0];
+				const name = feature.properties.name;
+				const classification = feature.properties.classification;
+				popup
+					.setLngLat(e.lngLat)
+					.setHTML('<strong>' + name + '</strong><br>' + classification)
+					.addTo(map);
+			});
+		});
+	});
+</script>
