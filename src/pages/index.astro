@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Hieroglyph from '../components/Hieroglyph.astro';
 ---
 
 <Layout title="Michelle Fullwood">
@@ -8,10 +7,10 @@ import Hieroglyph from '../components/Hieroglyph.astro';
 <h1>Michelle Fullwood</h1>
 
 <nav class="section-nav">
-  <a href="#languages">Languages</a> | <a href="#maps">Maps</a> | <a href="#miscellany">Miscellany</a>
+  <a href="#languages">Languages</a> <a href="#maps">Maps</a> <a href="#miscellany">Miscellany</a>
 </nav>
 
-<h2 id="languages">Language tools and explainers</h2>
+<h2 id="languages">Language tools</h2>
 
 <div>
 <h3><a href="/languages/arabic/fuzzy/">Fuzzy Arabic Dictionary</a></h3>
@@ -38,7 +37,7 @@ import Hieroglyph from '../components/Hieroglyph.astro';
 
 <div>
 <h3><a href="/maps/linguistic-streetmap-of-singapore/">A linguistic street map of Singapore</a></h3>
-<a href="/maps/linguistic-streetmap-of-singapore/"><img src="/data/maps/singapore_linguistic_map.png" alt="A linguistic street map of Singapore" class="project-img" /></a>
+<a href="/maps/linguistic-streetmap-of-singapore/"><img src="/data/maps/singapore_linguistic_map.png" alt="A linguistic street map of Singapore with roads colour-coded by origin" class="project-img" /></a>
 <p>
   A street map of Singapore in which every road is colour-coded
   with the language of origin of its road name. This was
@@ -63,7 +62,7 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
   <h3><a href="/lists/books/lesser-known-recs/">Lesser-known book recommendations</a></h3>
 
   <p>
-    A list of books I think should be on lists of book recs more often  
+    A list of books I think should be on lists of book recs more often  .
   </p>
 </div>
 
@@ -91,6 +90,15 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
   .section-nav a {
     text-decoration: none;
     color: inherit;
+    white-space: nowrap;
+  }
+  .section-nav a:not(:last-child)::after {
+    content: " \00a0|\00a0";
+  }
+  @media (max-width: 600px) {
+    .section-nav a:not(:last-child)::after {
+      content: "\00a0\00a0";
+    }
   }
   .section-nav a:hover {
     color: rgb(213, 117, 0);
@@ -100,5 +108,10 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
     width: 80%;
     border-radius: 4px;
     margin: 1rem auto 0;
+  }
+  @media (max-width: 600px) {
+    .project-img {
+      width: 100%;
+    }
   }
 </style>

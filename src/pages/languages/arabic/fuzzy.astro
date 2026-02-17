@@ -41,6 +41,7 @@ import Layout from '../../../layouts/Layout.astro';
     <tbody id="analysis-body"></tbody>
   </table>
   <p id="analysis-notfound" hidden>No matching words found</p>
+  <p id="scroll-hint" hidden>Scroll right to see more →</p>
 </div>
 
 <script is:inline src="//api.yamli.com/js/yamli_api.js"></script>
@@ -127,6 +128,8 @@ import Layout from '../../../layouts/Layout.astro';
   const table = document.getElementById("analysis-table");
   const tbody = document.getElementById("analysis-body");
   const notfound = document.getElementById("analysis-notfound");
+  const scrollHint = document.getElementById("scroll-hint");
+  const analysisArea = document.getElementById("analysis-area");
 
   let analyzerReady = false;
 
@@ -161,6 +164,8 @@ import Layout from '../../../layouts/Layout.astro';
         `<td>${esc(r.gloss)}</td>`;
       tbody.appendChild(tr);
     }
+
+    scrollHint.hidden = analysisArea.scrollWidth <= analysisArea.clientWidth;
   }
 
   function esc(s) {
@@ -199,6 +204,10 @@ import Layout from '../../../layouts/Layout.astro';
 
     showResults(allResults);
   });
+
+  analysisArea.addEventListener("scroll", () => {
+    if (analysisArea.scrollLeft > 0) scrollHint.hidden = true;
+  });
 </script>
 
 </Layout>
@@ -230,6 +239,7 @@ import Layout from '../../../layouts/Layout.astro';
   }
   #analysis-area {
     padding-bottom: 4rem;
+    overflow-x: auto;
   }
 </style>
 
@@ -294,5 +304,19 @@ import Layout from '../../../layouts/Layout.astro';
   }
   #analysis-table tr:nth-child(odd) {
     background-color: #f2f2f2;
+  }
+  #scroll-hint {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+    text-align: right;
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+  }
+  @media (max-width: 600px) {
+    #arabictextbox,
+    .samples {
+      width: 100%;
+    }
   }
 </style>

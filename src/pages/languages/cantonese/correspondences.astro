@@ -613,12 +613,23 @@ const stats = {
   }
 
   @media (max-width: 600px) {
+    h1 {
+      font-size: 2.3rem;
+    }
     .direction-toggle, .component-tabs {
       flex-wrap: wrap;
     }
     .direction-toggle button, .component-tabs button {
       font-size: 0.85rem;
       padding: 0.4rem 0.7rem;
+    }
+    .heatmap {
+      font-size: 0.85rem;
+      margin: 0 auto;
+    }
+    .heatmap .cell {
+      min-width: 34px;
+      height: 28px;
     }
   }
 </style>

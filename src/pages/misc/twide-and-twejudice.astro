@@ -19,6 +19,12 @@ import Layout from '../../layouts/Layout.astro';
 	.twide :global(h1) {
 		font-size: 3.5rem;
 		text-align: center;
+		line-height: 1.1;
+	}
+	@media (max-width: 600px) {
+		.twide :global(h1) {
+			font-size: 3rem;
+		}
 	}
 	.twide :global(span[data-original]) {
 		position: relative;

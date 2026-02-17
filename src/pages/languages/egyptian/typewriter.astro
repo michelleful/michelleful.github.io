@@ -400,6 +400,12 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
 </Layout>
 
 <style is:global>
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+
   #mdc-input {
     width: 100%;
     font-family: 'Jost', sans-serif;
@@ -426,10 +432,16 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
     border-radius: 6px;
     min-height: 80px;
     overflow-x: auto;
+    box-sizing: border-box;
   }
 
   #preview {
     font-size: 3rem;
+  }
+
+  #preview canvas {
+    max-width: 100%;
+    height: auto;
   }
 
   #preview .hierojax {
@@ -458,6 +470,7 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
 
   .button-row {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1rem;
   }
@@ -472,6 +485,7 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
     cursor: pointer;
     transition: background-color 0.15s;
   }
+
 
   .button-row button:hover {
     background: rgb(213, 117, 0);
@@ -523,6 +537,7 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #ddd;
     flex-shrink: 0;
+    flex-wrap: wrap;
   }
   .picker-title {
     font-family: 'Jost', sans-serif;
@@ -532,6 +547,7 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
   }
   #picker-search {
     flex: 1;
+    min-width: 200px;
     font-family: 'Jost', sans-serif;
     font-size: 1rem;
     padding: 0.4rem 0.75rem;
@@ -550,6 +566,16 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
     padding: 0 0.25rem;
     color: #666;
     line-height: 1;
+  }
+  @media (max-width: 600px) {
+    .picker-close-btn {
+      order: 2;
+      margin-left: auto;
+    }
+    #picker-search {
+      order: 3;
+      width: 100%;
+    }
   }
   .picker-close-btn:hover {
     color: #000;

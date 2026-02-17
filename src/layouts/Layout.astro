@@ -10,7 +10,7 @@ const { title = "Michelle Fullwood" } = Astro.props;
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
@@ -47,7 +47,17 @@ const { title = "Michelle Fullwood" } = Astro.props;
 	}
 	@media (max-width: 600px) {
 		body {
-			width: 80%;
+			width: 100% !important;
+			padding-left: 1rem !important;
+			padding-right: 1rem !important;
+			box-sizing: border-box;
+		}
+		h1 {
+			font-size: 2.5rem;
+			overflow-wrap: break-word;
+		}
+		h2 {
+			font-size: 1.8rem;
 		}
 	}
 	h1 {

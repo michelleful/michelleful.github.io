@@ -62,6 +62,24 @@ const link = `https://openlibrary.org/isbn/${isbn}`;
   .text-container {
     margin-left: 20px;
   }
+  @media (max-width: 600px) {
+    img {
+      float: none;
+      display: block;
+      margin: 0 auto 0.5rem;
+      width: 180px;
+    }
+    .text-container {
+      margin-left: 0;
+    }
+    .book-title {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .book-author {
+      text-align: center;
+    }
+  }
   .status-read {
     font-size: 1rem;
     background-color: green;
