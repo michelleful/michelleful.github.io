@@ -35,9 +35,11 @@ export class YouTubeSync {
   play() {
     if (this.playing) return;
     this.playing = true;
+    // playVideo() must come before seekTo() when player is in ENDED state,
+    // otherwise seekTo() is silently ignored by the YouTube API.
+    this.player.playVideo();
     this.player.seekTo((this.currentTime + this.startOffset) / 1000, true);
     this.player.setPlaybackRate(this.playbackRate);
-    this.player.playVideo();
     this._rafId = requestAnimationFrame(this._tick.bind(this));
   }
 
@@ -70,7 +72,22 @@ export class YouTubeSync {
   _tick() {
     if (!this.playing) return;
 
-    this.currentTime = Math.max(0, this.player.getCurrentTime() * 1000 - this.startOffset);
+    const ytRaw = this.player.getCurrentTime();
+    // Guard against NaN (player not ready yet).
+    if (typeof ytRaw !== 'number' || isNaN(ytRaw)) {
+      this._rafId = requestAnimationFrame(this._tick.bind(this));
+      return;
+    }
+    const ytTime = Math.max(0, ytRaw * 1000 - this.startOffset);
+    // Guard against stale pre-seek position: after a restart currentTime is 0,
+    // but YouTube may still report the old end-of-poem position for a few frames
+    // while the seek to startOffset completes. Skip those frames.
+    if (ytTime > this.currentTime + 5000) {
+      this._rafId = requestAnimationFrame(this._tick.bind(this));
+      return;
+    }
+
+    this.currentTime = ytTime;
 
     while (
       this._nextWordIndex < this.timestamps.length &&

@@ -71,10 +71,11 @@ export class CanvasRenderer {
     this._rafId = requestAnimationFrame(this._draw.bind(this));
   }
 
-  // Called on Play: switch to live-echo mode.
+  // Called on Play: switch to live-echo mode and ensure draw loop is running.
   start() {
     this._finalStateActive = false;
-    this.beginDraw();
+    if (this._rafId) cancelAnimationFrame(this._rafId);
+    this._rafId = requestAnimationFrame(this._draw.bind(this));
   }
 
   // No-op: loop keeps running so rings keep pulsing when paused.
