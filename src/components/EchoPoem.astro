@@ -1,0 +1,217 @@
+---
+interface Props {
+  poem: {
+    title: string;
+    author: string;
+    lines: string[];
+    words: Array<{ id: number; text: string; line: number; pos: number }>;
+    timestamps_ms: Array<{ id: number; start: number; end: number }>;
+    connections: Array<{ source: number; target: number; type: string; strength: number; note?: string }>;
+  };
+  instanceId?: string;
+}
+
+const { poem, instanceId = `echo-${Math.random().toString(36).slice(2, 9)}` } = Astro.props;
+
+// Escape <, >, & so the JSON cannot break out of the <script> tag
+const safeJson = JSON.stringify(poem)
+  .replace(/</g, '\\u003c')
+  .replace(/>/g, '\\u003e')
+  .replace(/&/g, '\\u0026');
+---
+
+<div class="echo-poem-root" data-instance-id={instanceId} data-youtube-id={poem.youtubeId ?? ''} data-audio-offset={poem.audioStartOffset ?? 0}>
+  <script type="application/json" data-echo-data={instanceId} set:html={safeJson}></script>
+  <header class="poem-header">
+    <h1 class="poem-title">{poem.title}</h1>
+    <p class="poem-author">{poem.author}</p>
+    {poem.performer && <p class="poem-performer">performed by {poem.performer}</p>}
+  </header>
+  <div class="sonnet-container"></div>
+  <canvas class="echo-canvas"></canvas>
+  {poem.youtubeId && <div class="yt-player-wrap"><div class="yt-player"></div></div>}
+</div>
+<div class="controls-bar"></div>
+
+<script>
+  import { initAll } from '../lib/echo-poem/main.js';
+  // Module scripts run after DOM is ready (deferred by spec)
+  initAll();
+</script>
+
+<style is:global>
+  .echo-poem-root {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 2rem 8rem;
+    box-sizing: border-box;
+  }
+
+  .echo-poem-root .poem-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .echo-poem-root .poem-title {
+    font-family: 'IM Fell English', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 500;
+    color: #e8e0d4;
+    margin: 0 0 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .echo-poem-root .poem-author {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #6a6460;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .echo-poem-root .poem-performer {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 200;
+    font-style: italic;
+    color: #504c48;
+    margin: 0.3rem 0 0;
+    letter-spacing: 0.05em;
+  }
+
+  .echo-poem-root .sonnet-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* YouTube player hidden — audio only */
+  .echo-poem-root .yt-player-wrap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Canvas sits on top (pointer-events:none so text stays interactive) */
+  .echo-poem-root .echo-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .echo-poem-root .sonnet {
+    font-family: 'IM Fell English', Georgia, serif;
+    font-size: clamp(1.2rem, 3vw, 1.9rem);
+    line-height: 2.2;
+    letter-spacing: 0.02em;
+    color: #c8c0b4;
+    text-align: center;
+  }
+
+  .echo-poem-root .line {
+    display: block;
+    word-spacing: 0.3em;
+  }
+
+  .echo-poem-root .word {
+    display: inline-block;
+    color: #c8c0b4;
+    padding: 0 0.1em;
+    will-change: color;
+  }
+
+  .echo-poem-root .word.speaking {
+    color: #ffffff;
+    text-shadow:
+      0 0 8px rgba(255, 255, 255, 0.85),
+      0 0 20px rgba(255, 255, 255, 0.35);
+  }
+
+  /* Fixed control bar at the bottom of the viewport */
+  .controls-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0.7rem 1rem;
+    background: rgba(10, 10, 15, 0.92);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .controls-bar .controls-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .controls-bar .ctrl-btn {
+    background: #1e1e26;
+    color: #7a7a88;
+    border: 1px solid #2e2e3a;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .controls-bar .ctrl-btn:hover {
+    background: #2a2a36;
+    color: #b0b0be;
+    border-color: #3e3e4e;
+  }
+
+  .controls-bar .ctrl-btn.active {
+    background: #15616d;
+    color: #e0f4f6;
+    border-color: #15616d;
+  }
+
+  .controls-bar .ctrl-speed-group {
+    display: flex;
+    gap: 0;
+  }
+
+  .controls-bar .ctrl-speed-group .ctrl-btn {
+    border-radius: 0;
+    border-right-width: 0;
+  }
+
+  .controls-bar .ctrl-speed-group .ctrl-btn:first-child {
+    border-radius: 4px 0 0 4px;
+  }
+
+  .controls-bar .ctrl-speed-group .ctrl-btn:last-child {
+    border-radius: 0 4px 4px 0;
+    border-right-width: 1px;
+  }
+
+  @media (max-width: 600px) {
+    .echo-poem-root {
+      padding: 2.5rem 1rem 6rem;
+    }
+
+    .echo-poem-root .poem-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
