@@ -23,6 +23,8 @@
     --accent: #f5c842;
     --found-word: #a8c060;
     --radius: 10px;
+    --board-gap: 18px;
+    --body-h-pad: 32px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,7 +69,8 @@
     max-width: 480px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px 16px;
     margin-bottom: 28px;
   }
 
@@ -112,7 +115,7 @@
   /* Board */
   .board {
     display: flex;
-    gap: 18px;
+    gap: var(--board-gap);
     margin-bottom: 28px;
     position: relative;
   }
@@ -124,13 +127,13 @@
   }
 
   .tile {
-    width: 72px;
-    height: 72px;
+    width: min(72px, calc((100vw - var(--body-h-pad) - 4 * var(--board-gap)) / 5));
+    height: min(72px, calc((100vw - var(--body-h-pad) - 4 * var(--board-gap)) / 5));
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Outfit', sans-serif; font-weight: 800;
-    font-size: 2rem;
+    font-size: min(2rem, calc((100vw - var(--body-h-pad) - 4 * var(--board-gap)) / 5 * 0.44));
     letter-spacing: 0.05em;
     border-radius: var(--radius);
     border: 2px solid var(--tile-border);
@@ -665,10 +668,18 @@
     cursor: pointer;
   }
 
-  @media (max-width: 400px) {
-    .tile { width: 60px; height: 60px; font-size: 1.7rem; }
-    .board { gap: 12px; }
+  @media (max-width: 480px) {
+    :root { --board-gap: 12px; }
     .column { gap: 6px; }
+
+    header { margin-bottom: 16px; }
+    .title { font-size: 2rem; }
+
+    .score-bar { flex-wrap: nowrap; gap: 8px; margin-bottom: 16px; }
+    .score-label { display: none; }
+    .score-value { font-size: 1.4rem; min-width: 2ch; }
+    .timer-display { font-size: 1.4rem; }
+    .timer-bar-wrap { width: 50px; }
   }
 
   /* Help button */
@@ -702,9 +713,10 @@
     inset: 0;
     background: rgba(0,0,0,0.82);
     z-index: 300;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 16px;
+    overflow-y: auto;
   }
 
   .help-overlay.show { display: flex; animation: fadeIn 0.25s ease; }
@@ -716,6 +728,7 @@
     padding: 32px 28px 28px;
     max-width: 380px;
     width: 100%;
+    margin: auto;
     animation: slideUp 0.3s ease;
   }
 
@@ -929,7 +942,7 @@
   </div>
 </header>
 
-<div class="score-bar" style="flex-wrap:wrap;gap:10px 16px;">
+<div class="score-bar">
   <div class="score-label">Score</div>
   <div class="score-value" id="scoreDisplay">0</div>
   <div class="progress-wrap">
