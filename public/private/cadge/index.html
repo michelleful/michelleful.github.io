@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CADGE · Word Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0f;
+    --surface: #1a1a1c;
+    --tile: #242428;
+    --tile-border: #383840;
+    --tile-active: #f5c842;
+    --tile-active-text: #0e0e0f;
+    --tile-dead: #1a1a1c;
+    --tile-dead-text: #2e2e34;
+    --tile-dead-border: #222226;
+    --tile-found: #3a3a20;
+    --tile-found-border: #6a6a28;
+    --text: #f0f0e8;
+    --muted: #666670;
+    --accent: #f5c842;
+    --found-word: #a8c060;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    gap: 0;
+  }
+
+  header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 28px;
+  }
+
+  .title {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 2.8rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .date {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* Score bar */
+  .score-bar {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .score-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .score-value {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 2rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    min-width: 3ch;
+  }
+
+  .progress-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--surface);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .word-count {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  /* Board */
+  .board {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tile {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius);
+    border: 2px solid var(--tile-border);
+    background: var(--tile);
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s, opacity 0.3s;
+    position: relative;
+  }
+
+  .tile:hover:not(.dead):not(.found-tile) {
+    border-color: var(--accent);
+    background: #2a2a2e;
+    transform: translateY(-2px);
+  }
+
+  .tile.selected {
+    background: var(--tile-active);
+    border-color: var(--tile-active);
+    color: var(--tile-active-text);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(245,200,66,0.35);
+  }
+
+  .tile.dead {
+    background: var(--tile-dead);
+    border-color: var(--tile-dead-border);
+    color: var(--tile-dead-text);
+    cursor: default;
+    transform: none !important;
+  }
+
+  .tile.found-tile {
+    background: var(--tile-found);
+    border-color: var(--tile-found-border);
+    color: #c8d880;
+    cursor: default;
+  }
+
+  .tile.shake {
+    animation: shake 0.35s ease;
+  }
+
+  .tile.pop {
+    animation: pop 0.25s ease;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.18) translateY(-4px); }
+    100% { transform: scale(1) translateY(0); }
+  }
+
+  /* Current selection display */
+  .selection-row {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    height: 52px;
+  }
+
+  .selection-slot {
+    flex: 1;
+    height: 52px;
+    border-radius: 8px;
+    border: 2px solid var(--tile-border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .selection-slot.filled {
+    border-color: var(--accent);
+    background: rgba(245,200,66,0.07);
+  }
+
+  .selection-slot.error {
+    border-color: #e05050;
+    background: rgba(224,80,80,0.07);
+    animation: shake 0.35s ease;
+  }
+
+  .selection-slot.success {
+    border-color: var(--found-word);
+    background: rgba(168,192,96,0.1);
+  }
+
+
+
+  /* Found words */
+  .found-section {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .found-header {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .found-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .found-word {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--found-word);
+    background: rgba(168,192,96,0.08);
+    border: 1px solid rgba(168,192,96,0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    animation: wordAppear 0.3s ease;
+    transition: color 0.6s, background 0.6s, border-color 0.6s;
+  }
+
+  .found-word.latest {
+    color: #50e870;
+    background: rgba(80,232,112,0.12);
+    border-color: rgba(80,232,112,0.35);
+  }
+
+  @keyframes tileBlink {
+    0%   { background: var(--tile-active); border-color: var(--tile-active); color: var(--tile-active-text); }
+    40%  { background: #50e870; border-color: #50e870; color: #0e0e0f; }
+    70%  { background: var(--tile-active); border-color: var(--tile-active); color: var(--tile-active-text); }
+    100% { background: #50e870; border-color: #50e870; color: #0e0e0f; }
+  }
+
+  .tile.blink-accept {
+    animation: tileBlink 0.45s ease forwards;
+  }
+
+  @keyframes tileBlink-bonus {
+    0%   { background: var(--tile-active); border-color: var(--tile-active); color: var(--tile-active-text); }
+    40%  { background: #a080d0; border-color: #a080d0; color: #fff; }
+    70%  { background: var(--tile-active); border-color: var(--tile-active); color: var(--tile-active-text); }
+    100% { background: #a080d0; border-color: #a080d0; color: #fff; }
+  }
+
+  .tile.blink-bonus {
+    animation: tileBlink-bonus 0.45s ease forwards;
+  }
+
+  @keyframes slotInvalid {
+    0%,100% { background: rgba(224,80,80,0.07); border-color: #e05050; }
+    50% { background: rgba(224,80,80,0.18); border-color: #ff6060; }
+  }
+
+  @keyframes slotDuplicate {
+    0%,100% { background: rgba(245,200,66,0.07); border-color: var(--accent); }
+    50% { background: rgba(245,200,66,0.2); border-color: #ffd060; }
+  }
+
+  .selection-slot.flash-invalid {
+    animation: slotInvalid 0.4s ease 2;
+    border-color: #e05050;
+    color: #e05050;
+  }
+
+  .selection-slot.flash-duplicate {
+    animation: slotDuplicate 0.4s ease 2;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @keyframes wordAppear {
+    from { opacity: 0; transform: scale(0.85) translateY(4px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: var(--surface);
+    border: 1px solid var(--tile-border);
+    color: var(--text);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    padding: 10px 20px;
+    border-radius: 24px;
+    transition: transform 0.3s ease;
+    z-index: 100;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Bonus words */
+  .bonus-section {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+
+  .bonus-header {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .bonus-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .bonus-word {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: #a080d0;
+    background: rgba(160,128,208,0.07);
+    border: 1px solid rgba(160,128,208,0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    animation: wordAppear 0.3s ease;
+  }
+
+  /* Hint button */
+  .hint-wrap {
+    width: 100%;
+    max-width: 480px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .hint-wrap.show { display: flex; }
+
+  .hint-btn {
+    background: transparent;
+    border: 1px solid var(--tile-border);
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .hint-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .hint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .hint-item {
+    font-size: 0.85rem;
+    color: var(--accent);
+    opacity: 0.85;
+    letter-spacing: 0.03em;
+    font-style: italic;
+    text-align: center;
+    animation: wordAppear 0.3s ease;
+  }
+
+  /* Missed words */
+  .missed-section {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+    margin-top: 20px;
+  }
+
+  .missed-section.show { display: block; animation: wordAppear 0.4s ease; }
+
+  .missed-header {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .missed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .missed-word-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .missed-word {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--tile-border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    flex-shrink: 0;
+  }
+
+  .missed-clue {
+    font-size: 0.78rem;
+    color: var(--muted);
+    opacity: 0.7;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+
+  .final-score {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+    padding-top: 12px;
+    border-top: 1px solid var(--tile-border);
+  }
+
+  .final-score strong {
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  /* Win state */
+  .win-banner {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    padding: 24px;
+    background: rgba(168,192,96,0.08);
+    border: 1px solid rgba(168,192,96,0.25);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+  }
+
+  .win-banner.show { display: block; animation: wordAppear 0.4s ease; }
+
+  .win-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 2.4rem;
+    color: var(--found-word);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .win-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+
+  /* Timer */
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .timer-display {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    min-width: 4ch;
+    text-align: right;
+    transition: color 0.4s;
+  }
+
+  .timer-display.urgent {
+    color: #ff8c42;
+  }
+
+  .timer-bar-wrap {
+    width: 80px;
+    height: 4px;
+    background: var(--surface);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .timer-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 1s linear, background 0.4s;
+    width: 100%;
+  }
+
+  .timer-bar.urgent { background: #ff8c42; }
+
+
+  /* Time-up modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--tile-border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    animation: slideUp 0.35s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-icon {
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+  }
+
+  .modal-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 2.2rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .modal-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--tile-border);
+    font-size: 0.8rem;
+  }
+
+  .modal-stat:last-of-type { border-bottom: none; }
+
+  .modal-stat-label {
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+  }
+
+  .modal-stat-value {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .modal-note {
+    margin-top: 16px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+
+  .modal-btn {
+    margin-top: 22px;
+    width: 100%;
+    height: 46px;
+    background: var(--accent);
+    color: #0e0e0f;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  @media (max-width: 400px) {
+    .tile { width: 60px; height: 60px; font-size: 1.7rem; }
+    .board { gap: 12px; }
+    .column { gap: 6px; }
+  }
+
+  /* Help button */
+  .help-btn {
+    background: transparent;
+    border: 2px solid var(--tile-border);
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .help-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Help overlay */
+  .help-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.82);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .help-overlay.show { display: flex; animation: fadeIn 0.25s ease; }
+
+  .help-modal {
+    background: var(--surface);
+    border: 1px solid var(--tile-border);
+    border-radius: 16px;
+    padding: 32px 28px 28px;
+    max-width: 380px;
+    width: 100%;
+    animation: slideUp 0.3s ease;
+  }
+
+  .help-about {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .help-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-top: 20px;
+    margin-bottom: 12px;
+  }
+
+  .help-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+  }
+
+  .help-body p { margin-bottom: 14px; }
+  .help-body p:last-child { margin-bottom: 0; }
+  .help-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  .help-body strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .help-close {
+    margin-top: 24px;
+    width: 100%;
+    height: 44px;
+    background: var(--accent);
+    color: #0e0e0f;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* Not-found overlay */
+  .notfound-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 32px;
+  }
+
+  .notfound-overlay.show { display: flex; }
+
+  .notfound-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  .notfound-msg {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 320px;
+  }
+
+  .notfound-countdown {
+    font-size: 0.75rem;
+    color: var(--muted);
+    opacity: 0.6;
+    letter-spacing: 0.06em;
+  }
+
+  /* Give-up / action row */
+  .action-row {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+
+  .action-btn {
+    background: transparent;
+    border: 1px solid var(--tile-border);
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .action-btn.danger:hover { border-color: #e05050; color: #e05050; }
+
+  /* Confirm overlay */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 250;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .confirm-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+
+  .confirm-modal {
+    background: var(--surface);
+    border: 1px solid var(--tile-border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    animation: slideUp 0.25s ease;
+  }
+
+  .confirm-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .confirm-msg {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .confirm-msg strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .confirm-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .confirm-cancel {
+    flex: 1;
+    height: 42px;
+    background: transparent;
+    border: 1px solid var(--tile-border);
+    color: var(--muted);
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .confirm-ok {
+    flex: 1;
+    height: 42px;
+    background: #e05050;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title">CADGE</div>
+  <div style="display:flex;align-items:baseline;gap:12px;">
+    <div class="date" id="dateDisplay"></div>
+    <button class="help-btn" onclick="showHelp()" title="How to play">?</button>
+  </div>
+</header>
+
+<div class="score-bar" style="flex-wrap:wrap;gap:10px 16px;">
+  <div class="score-label">Score</div>
+  <div class="score-value" id="scoreDisplay">0</div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="word-count" id="wordCount">0 / 0</div>
+  <div class="timer-wrap" style="margin-left:auto;">
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+    <div class="timer-display" id="timerDisplay">3:00</div>
+  </div>
+</div>
+
+<div class="board" id="board"></div>
+
+<div class="selection-row" id="selectionRow"></div>
+
+
+<div class="win-banner" id="winBanner">
+  <div class="win-title" id="winTitle">You got them all!</div>
+  <div class="win-sub" id="winSub"></div>
+  <button class="action-btn" onclick="shareGame()" style="margin-top:16px;">Share result</button>
+</div>
+
+<div class="hint-wrap" id="hintWrap">
+  <button class="hint-btn" onclick="showHint()">Hint <span style="opacity:0.6;font-size:0.65rem;">−3 pts</span></button>
+  <div class="hint-list" id="hintList"></div>
+</div>
+
+<div class="found-section">
+  <div class="found-header">Found words <span id="foundCount"></span></div>
+  <div class="found-list" id="foundList"></div>
+</div>
+
+<div class="bonus-section" id="bonusSection" style="display:none">
+  <div class="bonus-header">Bonus words</div>
+  <div class="bonus-list" id="bonusList"></div>
+</div>
+
+<div class="missed-section" id="missedSection">
+  <div class="missed-header">Missed words</div>
+  <div class="missed-list" id="missedList"></div>
+  <div class="final-score" id="finalScore"></div>
+</div>
+
+<div class="action-row" id="actionRow" style="display:none;">
+  <button class="action-btn danger" onclick="confirmGiveUp()">Give up</button>
+  <button class="action-btn" onclick="shareGame()">Share</button>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-title">Give up?</div>
+    <div class="confirm-msg">You'll see all the words you missed. This counts as a completed game.</div>
+    <div class="confirm-buttons">
+      <button class="confirm-cancel" onclick="cancelGiveUp()">Keep going</button>
+      <button class="confirm-ok" onclick="doGiveUp()">Give up</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="replayOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-title">You've played this one</div>
+    <div class="confirm-msg" id="replayMsg"></div>
+    <div class="confirm-buttons">
+      <button class="confirm-cancel" onclick="skipToNew()">New game</button>
+      <button class="confirm-ok" style="background:var(--accent);color:#0e0e0f;" onclick="dismissReplay()">Play again</button>
+    </div>
+  </div>
+</div>
+
+<div class="notfound-overlay" id="exhaustedOverlay">
+  <div class="notfound-title">You've done it all.</div>
+  <div class="notfound-msg" id="exhaustedMsg"></div>
+</div>
+
+<div class="notfound-overlay" id="notfoundOverlay">
+  <div class="notfound-title">Whoops!</div>
+  <div class="notfound-msg">We can't find that game. The link may be outdated or incorrect.</div>
+  <div class="notfound-countdown" id="notfoundCountdown">Redirecting in 15 seconds…</div>
+</div>
+
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-modal">
+    <div class="help-title">About</div>
+    <div class="help-body">
+      <p>
+        Hello! You've found <strong>CADGE</strong>, an on-demand version of OneLook's daily game CADGY.</a>.
+        This version is for friends and family only, so please do not share far and wide.
+      </p>
+    </div>
+    <div class="help-title">How to play</div>
+    <div class="help-body">
+      <p>Make <strong>5-letter words</strong> using one letter from each column.</p>
+      <p>We start with a <strong>3-minute speed round</strong>, during which you'll get <strong>10 points</strong> per word found.</p>
+      <p>After 3 minutes, you can continue playing at your leisure for <strong>5 points</strong> per word.</p>
+      <p>At this point you can also ask for hints, which cost <strong>3 points</strong> each.</p>
+      <p>Faded letters can't be part of any remaining word — only lit-up letters are still useful.</p>
+    </div>
+    <button class="help-close" onclick="dismissHelp()">Let's play</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon" id="modalIcon">⏱</div>
+    <div class="modal-title" id="modalTitle">Speed Round Over</div>
+    <div id="modalStatsArea">
+      <div class="modal-stat">
+        <span class="modal-stat-label">Words found</span>
+        <span class="modal-stat-value" id="modalWords">—</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-stat-label">Points earned</span>
+        <span class="modal-stat-value" id="modalScore">—</span>
+      </div>
+      <div class="modal-stat" id="modalRemainingRow">
+        <span class="modal-stat-label">Words remaining</span>
+        <span class="modal-stat-value" id="modalRemaining">—</span>
+      </div>
+    </div>
+    <div class="modal-note" id="modalNote"></div>
+    <button class="modal-btn" id="modalBtn" onclick="dismissModal()">Continue</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── HELP OVERLAY ─────────────────────────────────────────────────────────────
+const HELP_SEEN_KEY = 'cadge_help_seen';
+
+function showHelp() {
+  document.getElementById('helpOverlay').classList.add('show');
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function dismissHelp() {
+  document.getElementById('helpOverlay').classList.remove('show');
+  localStorage.setItem(HELP_SEEN_KEY, '1');
+  if (!overtime) startTimer();
+}
+
+// ─── STORAGE ──────────────────────────────────────────────────────────────────
+const STORAGE_KEY  = 'cadge_history';
+const BOARDS_DIR   = 'boards';
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+
+function saveHistory(h) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
+}
+
+// ─── GAME DATA (populated at load time) ───────────────────────────────────────
+let COLUMNS      = [];
+let TARGET_WORDS = new Set();
+let BONUS_WORDS  = new Set();
+let CLUES        = {};
+let BOARD_FILE   = null;
+let BOARD_KEY    = null;
+let BOARD_NUM    = null;
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let NUM_COLS, NUM_ROWS;
+let selected = [];
+let foundWords = [];
+let foundBonus = [];
+let speedRoundCount = 0;
+let score = 0;
+let MAX_SCORE = 0;
+let remainingWords = new Set();
+
+const BONUS_MESSAGES = [
+  "Didn't think you'd know that one!",
+  "Now that's a word!",
+  "Impressive vocabulary.",
+  "Scrabble champion spotted.",
+  "We had to look that one up.",
+  "Boldly obscure.",
+  "A+ for lexical ambition.",
+];
+
+// ─── TIMER ───────────────────────────────────────────────────────────────────
+const TIMER_DURATION = 180;
+let timeLeft = TIMER_DURATION;
+let timerInterval = null;
+let overtime = false;
+let gameRecorded = false;
+
+// ─── BOARD LOADING ────────────────────────────────────────────────────────────
+function dismissReplay() {
+  document.getElementById('replayOverlay').classList.remove('show');
+  if (!overtime) startTimer();
+}
+
+function skipToNew() {
+  // Drop the ?game= param and load a fresh random game
+  window.location.href = window.location.pathname;
+}
+
+function showExhausted(total) {
+  document.getElementById('exhaustedMsg').textContent =
+    `You've played all ${total.toLocaleString()} games. Please let Michelle know — it's time for more!`;
+  document.getElementById('exhaustedOverlay').classList.add('show');
+}
+
+function showNotFound() {
+  document.getElementById('notfoundOverlay').classList.add('show');
+  let secs = 15;
+  const el = document.getElementById('notfoundCountdown');
+  const tick = setInterval(() => {
+    secs--;
+    el.textContent = secs > 0
+      ? `Redirecting in ${secs} second${secs === 1 ? '' : 's'}…`
+      : 'Redirecting…';
+    if (secs <= 0) {
+      clearInterval(tick);
+      window.location.href = window.location.pathname;  // strip query string
+    }
+  }, 1000);
+}
+
+async function loadBoard() {
+  const manifest = await fetch(`${BOARDS_DIR}/manifest.json`).then(r => r.json());
+
+  // Check for a linked game via ?game=<20-char url_key>
+  const params  = new URLSearchParams(window.location.search);
+  const gameKey = params.get('game');
+  if (gameKey) {
+    const entry = manifest.find(e => e.url_key === gameKey);
+    if (!entry) { showNotFound(); return false; }
+
+    // Check if already played
+    const history = loadHistory();
+    const prior   = (history.played || {})[entry.key];
+    if (prior) {
+      const pct = Math.round(prior.found / prior.total * 100);
+      document.getElementById('replayMsg').innerHTML =
+        `You first played this game on ${prior.date}. You found <strong>${prior.found} of ${prior.total} words (${pct}%)</strong> and scored <strong>${prior.score} points</strong>. Want to play it again?`;
+      document.getElementById('replayOverlay').classList.add('show');
+      // Board data is loaded below; init will wait for the overlay to resolve
+    }
+
+    const board = await fetch(`${BOARDS_DIR}/${entry.file}`).then(r => r.json());
+    BOARD_FILE = entry.file;
+    BOARD_KEY  = entry.key;
+    BOARD_NUM  = parseInt(entry.file, 10);
+    COLUMNS    = board.columns.map(col => col.map(l => l.toUpperCase()));
+    TARGET_WORDS = new Set(board.words);
+    BONUS_WORDS  = new Set(board.bonus);
+    CLUES = {};
+    for (const [word, clue] of Object.entries(board.clues || {})) {
+      CLUES[word.toUpperCase()] = clue;
+    }
+    NUM_COLS = COLUMNS.length;
+    NUM_ROWS = COLUMNS[0].length;
+    selected = new Array(NUM_COLS).fill(null);
+    remainingWords = new Set(TARGET_WORDS);
+    MAX_SCORE = TARGET_WORDS.size * 10;
+    return true;
+  }
+
+  const history  = loadHistory();
+  const played   = history.played || {};
+
+  // Exclude boards where the game was completed (reached 3-min mark or perfect).
+  // Keyed by column fingerprint so the same board is recognised across pool regenerations.
+  const unplayed = manifest.filter(e => !played[e.key]);
+  if (unplayed.length === 0) { showExhausted(manifest.length); return false; }
+  const entry = unplayed[Math.floor(Math.random() * unplayed.length)];
+
+  const board = await fetch(`${BOARDS_DIR}/${entry.file}`).then(r => r.json());
+
+  BOARD_FILE = entry.file;
+  BOARD_KEY  = entry.key;
+  BOARD_NUM  = parseInt(entry.file, 10);
+  COLUMNS    = board.columns.map(col => col.map(l => l.toUpperCase()));
+  TARGET_WORDS = new Set(board.words);
+  BONUS_WORDS  = new Set(board.bonus);
+
+  // Build clue map
+  CLUES = {};
+  for (const [word, clue] of Object.entries(board.clues || {})) {
+    CLUES[word.toUpperCase()] = clue;
+  }
+
+  NUM_COLS      = COLUMNS.length;
+  NUM_ROWS      = COLUMNS[0].length;
+  selected      = new Array(NUM_COLS).fill(null);
+  remainingWords = new Set(TARGET_WORDS);
+  MAX_SCORE     = TARGET_WORDS.size * 10;
+  return true;
+}
+
+// ─── RECORD GAME ──────────────────────────────────────────────────────────────
+function recordGame(perfect) {
+  if (gameRecorded) return;
+  gameRecorded = true;
+
+  const history = loadHistory();
+  if (!history.played)   history.played = {};
+  if (!history.stats)    history.stats  = { gamesPlayed: 0, totalScore: 0, perfectGames: 0 };
+
+  if (history.played[BOARD_KEY]) return;  // keep first score only
+  history.played[BOARD_KEY] = {
+    score,
+    maxScore:  MAX_SCORE,
+    found:     foundWords.length,
+    total:     TARGET_WORDS.size,
+    bonus:     foundBonus.length,
+    perfect,
+    date: new Date().toISOString().slice(0, 10),
+  };
+
+  history.stats.gamesPlayed++;
+  history.stats.totalScore  += score;
+  if (perfect) history.stats.perfectGames++;
+
+  saveHistory(history);
+}
+
+// ─── GIVE UP ──────────────────────────────────────────────────────────────────
+function confirmGiveUp() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function cancelGiveUp() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if (!overtime) startTimer();
+}
+
+function doGiveUp() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  overtime = true;
+  updateTimerDisplay();
+  recordGame(false);
+  showWin();
+}
+
+// ─── SHARE ────────────────────────────────────────────────────────────────────
+function shareGame() {
+  const url    = `${location.origin}${location.pathname}?game=${BOARD_KEY.replace(/\|/g, '')}`;
+  const pct    = Math.round(foundWords.length / TARGET_WORDS.size * 100);
+  const text   = `CADGE #${BOARD_NUM} — ${foundWords.length}/${TARGET_WORDS.size} words (${pct}%) · ${score} pts\n${url}`;
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(
+      () => showToast('Copied to clipboard!'),
+      () => showToast('Could not copy — check console'),
+    );
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  document.getElementById('dateDisplay').textContent = 'Loading…';
+  const loaded = await loadBoard();
+  if (!loaded) return;
+
+  const history = loadHistory();
+  const stats   = history.stats || {};
+  const played  = Object.keys(history.played || {}).length;
+  document.getElementById('dateDisplay').textContent =
+    `Game #${BOARD_NUM}  ·  ${played} played`;
+
+  document.getElementById('wordCount').textContent = `0 / ${TARGET_WORDS.size}`;
+
+  renderBoard();
+  renderSelectionRow();
+
+  const replayShowing = document.getElementById('replayOverlay').classList.contains('show');
+  if (!localStorage.getItem(HELP_SEEN_KEY)) {
+    showHelp();
+  } else if (!replayShowing) {
+    startTimer();
+  }
+}
+
+// ─── TIMER FUNCTIONS ──────────────────────────────────────────────────────────
+function startTimer() {
+  setTimeout(() => { timerInterval = setInterval(tickTimer, 1000); }, 1000);
+}
+
+function tickTimer() {
+  timeLeft--;
+  updateTimerDisplay();
+  if (timeLeft === 0) {
+    overtime = true;
+    recordGame(false);
+    showTimeUpModal();
+  }
+}
+
+function updateTimerDisplay() {
+  const display = document.getElementById('timerDisplay');
+  const bar     = document.getElementById('timerBar');
+  if (overtime) {
+    display.textContent = '0:00';
+    display.className   = 'timer-display';
+    display.style.opacity = '0.35';
+    bar.style.width = '0%';
+  } else {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    display.textContent = mins + ':' + String(secs).padStart(2, '0');
+    bar.style.width = (timeLeft / TIMER_DURATION * 100) + '%';
+    if (timeLeft <= 30) {
+      display.style.color = '#ff8c42';
+      bar.style.background = '#ff8c42';
+    }
+  }
+}
+
+function showPerfectModal() {
+  clearInterval(timerInterval);
+  overtime = true;
+  updateTimerDisplay();
+  recordGame(true);
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  const timeStr = mins + ':' + String(secs).padStart(2, '0');
+  document.getElementById('modalIcon').textContent  = '★';
+  document.getElementById('modalTitle').textContent = 'Perfect Round!';
+  document.getElementById('modalStatsArea').style.display = 'none';
+  document.getElementById('modalNote').textContent  = `You found every word with ${timeStr} to spare.`;
+  document.getElementById('modalBtn').textContent   = 'See results';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function showTimeUpModal() {
+  document.getElementById('modalIcon').textContent  = '⏱';
+  document.getElementById('modalTitle').textContent = 'Speed Round Over';
+  document.getElementById('modalStatsArea').style.display = '';
+  document.getElementById('modalRemainingRow').style.display = '';
+  document.getElementById('modalWords').textContent    = foundWords.length;
+  document.getElementById('modalScore').textContent    = score + ' / ' + MAX_SCORE;
+  document.getElementById('modalRemaining').textContent = remainingWords.size;
+  document.getElementById('modalNote').textContent     = 'Keep going — 5 points per word.';
+  document.getElementById('modalBtn').textContent      = 'Continue';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function dismissModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  if (remainingWords.size === 0) showWin();
+  else {
+    document.getElementById('hintWrap').classList.add('show');
+    document.getElementById('actionRow').style.display = 'flex';
+  }
+}
+
+// ─── HINT ─────────────────────────────────────────────────────────────────────
+let hintedWords = new Set();
+
+function showHint() {
+  let candidates = [...remainingWords].filter(w => CLUES[w.toUpperCase()] && !hintedWords.has(w));
+  if (candidates.length === 0) {
+    hintedWords.clear();
+    const shown = new Set([...document.querySelectorAll('#hintList .hint-item')].map(el => el.dataset.word));
+    candidates  = [...remainingWords].filter(w => CLUES[w.toUpperCase()] && !shown.has(w));
+  }
+  if (candidates.length === 0) { showToast('No hints available'); return; }
+  const word = candidates[Math.floor(Math.random() * candidates.length)];
+  hintedWords.add(word);
+  score = Math.max(0, score - 3);
+  updateScore();
+  const item = document.createElement('div');
+  item.className    = 'hint-item';
+  item.dataset.word = word;
+  item.textContent  = CLUES[word.toUpperCase()];
+  document.getElementById('hintList').appendChild(item);
+}
+
+function clearHintIfFound(word) {
+  const item = document.querySelector(`#hintList .hint-item[data-word="${word}"]`);
+  if (item) item.remove();
+}
+
+// ─── RENDER BOARD ─────────────────────────────────────────────────────────────
+function renderBoard() {
+  const boardEl = document.getElementById('board');
+  boardEl.innerHTML = '';
+  const viable = computeViable();
+  COLUMNS.forEach((col, colIdx) => {
+    const colEl = document.createElement('div');
+    colEl.className = 'column';
+    col.forEach((letter, rowIdx) => {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.id = `tile-${colIdx}-${rowIdx}`;
+      tile.textContent = letter;
+      const isViable   = viable[colIdx].has(rowIdx);
+      const isSelected = selected[colIdx] === rowIdx;
+      if (!isViable) tile.classList.add('dead');
+      else if (isSelected) tile.classList.add('selected');
+      if (isViable) tile.addEventListener('click', () => selectTile(colIdx, rowIdx));
+      colEl.appendChild(tile);
+    });
+    boardEl.appendChild(colEl);
+  });
+}
+
+function computeViable() {
+  const viable = COLUMNS.map(() => new Set());
+  for (const word of remainingWords) {
+    for (let col = 0; col < NUM_COLS; col++) {
+      const letter = word[col].toUpperCase();
+      const rowIdx = COLUMNS[col].indexOf(letter);
+      if (rowIdx !== -1) viable[col].add(rowIdx);
+    }
+  }
+  return viable;
+}
+
+// ─── SELECTION ────────────────────────────────────────────────────────────────
+function selectTile(colIdx, rowIdx) {
+  selected[colIdx] = selected[colIdx] === rowIdx ? null : rowIdx;
+  renderBoard();
+  renderSelectionRow();
+  updateLines();
+  if (selected.every(s => s !== null)) setTimeout(submitWord, 180);
+}
+
+function clearSelection() {
+  selected = new Array(NUM_COLS).fill(null);
+  renderBoard();
+  renderSelectionRow();
+  updateLines();
+}
+
+function renderSelectionRow() {
+  const row = document.getElementById('selectionRow');
+  row.innerHTML = '';
+  for (let col = 0; col < NUM_COLS; col++) {
+    const slot = document.createElement('div');
+    slot.className = 'selection-slot' + (selected[col] !== null ? ' filled' : '');
+    slot.id = `slot-${col}`;
+    if (selected[col] !== null) slot.textContent = COLUMNS[col][selected[col]];
+    row.appendChild(slot);
+  }
+}
+
+// ─── LINES ────────────────────────────────────────────────────────────────────
+function updateLines(color) {
+  const boardEl  = document.getElementById('board');
+  const existing = boardEl.querySelector('.lines-svg');
+  if (existing) existing.remove();
+  const pairs = [];
+  for (let col = 0; col < NUM_COLS - 1; col++) {
+    if (selected[col] !== null && selected[col + 1] !== null) pairs.push([col, col + 1]);
+  }
+  if (pairs.length === 0) return;
+  const strokeColor = color || 'var(--tile-active)';
+  const boardRect   = boardEl.getBoundingClientRect();
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.classList.add('lines-svg');
+  svg.setAttribute('style', 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;');
+  for (const [colA, colB] of pairs) {
+    const tileA = document.getElementById(`tile-${colA}-${selected[colA]}`);
+    const tileB = document.getElementById(`tile-${colB}-${selected[colB]}`);
+    if (!tileA || !tileB) continue;
+    const rA = tileA.getBoundingClientRect();
+    const rB = tileB.getBoundingClientRect();
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', rA.right - boardRect.left);
+    line.setAttribute('y1', rA.top   - boardRect.top  + rA.height / 2);
+    line.setAttribute('x2', rB.left  - boardRect.left);
+    line.setAttribute('y2', rB.top   - boardRect.top  + rB.height / 2);
+    line.setAttribute('stroke', strokeColor);
+    line.setAttribute('stroke-width', '3');
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('opacity', '0.7');
+    svg.appendChild(line);
+  }
+  boardEl.appendChild(svg);
+}
+
+// ─── SUBMIT ───────────────────────────────────────────────────────────────────
+function submitWord() {
+  if (selected.some(s => s === null)) return;
+  const word = selected.map((rowIdx, colIdx) => COLUMNS[colIdx][rowIdx]).join('').toLowerCase();
+
+  if (foundWords.includes(word) || foundBonus.includes(word)) {
+    showToast('"' + word.toUpperCase() + '" already found');
+    flashSlotsDuplicate();
+    setTimeout(clearSelection, 900);
+    return;
+  }
+
+  if (BONUS_WORDS.has(word)) {
+    blinkTiles(() => {
+      foundBonus.push(word);
+      showToast(BONUS_MESSAGES[Math.floor(Math.random() * BONUS_MESSAGES.length)]);
+      addBonusWord(word);
+      clearSelection();
+    }, true);
+    return;
+  }
+
+  if (!TARGET_WORDS.has(word)) {
+    showToast('"' + word.toUpperCase() + '" is not a word');
+    flashSlotsInvalid();
+    setTimeout(clearSelection, 900);
+    return;
+  }
+
+  blinkTiles(() => {
+    foundWords.push(word);
+    remainingWords.delete(word);
+    const pointValue = overtime ? 5 : 10;
+    score += pointValue;
+    if (!overtime) speedRoundCount++;
+    addFoundWord(word);
+    updateScore();
+    clearHintIfFound(word);
+    clearSelection();
+    renderBoard();
+    if (remainingWords.size === 0) {
+      if (!overtime) setTimeout(showPerfectModal, 400);
+      else           setTimeout(showWin, 400);
+    }
+  });
+}
+
+// ─── UI HELPERS ───────────────────────────────────────────────────────────────
+function blinkTiles(callback, bonus = false) {
+  const cls        = bonus ? 'blink-bonus' : 'blink-accept';
+  const blinkColor = bonus ? '#a080d0' : '#50e870';
+  for (let col = 0; col < NUM_COLS; col++) {
+    if (selected[col] !== null) {
+      const tile = document.getElementById(`tile-${col}-${selected[col]}`);
+      if (tile) tile.classList.add(cls);
+    }
+  }
+  updateLines(blinkColor);
+  setTimeout(callback, 480);
+}
+
+function addFoundWord(newWord) {
+  document.getElementById('foundCount').textContent = '(' + foundWords.length + ')';
+  document.querySelectorAll('.found-word.latest').forEach(el => el.classList.remove('latest'));
+  const list   = document.getElementById('foundList');
+  list.innerHTML = '';
+  [...foundWords].sort().forEach(word => {
+    const el = document.createElement('div');
+    el.className  = 'found-word' + (word === newWord ? ' latest' : '');
+    el.textContent = word.toUpperCase();
+    list.appendChild(el);
+  });
+}
+
+function addBonusWord(word) {
+  document.getElementById('bonusSection').style.display = 'block';
+  const el = document.createElement('div');
+  el.className  = 'bonus-word';
+  el.textContent = word.toUpperCase();
+  document.getElementById('bonusList').appendChild(el);
+}
+
+function updateScore() {
+  document.getElementById('scoreDisplay').textContent = score;
+  const pct = foundWords.length / TARGET_WORDS.size * 100;
+  document.getElementById('progressBar').style.width  = pct + '%';
+  document.getElementById('wordCount').textContent    = `${foundWords.length} / ${TARGET_WORDS.size}`;
+}
+
+function flashSlotsInvalid() {
+  for (let col = 0; col < NUM_COLS; col++) {
+    const slot = document.getElementById(`slot-${col}`);
+    slot.classList.remove('filled', 'success', 'flash-duplicate');
+    slot.classList.add('flash-invalid');
+    slot.addEventListener('animationend', () => slot.classList.remove('flash-invalid'), { once: true });
+  }
+}
+
+function flashSlotsDuplicate() {
+  for (let col = 0; col < NUM_COLS; col++) {
+    const slot = document.getElementById(`slot-${col}`);
+    slot.classList.remove('filled', 'success', 'flash-invalid');
+    slot.classList.add('flash-duplicate');
+    slot.addEventListener('animationend', () => slot.classList.remove('flash-duplicate'), { once: true });
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function showWin() {
+  const banner     = document.getElementById('winBanner');
+  const speedRound = !overtime;
+  document.getElementById('winTitle').textContent =
+    speedRound ? '🏆 Perfect Speed Round!' : 'You got them all!';
+  banner.style.borderColor = speedRound ? 'rgba(245,200,66,0.5)' : '';
+  banner.style.background  = speedRound ? 'rgba(245,200,66,0.07)' : '';
+  document.getElementById('winTitle').style.color = speedRound ? 'var(--accent)' : '';
+  document.getElementById('winSub').textContent   =
+    `${foundWords.length} words · ${score} / ${MAX_SCORE} points`;
+  banner.classList.add('show');
+  banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // Show cumulative stats
+  const history = loadHistory();
+  const stats   = history.stats || {};
+  const total   = stats.gamesPlayed || 0;
+  if (total > 1) {
+    showToast(`Total score: ${stats.totalScore} across ${total} games`);
+  }
+}
+
+// ─── KEYBOARD ─────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  const key = e.key.toUpperCase();
+  if (e.key === 'Backspace') {
+    for (let col = NUM_COLS - 1; col >= 0; col--) {
+      if (selected[col] !== null) { selected[col] = null; renderBoard(); renderSelectionRow(); return; }
+    }
+    return;
+  }
+  if (key.length !== 1 || key < 'A' || key > 'Z') return;
+  const nextCol = selected.indexOf(null);
+  if (nextCol === -1) return;
+  const rowIdx = COLUMNS[nextCol].indexOf(key);
+  if (rowIdx === -1) return;
+  const viable = computeViable();
+  if (!viable[nextCol].has(rowIdx)) return;
+  selectTile(nextCol, rowIdx);
+});
+
+init();
+</script>
+</body>
+</html>
