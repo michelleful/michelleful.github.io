@@ -279,6 +279,22 @@
     border-color: rgba(80,232,112,0.35);
   }
 
+  a.found-word, a.missed-word {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  a.found-word:hover {
+    background: rgba(168,192,96,0.18);
+    border-color: rgba(168,192,96,0.5);
+  }
+
+  a.missed-word:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.07);
+    border-color: var(--muted);
+  }
+
   @keyframes tileBlink {
     0%   { background: var(--tile-active); border-color: var(--tile-active); color: var(--tile-active-text); }
     40%  { background: #50e870; border-color: #50e870; color: #0e0e0f; }
@@ -516,6 +532,13 @@
   }
 
   .win-banner.show { display: block; animation: wordAppear 0.4s ease; }
+
+  .win-wordnik-hint {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 10px;
+  }
 
   .win-title {
     font-family: 'Outfit', sans-serif; font-weight: 800;
@@ -963,6 +986,7 @@
 <div class="win-banner" id="winBanner">
   <div class="win-title" id="winTitle">You got them all!</div>
   <div class="win-sub" id="winSub"></div>
+  <div class="win-wordnik-hint">Click on words to see their definitions on Wordnik.</div>
   <button class="action-btn" onclick="shareGame()" style="margin-top:16px;">Share result</button>
 </div>
 
@@ -1039,10 +1063,9 @@
     <div class="help-body">
       <p>Make <strong>5-letter words</strong> using one letter from each column.</p>
       <p>We start with a <strong>3-minute speed round</strong>, during which you'll get <strong>10 points</strong> per word found.</p>
-      <p>After 3 minutes, you can continue playing at your leisure for <strong>5 points</strong> per word.</p>
-      <p>At this point you can also ask for hints, which cost <strong>3 points</strong> each.</p>
+      <p>After 3 minutes, you can continue playing at your leisure for <strong>5 points</strong> per word, and ask for hints (<strong>-3 points</strong> per hint).</p>
       <p>Faded letters can't be part of any remaining word — only lit-up letters are still useful.</p>
-      <p>Please note that unlike CADGY, the target may not be 20 words exactly.</p>
+      <p>Please note that unlike CADGY, the target may not be 20 words exactly. Both British and American spellings are generally accepted.</p>
     </div>
     <button class="help-close" onclick="dismissHelp()">Let's play</button>
   </div>
@@ -1645,6 +1668,45 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
+function makeWordsClickable() {
+  // Convert found-word divs to wordnik links
+  document.querySelectorAll('#foundList .found-word').forEach(el => {
+    const word = el.textContent.trim().toLowerCase();
+    const a = document.createElement('a');
+    a.className = el.className;
+    a.textContent = el.textContent;
+    a.href = `https://www.wordnik.com/words/${word}`;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    el.replaceWith(a);
+  });
+
+  // Show missed words as wordnik links
+  if (remainingWords.size > 0) {
+    const list = document.getElementById('missedList');
+    list.innerHTML = '';
+    [...remainingWords].sort().forEach(word => {
+      const entry = document.createElement('div');
+      entry.className = 'missed-word-entry';
+      const a = document.createElement('a');
+      a.className = 'missed-word';
+      a.textContent = word.toUpperCase();
+      a.href = `https://www.wordnik.com/words/${word}`;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      entry.appendChild(a);
+      if (CLUES[word.toUpperCase()]) {
+        const clue = document.createElement('span');
+        clue.className = 'missed-clue';
+        clue.textContent = CLUES[word.toUpperCase()];
+        entry.appendChild(clue);
+      }
+      list.appendChild(entry);
+    });
+    document.getElementById('missedSection').classList.add('show');
+  }
+}
+
 function showWin() {
   const banner     = document.getElementById('winBanner');
   const speedRound = !overtime;
@@ -1665,6 +1727,11 @@ function showWin() {
   if (total > 1) {
     showToast(`Total score: ${stats.totalScore} across ${total} games`);
   }
+
+  document.getElementById('hintWrap').classList.remove('show');
+  document.getElementById('actionRow').style.display = 'none';
+
+  makeWordsClickable();
 }
 
 // ─── KEYBOARD ─────────────────────────────────────────────────────────────────
