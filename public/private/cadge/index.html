@@ -1022,7 +1022,8 @@
 <div class="notfound-overlay" id="notfoundOverlay">
   <div class="notfound-title">Whoops!</div>
   <div class="notfound-msg">We can't find that game. The link may be outdated or incorrect.</div>
-  <div class="notfound-countdown" id="notfoundCountdown">Redirecting in 15 seconds…</div>
+  <button class="help-play-btn" onclick="window.location.href = window.location.pathname" style="margin-top:8px;">Start a new game</button>
+  <div class="notfound-countdown" id="notfoundCountdown">Redirecting in 10 seconds…</div>
 </div>
 
 <div class="help-overlay" id="helpOverlay">
@@ -1157,7 +1158,7 @@ function showExhausted(total) {
 
 function showNotFound() {
   document.getElementById('notfoundOverlay').classList.add('show');
-  let secs = 15;
+  let secs = 10;
   const el = document.getElementById('notfoundCountdown');
   const tick = setInterval(() => {
     secs--;
