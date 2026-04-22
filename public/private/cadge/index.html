@@ -987,7 +987,10 @@
   <div class="win-title" id="winTitle">You got them all!</div>
   <div class="win-sub" id="winSub"></div>
   <div class="win-wordnik-hint">Click on words to see their definitions on Wordnik.</div>
-  <button class="action-btn" onclick="shareGame()" style="margin-top:16px;">Share result</button>
+  <div style="display:flex;gap:10px;margin-top:16px;justify-content:center;">
+    <button class="action-btn" onclick="shareGame()">Share result</button>
+    <button class="action-btn" onclick="window.location.href = window.location.pathname">New game</button>
+  </div>
 </div>
 
 <div class="hint-wrap" id="hintWrap">
