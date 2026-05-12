@@ -1,0 +1,222 @@
+{
+  "id": 2,
+  "subLevels": [
+    {
+      "kind": "translate",
+      "german": "Meine Mutter und mein Vater",
+      "target": [
+        {"word": "my"},
+        {"word": "mother"},
+        {"word": "and"},
+        {"word": "my"},
+        {"word": "father"}
+      ],
+      "hints": [
+        {
+          "hint": "👫"
+        },
+        {
+          "hint": "The \"ei\" of \"mein(e)\" is pronounced \"eye\". Sound it out, does it sound similar to anything in English?",
+          "points": 2
+        },
+        {
+          "hint": "Drop the \"n(e)\" to find the English equivalent!"
+        }
+      ],
+      "reveal": "Some people believe that \"Darth Vader\" in Star Wars was meant to foreshadow \"Dark Father\", but there are lots of competing theories."
+    },
+    {
+      "kind": "translate",
+      "german": "Muttertag ist immer ein Sonntag.",
+      "target": [
+        {"word": "Mother", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "Day"},
+        {"word": "is"},
+        {"word": "always", "given": true},
+        {"word": "a"},
+        {"word": "Sunday", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "There is also a Vatertag, but it's on a different Sonntag in the Jahr.",
+          "points": 1
+        },
+        {
+          "hint": "\"Hello\" in German is \"Guten Tag!\""
+        },
+        {
+          "hint": "Replace the \"o\" with \"u\" to get a hint to what celestial body \"Sonn\" could mean.",
+          "points": 5
+        }
+      ],
+      "reveal": "💐"
+    },
+    {
+      "kind": "reorder",
+      "instruction": "Put the days of the week in order (−1 pt per wrong placement)",
+      "slots": [
+        {"label": "M",  "answer": "Montag"},
+        {"label": "T",  "answer": "Dienstag"},
+        {"label": "W",  "answer": "Mittwoch"},
+        {"label": "Th", "answer": "Donnerstag"},
+        {"label": "F",  "answer": "Freitag"},
+        {"label": "Sa", "answer": "Samstag"},
+        {"label": "Su", "answer": "Sonntag"}
+      ],
+      "reveal": "Well done! Many of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, and thunder is \"donner\" in German!"
+    },
+    {
+      "kind": "translate",
+      "german": "Mittwoch",
+      "instruction": "Translate each piece literally",
+      "target": [
+        {"word": "mid"},
+        {"word": "week"}
+      ],
+      "hints": [
+        {
+          "hint": "The two parts you have to translate are \"mitt\" and \"woch\".",
+          "points": 1
+        },
+        {
+          "hint": "What English words do they sound close to, that would make sense when put together to mean \"Wednesday\"?"
+        }
+      ],
+      "reveal": "That's right! Bonus question: what do you think \"Mittag\" would mean?"
+    },
+    {
+      "kind": "translate",
+      "german": "Meine Woche beginnt am Montag und endet am Freitag.",
+      "target": [
+        {"word": "My"},
+        {"word": "week"},
+        {"word": "begins"},
+        {"word": "on"},
+        {"word": "Monday"},
+        {"word": "and"},
+        {"word": "ends"},
+        {"word": "on"},
+        {"word": "Friday", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "Germans celebrate the end of their workweek with the phrase \"Feierabend\", literally \"celebration evening\". Colleagues often mark it with a \"Feierabendbier\"!"
+    },
+    {
+      "kind": "translate",
+      "german": "Was ist ein Wochenende?",
+      "target": [
+        {"word": "What", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "a"},
+        {"word": "weekend", "spaceAfter": false},
+        {"word": "?", "given": true}
+      ],
+      "attribution": "Dowager Countess Violet Crawley, Downton Abbey",
+      "hints": [
+        {
+          "hint": "Split \"Wochenende\" between the two \"en\"s to read it correctly."
+        }
+      ],
+      "reveal": "You can now answer her: Wochenende = Samstag + Sonntag."
+    },
+    {
+      "kind": "translate",
+      "german": "Wochentage sind Arbeitstage für mich.",
+      "target": [
+        {"word": "Weekdays"},
+        {"word": "are"},
+        {"word": "workdays"},
+        {"word": "for"},
+        {"word": "me", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "There's a Japanese word \"arubaito\" borrowed from \"Arbeit\" that means part-time work, but the German word is more intense.",
+          "points": 2
+        },
+        {
+          "hint": "Beethoven wrote a famous piece for an unknown lady, \"<em>Für</em> Elise\".",
+          "points": 2
+        },
+        {
+          "hint": "\"mich\" is another form of \"ich\". It's actually pretty close to its English equivalent!"
+        }
+      ],
+      "reveal": "To answer the question two puzzles back, \"Mittag\" = \"midday\", or \"noon\"!"
+    },
+    {
+      "kind": "translate",
+      "german": "Ich arbeite nicht am Wochenende.",
+      "target": [
+        {"word": "I"},
+        {"word": "don", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "t"},
+        {"word": "work"},
+        {"word": "on"},
+        {"word": "the"},
+        {"word": "weekend", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ]
+    },
+    {
+      "kind": "translate",
+      "german": "Und meine Katze arbeitet nie.",
+      "instruction": "Translate (with the same word order, for comic effect).",
+      "target": [
+        {"word": "And"},
+        {"word": "my"},
+        {"word": "cat"},
+        {"word": "works"},
+        {"word": "never", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"nie\" is a negation word, more emphatic than \"nicht\".",
+          "points": 2
+        },
+        {
+          "hint": "Katze = 🐱"
+        }
+      ]
+    },
+    {
+      "kind": "translate",
+      "german": "Ich hasse Montage, wie Garfield. Ich möchte nicht arbeiten!",
+      "target": [
+        {"word": "I"},
+        {"word": "hate"},
+        {"word": "Mondays", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "like"},
+        {"word": "Garfield", "spaceafter": false},
+        {"word": ".", "given": true},
+        {"word": "I"},
+        {"word": "don", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "t"},
+        {"word": "want"},
+        {"word": "to"},
+        {"word": "work"},
+        {"word": "!", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "möchte = 👍",
+          "points": 2
+        },
+        {
+          "hint": "If Wasser ~ water, then hasse ~ ?"
+        }
+      ],
+      "reveal": "Why <em>does</em> Garfield hate Mondays, when he doesn't have to work? I hope completing this level didn't feel like Arbeit!"
+    }
+  ]
+}

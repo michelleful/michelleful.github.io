@@ -1,0 +1,291 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import levels from '../../../../data/german-is-easy/levels.json';
+
+const safeJson = JSON.stringify(levels)
+  .replace(/</g, '\\u003c')
+  .replace(/>/g, '\\u003e')
+  .replace(/&/g, '\\u0026');
+---
+
+<Layout title="German Is Easy">
+
+<h1>German Is <span class="crayon-strike">Easy<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Exactly the Right Level of Challenge</h1>
+<p>
+  A puzzle game of cognates and induction.
+</p>
+
+<div class="total-score-row" id="total-score-row" style="display:none">
+  Total: <span id="total-score"></span>
+</div>
+
+<div class="map-container" id="map-container">
+  <svg id="map-svg" aria-hidden="true"></svg>
+  {levels.map((level) => (
+    <a class="map-node" href={`/languages/german/is-easy/level/${level.id}/`} data-level-id={level.id} data-requires={level.requires ?? ''}>
+      <div class="node-title">{level.title}</div>
+      <div class="node-label">Level {level.id}</div>
+      <span class="node-status" data-status-id={level.id}></span>
+      <span class="node-score" data-score-id={level.id}></span>
+    </a>
+  ))}
+</div>
+
+<div class="reset-row">
+  <button id="reset-btn" class="reset-btn">Reset all progress</button>
+</div>
+
+<script type="application/json" id="levels-meta" set:html={safeJson}></script>
+
+<script>
+  import rough from 'roughjs';
+
+  const STORAGE_KEY = 'gie-progress';
+  const levelsData  = JSON.parse(document.getElementById('levels-meta').textContent);
+
+  function getProgress() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+  }
+
+  const progress = getProgress();
+
+  // ── Map layout ─────────────────────────────────────────────────────────────
+  const NODE_W   = 110;
+  const NODE_H   = 110;
+  const V_STEP   = 170;
+  const MARGIN_Y = 50;
+
+  const container  = document.getElementById('map-container');
+  const mapSvg     = document.getElementById('map-svg');
+  const nodes      = Array.from(container.querySelectorAll('.map-node'));
+  const cW         = container.offsetWidth;
+  const totalH     = MARGIN_Y * 2 + (levelsData.length - 1) * V_STEP;
+
+  container.style.height = totalH + 'px';
+  Object.assign(mapSvg.style, {
+    position: 'absolute', top: '0', left: '0',
+    width: cW + 'px', height: totalH + 'px',
+    pointerEvents: 'none', overflow: 'visible'
+  });
+  mapSvg.setAttribute('width',  cW);
+  mapSvg.setAttribute('height', totalH);
+
+  // Alternate node centres left / right
+  const centers = levelsData.map((_, i) => ({
+    x: i % 2 === 0 ? cW * 0.22 : cW * 0.78,
+    y: MARGIN_Y + i * V_STEP
+  }));
+
+  // Position HTML nodes
+  nodes.forEach((node, i) => {
+    const c = centers[i];
+    node.style.left = (c.x - NODE_W / 2) + 'px';
+    node.style.top  = (c.y - NODE_H / 2) + 'px';
+  });
+
+  // ── Locked state ───────────────────────────────────────────────────────────
+  const locked = levelsData.map(level =>
+    level.requires ? !progress[String(level.requires)]?.done : false
+  );
+
+  // ── Rough drawing ──────────────────────────────────────────────────────────
+  const rc = rough.svg(mapSvg);
+
+  // Paths first so node boxes render on top
+  for (let i = 0; i < centers.length - 1; i++) {
+    const a = centers[i];
+    const b = centers[i + 1];
+    const y0    = a.y + NODE_H / 2 + 4;
+    const y1    = b.y - NODE_H / 2 - 4;
+    const midX  = (a.x + b.x) / 2 + (i % 2 === 0 ? cW * 0.10 : -cW * 0.10);
+    const midY  = (y0 + y1) / 2;
+    mapSvg.appendChild(rc.curve(
+      [[a.x, y0], [midX, midY], [b.x, y1]],
+      {
+        stroke: locked[i + 1] ? '#ddd' : '#15616d',
+        strokeWidth: 7,
+        roughness: 1.2,
+        strokeLineDash: [10, 14],
+        seed: i + 1
+      }
+    ));
+  }
+
+  // Node circles (filled white so they sit over the path)
+  centers.forEach((c, i) => {
+    mapSvg.appendChild(rc.circle(c.x, c.y, NODE_W,
+      {
+        stroke: locked[i] ? '#bbb' : '#15616d',
+        strokeWidth: 2,
+        roughness: 0.6,
+        fill: '#fff',
+        fillStyle: 'solid',
+        seed: i + 10
+      }
+    ));
+  });
+
+  // Crayon strikethrough on h1
+  document.querySelectorAll('.crayon-line').forEach(svg => {
+    const rcS = rough.svg(svg);
+    svg.appendChild(rcS.line(1, 6, 99, 6, { stroke: '#b91c1c', strokeWidth: 2, roughness: 2.5, seed: 12 }));
+  });
+
+  // ── Progress & locking ─────────────────────────────────────────────────────
+  let totalScore = 0, totalMax = 0, anyScore = false;
+
+  nodes.forEach((node, i) => {
+    const level    = levelsData[i];
+    const statusEl = node.querySelector('[data-status-id]');
+    const scoreEl  = node.querySelector('[data-score-id]');
+    const p        = progress[String(level.id)];
+
+    if (locked[i]) {
+      node.removeAttribute('href');
+      node.classList.add('locked');
+      if (statusEl) statusEl.textContent = '🔒';
+      return;
+    }
+
+    if (p?.done) {
+      if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
+    } else if (p) {
+      if (statusEl) { statusEl.textContent = `${p.current}/${level.total}`; statusEl.classList.add('in-progress'); }
+    }
+
+    if (p?.score != null) {
+      if (scoreEl) scoreEl.textContent = `${p.score}/${p.maxScore} pts`;
+      totalScore += p.score;
+      totalMax   += p.maxScore;
+      anyScore    = true;
+    }
+  });
+
+  if (anyScore) {
+    const totalRow  = document.getElementById('total-score-row');
+    const totalSpan = document.getElementById('total-score');
+    if (totalRow && totalSpan) {
+      totalSpan.textContent = `${totalScore} / ${totalMax} pts`;
+      totalRow.style.display = '';
+    }
+  }
+
+  // Enter: jump to the next playable level (first unlocked + incomplete, or first unlocked)
+  const nextLevel = levelsData.find((l, i) => !locked[i] && !progress[String(l.id)]?.done);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && nextLevel) {
+      window.location.href = `/languages/german/is-easy/level/${nextLevel.id}/`;
+    }
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (confirm('Reset all progress? This cannot be undone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  });
+</script>
+
+</Layout>
+
+<style>
+  .crayon-strike {
+    position: relative;
+    display: inline-block;
+  }
+
+  .crayon-line {
+    position: absolute;
+    left: -3px;
+    width: calc(100% + 6px);
+    height: 0.45em;
+    top: 50%;
+    transform: translateY(-60%);
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* ── Map ──────────────────────────────────────────────────────────────────── */
+  .map-container {
+    position: relative;
+    max-width: 480px;
+    margin: 2rem auto 0;
+  }
+
+  .map-node {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: inherit;
+    background: transparent;
+    gap: 1px;
+  }
+
+  .map-node.locked {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .node-title {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .node-label {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.7rem;
+    color: #888;
+  }
+
+  .node-status {
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .node-status.done        { color: #2d7a3a; font-weight: 600; }
+  .node-status.in-progress { color: #15616d; }
+
+  .node-score {
+    font-size: 0.65rem;
+    color: #aaa;
+  }
+
+  /* ── Total score ──────────────────────────────────────────────────────────── */
+  .total-score-row {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #15616d;
+    margin-top: 1.5rem;
+    text-align: right;
+  }
+
+  /* ── Reset ────────────────────────────────────────────────────────────────── */
+  .reset-row {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .reset-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    color: #ccc;
+    background: transparent;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .reset-btn:hover {
+    color: #c0392b;
+    border-color: #c0392b;
+  }
+</style>

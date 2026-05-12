@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "title": "🧂🍺",
+    "unlocked": true,
+    "total": 10
+  },
+  {
+    "id": 2,
+    "title": "👨‍👩‍👧🗓️",
+    "unlocked": false,
+    "total": 10,
+    "requires": 1
+  }
+]

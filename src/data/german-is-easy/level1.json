@@ -1,0 +1,200 @@
+{
+  "id": 1,
+  "subLevels": [
+    {
+      "kind": "translate",
+      "german": "Salz und Pfeffer",
+      "target": [
+        {"word": "salt"},
+        {"word": "and"},
+        {"word": "pepper"}
+      ],
+      "hints": [
+        {
+          "hint": "🧂 + 🧂, but in grey"
+        }
+      ],
+      "reveal": "Well done! Pay attention to these reveals - they may help with future puzzles!"
+    },
+    {
+      "kind": "translate",
+      "german": "Salzwasser",
+      "target": [
+        {"word": "salt"},
+        {"word": "water"}
+      ],
+      "hints": [
+        {
+          "hint": "🧂 + 💧"
+        }
+      ],
+      "reveal": "German likes its compound words, as we're going to find out! English is a bit more variable as to whether it writes compounds as one word or two."
+    },
+    {
+      "kind": "translate",
+      "german": "Meerwasser ist Salzwasser.",
+      "target": [
+        {"word": "Seawater"},
+        {"word": "is"},
+        {"word": "salt"},
+        {"word": "water"},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"Meer\" and French \"mer\" have the same meaning.",
+          "points": 1
+        },
+        {
+          "hint": "Meer = 🌊"
+        }
+      ],
+      "reveal": "English still retains \"mere\" in some place names like \"Windermere\", the largest lake in England."
+    },
+    {
+      "kind": "choice",
+      "german": "Ist Meerwasser Trinkwasser?",
+      "choices": [
+        {"label": "Ja", "correct": false},
+        {"label": "Nein", "correct": true}
+      ],
+      "hints": [
+        {
+          "image": "/images/german-is-easy/trinkwasser.png",
+          "alt": "Image of a water fountain, with the words \"Trinkwasser\" and \"Drinking water\" on its sign"
+        }
+      ],
+      "reveal": "Indeed, the excess salt in seawater would dehydrate you more than drinking nothing at all."
+    },
+    {
+      "kind": "translate",
+      "german": "Wasser, Wasser überall, und nicht ein Tropfen zu trinken.",
+      "target": [
+        {"word": "Water", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "water"},
+        {"word": "everywhere", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "and"},
+        {"word": "not"},
+        {"word": "one"},
+        {"word": "drop"},
+        {"word": "to"},
+        {"word": "drink", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "attribution": "Samuel Taylor Coleridge",
+      "hints": [
+        {
+          "hint": "The lament of the Ancient Mariner"
+        }
+      ],
+      "reveal": "Coleridge's ballad actually says \"Nor any drop to drink\", but who quotes it like that? No one."
+    },
+    {
+      "kind": "translate",
+      "german": "Ich trinke Bier, du trinkst Milch.",
+      "target": [
+        {"word": "I"},
+        {"word": "drink"},
+        {"word": "beer", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "you"},
+        {"word": "drink"},
+        {"word": "milk", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "🍺 + 🥛",
+          "points": 5
+        }
+      ],
+      "reveal": "Fun fact! German \"du\" ~ \"thou\" in English!"
+    },
+    {
+      "kind": "translate",
+      "german": "Ich habe Kaffee, du hast Tee.",
+      "target": [
+        {"word": "I"},
+        {"word": "have"},
+        {"word": "coffee", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "you"},
+        {"word": "have"},
+        {"word": "tea", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "Since \"du/thou\" is just old-timey \"you\", \"hast\" is just old-timey...?"
+        },
+        {
+          "hint": "☕ + 🍵",
+          "points": 4
+        }
+      ],
+      "reveal": "Old English had \"ic hæbbe\" too, but English gradually smooshed together most present tense forms (except \"has\"!) while German kept alllll its verb distinctions."
+    },
+    {
+      "kind": "translate",
+      "german": "Ich habe Bier getrunken.",
+      "target": [
+        {"word": "I"},
+        {"word": "have"},
+        {"word": "drunk"},
+        {"word": "beer", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "Word order should be in natural English word order, not following the German, unless otherwise instructed.",
+          "points": 0
+        },
+        {
+          "hint": "Turn the \"u\" to an \"i\" to find a more familiar form.",
+          "points": 2
+        },
+        {
+          "hint": "\"getrunken\" is a past participle of a verb we've already seen a couple of times."
+        }
+      ],
+      "reveal": "This was not an easy one! Well done!"
+    },
+    {
+      "kind": "translate",
+      "german": "Ich habe zu viel Bier getrunken.",
+      "target": [
+        {"word": "I"},
+        {"word": "have"},
+        {"word": "drunk"},
+        {"word": "too", "given": true},
+        {"word": "much"},
+        {"word": "beer", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "There's no close cognate to \"viel\" in Modern English. It means \"much\".",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "kind": "translate",
+      "german": "Ich bin betrunken!",
+      "target": [
+        {"word": "I"},
+        {"word": "am"},
+        {"word": "drunk", "spaceAfter": false},
+        {"word": "!", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "The obvious consequence of the previous sentence."
+        }
+      ],
+      "reveal": "Congratulations on finishing the first level! 🥂"
+    }
+  ]
+}

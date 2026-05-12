@@ -1,0 +1,1135 @@
+---
+import levels from '../../../../../data/german-is-easy/levels.json';
+import level1 from '../../../../../data/german-is-easy/level1.json';
+import level2 from '../../../../../data/german-is-easy/level2.json';
+
+export function getStaticPaths() {
+  return [
+    { params: { id: '1' }, props: { levelData: level1 } },
+    { params: { id: '2' }, props: { levelData: level2 } },
+  ];
+}
+
+const { levelData } = Astro.props;
+const levelMeta = levels.find(l => l.id === levelData.id);
+
+const safeJson = JSON.stringify(levelData)
+  .replace(/</g, '\\u003c')
+  .replace(/>/g, '\\u003e')
+  .replace(/&/g, '\\u0026');
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:ital,wght@0,200;0,400;1,400&display=swap" rel="stylesheet" />
+  <title>Level {levelData.id} — German Is Easy</title>
+</head>
+<body>
+  <header class="game-header">
+    <a href="/languages/german/is-easy/" class="back-link">← Levels</a>
+    <div class="header-center">
+      <div class="game-name">German Is <span class="crayon-strike">Easy<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Exactly the Right Level of Challenging</div>
+      <div class="level-title">Level {levelData.id}: {levelMeta?.title}</div>
+    </div>
+    <div class="progress-indicator" id="progress-indicator">
+<span id="score-display" class="score-display">0 pts</span>
+      <div class="progress-dots" id="progress-dots"></div>
+    </div>
+  </header>
+
+  <main class="game-main" id="game-main"></main>
+
+  <script type="application/json" id="level-data" set:html={safeJson}></script>
+
+  <script>
+    const STORAGE_KEY = 'gie-progress';
+
+    function getProgress() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+    }
+    function setProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+    const levelData = JSON.parse(document.getElementById('level-data').textContent);
+    const levelId = String(levelData.id);
+    const totalSubs = levelData.subLevels.length;
+
+    const prog = getProgress();
+    if (!prog[levelId]) prog[levelId] = { current: 0, done: false };
+
+    let currentIdx = prog[levelId].done ? 0 : prog[levelId].current;
+
+    const gameMain = document.getElementById('game-main');
+const progressDots = document.getElementById('progress-dots');
+    const scoreDisplay = document.getElementById('score-display');
+
+    // ── Score ───────────────────────────────────────────────────────────────────
+    let score = prog[levelId].done ? 0 : (prog[levelId].score || 0);
+    const maxScore = totalSubs * 10;
+
+    function subLevelPoints(mistakes) {
+      if (mistakes === 0) return 10;
+      if (mistakes === 1) return 7;
+      if (mistakes === 2) return 5;
+      return 3;
+    }
+
+    function updateScoreDisplay() {
+      scoreDisplay.textContent = `${score} pts`;
+    }
+
+    function popPoints(pts, card, onDone) {
+      const ns = 'http://www.w3.org/2000/svg';
+      const pop = document.createElement('div');
+      pop.className = 'pts-pop';
+
+      // Burst lines SVG
+      const svg = document.createElementNS(ns, 'svg');
+      svg.setAttribute('class', 'burst-svg');
+      svg.setAttribute('viewBox', '-60 -60 120 120');
+      svg.setAttribute('aria-hidden', 'true');
+
+      // Radial gradient: opaque at centre, transparent at outer tip
+      const defs = document.createElementNS(ns, 'defs');
+      const grad = document.createElementNS(ns, 'radialGradient');
+      grad.setAttribute('id', 'burst-grad');
+      grad.setAttribute('cx', '0'); grad.setAttribute('cy', '0');
+      grad.setAttribute('r', '56');
+      grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+      const s1 = document.createElementNS(ns, 'stop');
+      s1.setAttribute('offset', '0.6'); // r=34/56 — fully opaque at line start
+      s1.setAttribute('stop-color', '#ff7d00');
+      s1.setAttribute('stop-opacity', '1');
+      const s2 = document.createElementNS(ns, 'stop');
+      s2.setAttribute('offset', '1');
+      s2.setAttribute('stop-color', '#ff7d00');
+      s2.setAttribute('stop-opacity', '0');
+      grad.appendChild(s1); grad.appendChild(s2);
+      defs.appendChild(grad);
+      svg.appendChild(defs);
+
+      const lineCount = 12;
+      for (let i = 0; i < lineCount; i++) {
+        const angle = (i / lineCount) * Math.PI * 2;
+        const line = document.createElementNS(ns, 'line');
+        line.setAttribute('x1', (Math.cos(angle) * 34).toFixed(1));
+        line.setAttribute('y1', (Math.sin(angle) * 34).toFixed(1));
+        line.setAttribute('x2', (Math.cos(angle) * 56).toFixed(1));
+        line.setAttribute('y2', (Math.sin(angle) * 56).toFixed(1));
+        line.setAttribute('class', 'burst-line');
+        svg.appendChild(line);
+      }
+
+      const textEl = document.createElement('div');
+      textEl.className = 'pts-text';
+      textEl.textContent = `+${pts}`;
+
+      pop.appendChild(svg);
+      pop.appendChild(textEl);
+      card.appendChild(pop);
+      pop.addEventListener('animationend', (e) => {
+        if (e.target === pop) { pop.remove(); onDone(); }
+      });
+    }
+
+    // ── Progress UI ────────────────────────────────────────────────────────────
+    function renderProgressDots() {
+progressDots.innerHTML = '';
+      for (let i = 0; i < totalSubs; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i < currentIdx ? ' done' : i === currentIdx ? ' active' : '');
+        progressDots.appendChild(dot);
+      }
+    }
+
+    // ── Navigation ─────────────────────────────────────────────────────────────
+    function advanceSubLevel() {
+      currentIdx++;
+      const p = getProgress();
+      if (currentIdx >= totalSubs) {
+        p[levelId] = { current: 0, done: true, score, maxScore };
+        setProgress(p);
+        showLevelComplete();
+      } else {
+        p[levelId] = { current: currentIdx, done: false, score };
+        setProgress(p);
+        renderSubLevel(currentIdx);
+      }
+    }
+
+    function showLevelComplete() {
+      renderProgressDots();
+      gameMain.innerHTML = '';
+      const pct = score / maxScore;
+      const stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : 1;
+      const card = el('div', 'complete-card');
+      card.appendChild(elText('div', 'complete-icon', '✓'));
+      card.appendChild(elText('h2', '', 'Level complete!'));
+      const starsEl = elText('div', 'stars', '★'.repeat(stars) + '☆'.repeat(3 - stars));
+      card.appendChild(starsEl);
+      card.appendChild(elText('p', 'complete-score', `${score} / ${maxScore} pts`));
+      const btn = el('a', 'next-btn');
+      btn.href = '/languages/german/is-easy/';
+      btn.textContent = '← Back to levels';
+      card.appendChild(btn);
+      gameMain.appendChild(card);
+      btn.focus();
+      document.addEventListener('keydown', function onKey(e) {
+        if (e.key === 'Enter') {
+          document.removeEventListener('keydown', onKey);
+          window.location.href = '/languages/german/is-easy/';
+        }
+      });
+    }
+
+    // ── Sub-level renderer ─────────────────────────────────────────────────────
+    function renderSubLevel(idx) {
+      renderProgressDots();
+      gameMain.innerHTML = '';
+
+      const sub = levelData.subLevels[idx];
+      const card = el('div', 'sub-level-card');
+
+      // German text
+      if (sub.german) {
+        card.appendChild(elText('div', 'german-text', sub.german));
+      }
+      if (sub.attribution) {
+        card.appendChild(elText('div', 'attribution', `— ${sub.attribution}`));
+      }
+
+      // Instruction
+      const instructionText =
+        sub.instruction ||
+        (sub.kind === 'translate' ? 'Translate' :
+         sub.kind === 'choice'    ? 'Choose the correct answer' :
+         sub.kind === 'reorder'   ? 'Put in the correct order' : '');
+      if (instructionText) {
+        card.appendChild(elText('div', 'instruction', instructionText));
+      }
+
+      // Task area
+      const taskArea = el('div', 'task-area');
+
+      // Next button (shared)
+      const nextBtn = el('button', 'next-btn');
+      nextBtn.textContent = idx < totalSubs - 1 ? 'Next ↵' : 'Finish ↵';
+      // Use style.display rather than the hidden attribute — some browsers' UA
+      // stylesheet lacks !important on [hidden], so author CSS can override it.
+      nextBtn.style.display = 'none';
+
+      let hintDeduction = 0;
+      let taskFailed = false;
+      let mistakeCount = 0;
+      // choice: all-or-nothing; reorder: −1 pt per wrong placement; translate: no penalty
+      const onMistake = sub.kind === 'choice'  ? () => { taskFailed = true; }
+                      : sub.kind === 'reorder' ? () => { mistakeCount++; }
+                      : () => {};
+
+      // focusNextInput is set after the task is rendered (translate only)
+      let focusNextInput = null;
+
+      // Hints area (visible before completion)
+      const hints = sub.hints || [];
+      const hintsArea = el('div', 'hints-area');
+      if (hints.length > 0) {
+        const revealedHints = el('div', 'revealed-hints');
+        let hintIdx = 0;
+        const hintBtn = el('button', 'hint-btn');
+        const refreshHintBtn = () => {
+          if (hintIdx < hints.length) {
+            const cost = hints[hintIdx].points ?? 3;
+            const num = hints.length > 1 ? `Hint ${hintIdx + 1} of ${hints.length}` : 'Hint';
+            const costStr = cost === 0 ? 'free' : `−${cost} pts`;
+            hintBtn.textContent = `${num} (${costStr})`;
+          } else {
+            hintBtn.style.display = 'none';
+          }
+        };
+        refreshHintBtn();
+        hintBtn.addEventListener('click', () => {
+          const h = hints[hintIdx];
+          hintDeduction += h.points ?? 3;
+          const hintEl = document.createElement('div');
+          hintEl.className = 'hint-text';
+          if (h.image) {
+            const img = document.createElement('img');
+            img.src = h.image;
+            img.alt = h.alt || h.hint || 'Hint';
+            img.className = 'hint-img';
+            hintEl.appendChild(img);
+            if (h.hint) hintEl.appendChild(document.createTextNode(h.hint));
+          } else {
+            const label = document.createElement('strong');
+            label.textContent = 'Hint: ';
+            hintEl.appendChild(label);
+            hintEl.appendChild(document.createTextNode(h.hint));
+          }
+          revealedHints.appendChild(hintEl);
+          hintIdx++;
+          refreshHintBtn();
+          if (focusNextInput) focusNextInput();
+        });
+        hintsArea.appendChild(revealedHints);
+        hintsArea.appendChild(hintBtn);
+      }
+
+      // Reveal area (hidden until completion)
+      const revealArea = el('div', 'reveal-area');
+      revealArea.style.display = 'none';
+      if (sub.reveal) {
+        const revealP = el('p', 'reveal-text');
+        revealP.innerHTML = sub.reveal;
+        revealArea.appendChild(revealP);
+      }
+
+      const showNext = () => {
+        hintsArea.style.display = 'none';
+        if (sub.reveal) revealArea.style.display = '';
+        const pts = taskFailed ? 0 : Math.max(0, 10 - hintDeduction - mistakeCount);
+        score += pts;
+        updateScoreDisplay();
+        scoreDisplay.classList.add('score-bump');
+        scoreDisplay.addEventListener('animationend', () => scoreDisplay.classList.remove('score-bump'), { once: true });
+        popPoints(pts, card, () => {
+          nextBtn.style.display = '';
+          nextBtn.focus();
+        });
+      };
+
+      switch (sub.kind) {
+        case 'translate': focusNextInput = renderTranslate(sub, taskArea, showNext, onMistake); break;
+        case 'choice':    renderChoice(sub, taskArea, showNext, onMistake);    break;
+        case 'reorder':   renderReorder(sub, taskArea, showNext, onMistake);   break;
+      }
+
+      card.appendChild(taskArea);
+      card.appendChild(hintsArea);
+      card.appendChild(revealArea);
+      card.appendChild(nextBtn);
+      gameMain.appendChild(card);
+
+      // Always remove the keydown listener before advancing, whether via click or Enter,
+      // so listeners don't accumulate across sub-levels.
+      const onKeyDown = (e) => {
+        if (e.key === 'Enter' && nextBtn.style.display !== 'none' && !(document.activeElement instanceof HTMLInputElement)) {
+          document.removeEventListener('keydown', onKeyDown);
+          advanceSubLevel();
+        }
+      };
+      nextBtn.addEventListener('click', () => {
+        document.removeEventListener('keydown', onKeyDown);
+        advanceSubLevel();
+      });
+      document.addEventListener('keydown', onKeyDown);
+    }
+
+    // ── Translate task ─────────────────────────────────────────────────────────
+    function renderTranslate(sub, container, onComplete, onMistake) {
+      const answerRow = el('div', 'answer-row');
+      const inputs = [];
+
+      for (const item of sub.target) {
+        if (item.given) {
+          const span = elText('span', 'given-word', item.word);
+          if (item.spaceAfter === false) span.classList.add('tight');
+          answerRow.appendChild(span);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'word-input';
+          input.dataset.answer = item.word;
+          input.style.width = Math.max(5, item.word.length + 2) + 'ch';
+          input.autocomplete = 'off';
+          input.spellcheck = false;
+          input.setAttribute('autocorrect', 'off');
+          input.setAttribute('autocapitalize', 'off');
+
+          const accept = () => {
+            input.value = item.word; // correct case
+            input.classList.remove('wrong');
+            input.classList.add('correct');
+            input.disabled = true;
+            if (inputs.every(i => i.disabled)) {
+              onComplete();
+            } else {
+              const idx = inputs.indexOf(input);
+              const next = inputs.slice(idx + 1).find(i => !i.disabled)
+                        || inputs.find(i => !i.disabled);
+              if (next) next.focus();
+            }
+          };
+
+          const rejectExplicit = () => {
+            if (input.disabled) return;
+            const val = input.value.trim();
+            if (!val) return;
+            onMistake();
+            input.classList.add('wrong');
+            input.value = '';
+            setTimeout(() => { input.classList.remove('wrong'); input.focus(); }, 500);
+          };
+
+          // Accept as soon as the typed value matches, without needing Enter/Tab
+          input.addEventListener('input', () => {
+            if (input.disabled) return;
+            if (input.value.trim().toLowerCase() === item.word.toLowerCase()) accept();
+          });
+
+          // Enter/Tab: explicit submit — reject with feedback if wrong
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === 'Tab') {
+              e.preventDefault();
+              if (!input.disabled) rejectExplicit();
+            }
+          });
+
+          if (item.spaceAfter === false) input.classList.add('tight');
+          inputs.push(input);
+          answerRow.appendChild(input);
+        }
+      }
+
+      container.appendChild(answerRow);
+
+      // Focus first input after layout
+      const firstInput = inputs[0];
+      if (firstInput) setTimeout(() => firstInput.focus(), 50);
+
+      // Return a function the caller can use to refocus the next empty input
+      return () => { const next = inputs.find(i => !i.disabled); if (next) next.focus(); };
+    }
+
+    // ── Choice task ────────────────────────────────────────────────────────────
+    function renderChoice(sub, container, onComplete, onMistake) {
+      const row = el('div', 'choice-row');
+
+      for (const choice of sub.choices) {
+        const btn = elText('button', 'choice-btn', choice.label);
+        btn.addEventListener('click', () => {
+          // Disable all buttons
+          row.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+          if (choice.correct) {
+            btn.classList.add('correct');
+            setTimeout(onComplete, 400);
+          } else {
+            onMistake();
+            btn.classList.add('wrong');
+            // Re-enable other buttons after flash
+            setTimeout(() => {
+              row.querySelectorAll('.choice-btn:not(.correct)').forEach(b => {
+                b.disabled = false;
+                b.classList.remove('wrong');
+              });
+            }, 600);
+          }
+        });
+        row.appendChild(btn);
+      }
+
+      container.appendChild(row);
+    }
+
+    // ── Reorder task ───────────────────────────────────────────────────────────
+    function renderReorder(sub, container, onComplete, onMistake) {
+      // Shuffle the word bank
+      const shuffled = [...sub.slots.map(s => s.answer)].sort(() => Math.random() - 0.5);
+
+      // Slots grid
+      const slotsEl = el('div', 'reorder-slots');
+      const slotEls = sub.slots.map(slot => {
+        const row = el('div', 'slot-row');
+        const label = elText('span', 'slot-label', slot.label);
+        const drop = el('div', 'slot-drop');
+        drop.dataset.answer = slot.answer;
+        row.appendChild(label);
+        row.appendChild(drop);
+        slotsEl.appendChild(row);
+        return drop;
+      });
+
+      // Word bank
+      const bankEl = el('div', 'word-bank');
+      const wordEls = shuffled.map(word => {
+        const w = elText('button', 'bank-word', word);
+        bankEl.appendChild(w);
+        return w;
+      });
+
+      container.appendChild(slotsEl);
+      container.appendChild(bankEl);
+
+      let selected = null; // currently selected word button (click mode)
+      let dragWord = null; // word element being dragged (drag mode)
+
+      function selectWord(wordEl) {
+        if (selected) selected.classList.remove('selected');
+        selected = wordEl;
+        selected.classList.add('selected');
+      }
+
+      function returnToBank(slotEl) {
+        const prevWord = slotEl.dataset.placed;
+        const prevEl = wordEls.find(w => w.textContent === prevWord && w.style.display === 'none');
+        if (prevEl) prevEl.style.display = '';
+        delete slotEl.dataset.placed;
+        slotEl.textContent = '';
+        slotEl.classList.remove('filled', 'correct', 'wrong');
+      }
+
+      function placeWord(slotEl, wordEl) {
+        if (slotEl.classList.contains('locked')) return;
+
+        // Evict any word already in the slot
+        if (slotEl.dataset.placed) returnToBank(slotEl);
+
+        // Place word
+        slotEl.textContent = wordEl.textContent;
+        slotEl.dataset.placed = wordEl.textContent;
+        slotEl.classList.add('filled');
+        wordEl.style.display = 'none';
+        wordEl.classList.remove('selected');
+        selected = null;
+
+        // Validate
+        if (wordEl.textContent === slotEl.dataset.answer) {
+          slotEl.classList.add('correct', 'locked');
+          if (slotEls.every(s => s.classList.contains('locked'))) {
+            setTimeout(onComplete, 400);
+          }
+        } else {
+          onMistake();
+          slotEl.classList.add('wrong');
+          setTimeout(() => {
+            wordEl.style.display = '';
+            delete slotEl.dataset.placed;
+            slotEl.textContent = '';
+            slotEl.classList.remove('filled', 'wrong');
+          }, 600);
+        }
+      }
+
+      // Wire up word bank: click + drag
+      for (const wordEl of wordEls) {
+        wordEl.draggable = true;
+
+        wordEl.addEventListener('click', () => {
+          if (wordEl.style.display === 'none') return;
+          if (selected === wordEl) { wordEl.classList.remove('selected'); selected = null; }
+          else selectWord(wordEl);
+        });
+
+        wordEl.addEventListener('dragstart', (e) => {
+          dragWord = wordEl;
+          wordEl.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        wordEl.addEventListener('dragend', () => {
+          wordEl.classList.remove('dragging');
+          dragWord = null;
+        });
+      }
+
+      // Wire up slots: click + drop target
+      for (const slotEl of slotEls) {
+        slotEl.addEventListener('click', () => {
+          if (slotEl.classList.contains('locked')) return;
+          if (selected) {
+            placeWord(slotEl, selected);
+          } else if (slotEl.dataset.placed) {
+            returnToBank(slotEl);
+          }
+        });
+
+        slotEl.addEventListener('dragover', (e) => {
+          if (slotEl.classList.contains('locked')) return;
+          e.preventDefault();
+          slotEl.classList.add('drag-over');
+        });
+        slotEl.addEventListener('dragleave', () => slotEl.classList.remove('drag-over'));
+        slotEl.addEventListener('drop', (e) => {
+          e.preventDefault();
+          slotEl.classList.remove('drag-over');
+          if (dragWord) placeWord(slotEl, dragWord);
+        });
+      }
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function el(tag, cls) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      return e;
+    }
+    function elText(tag, cls, text) {
+      const e = el(tag, cls);
+      e.textContent = text;
+      return e;
+    }
+
+    // ── Boot ───────────────────────────────────────────────────────────────────
+    renderSubLevel(currentIdx);
+  </script>
+
+  <script>
+    import rough from 'roughjs';
+    document.querySelectorAll('.crayon-line').forEach(svg => {
+      const rc = rough.svg(svg);
+      svg.appendChild(rc.line(1, 6, 99, 6, { stroke: '#b91c1c', strokeWidth: 2, roughness: 2.5, seed: 12 }));
+    });
+  </script>
+</body>
+</html>
+
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #f0efeb;
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    color: #1a1a2e;
+  }
+
+  /* ── Crayon strikethrough ────────────────────────────────────────────────── */
+  .crayon-strike {
+    position: relative;
+    display: inline-block;
+  }
+
+  .crayon-line {
+    position: absolute;
+    left: -3px;
+    width: calc(100% + 6px);
+    height: 0.45em;
+    top: 50%;
+    transform: translateY(-60%);
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────────── */
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1.5rem;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .back-link {
+    font-size: 0.8rem;
+    font-weight: 200;
+    color: #888;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: #15616d; }
+
+  .header-center {
+    text-align: center;
+    flex: 1;
+  }
+
+  .game-name {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #15616d;
+    line-height: 1;
+  }
+
+  .level-title {
+    font-size: 0.75rem;
+    font-weight: 200;
+    color: #888;
+    margin-top: 0.1rem;
+  }
+
+  .progress-indicator {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+.progress-dots {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    flex-shrink: 0;
+  }
+  .dot.done    { background: #2d7a3a; }
+  .dot.active  { background: #15616d; }
+
+  /* ── Game main area ──────────────────────────────────────────────────────── */
+  .game-main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 1rem 6rem;
+    min-height: calc(100vh - 70px);
+  }
+
+  .sub-level-card,
+  .complete-card {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 640px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .complete-card {
+    text-align: center;
+  }
+
+  .complete-icon {
+    font-size: 3rem;
+    color: #2d7a3a;
+    margin-bottom: 0.5rem;
+  }
+
+  .complete-card h2 {
+    font-family: 'IM Fell English', serif;
+    font-size: 2rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .complete-msg {
+    color: #666;
+    font-weight: 200;
+    margin-bottom: 2rem;
+  }
+
+  /* ── German text ─────────────────────────────────────────────────────────── */
+  .german-text {
+    font-family: 'IM Fell English', serif;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .attribution {
+    text-align: right;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 0.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .instruction {
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #888;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  /* ── Task area ───────────────────────────────────────────────────────────── */
+  .task-area {
+    margin-bottom: 2rem;
+  }
+
+  /* Translate */
+  .answer-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0;
+  }
+
+  .given-word {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.3rem;
+    color: #555;
+    margin-right: 0.45em;
+  }
+
+  .given-word.tight { margin-right: 0; }
+
+  .word-input {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.2rem;
+    margin-right: 0.45em;
+    border: none;
+    border-bottom: 2px solid #bbb;
+    background: transparent;
+    padding: 0.1em 0.2em;
+    color: #1a1a2e;
+    outline: none;
+    min-width: 5ch;
+    transition: border-color 0.15s;
+  }
+
+  .word-input:focus {
+    border-color: #15616d;
+  }
+
+  .word-input.tight { margin-right: 0; }
+
+  .word-input.correct {
+    border-color: #2d7a3a;
+    color: #2d7a3a;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-5px); }
+    60%      { transform: translateX(5px); }
+    80%      { transform: translateX(-3px); }
+  }
+
+  .word-input.wrong {
+    border-color: #c0392b;
+    background: #fff0ee;
+    animation: shake 0.4s ease;
+  }
+
+  /* Choice */
+  .choice-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .choice-btn {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.4rem;
+    padding: 0.5rem 2rem;
+    border: 2px solid #bbb;
+    border-radius: 8px;
+    background: #fff;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: #15616d;
+    background: #f0f9fa;
+  }
+
+  .choice-btn.correct {
+    border-color: #2d7a3a;
+    background: #eaf7ec;
+    color: #2d7a3a;
+  }
+
+  .choice-btn.wrong {
+    border-color: #c0392b;
+    background: #fff0ee;
+    color: #c0392b;
+  }
+
+  /* Reorder */
+  .reorder-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .slot-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .slot-label {
+    font-weight: 400;
+    color: #888;
+    width: 2rem;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .slot-drop {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    min-width: 140px;
+    height: 2.2rem;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 0.6rem;
+    cursor: pointer;
+    color: #1a1a2e;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .slot-drop:hover:not(.locked) {
+    border-color: #15616d;
+    background: #f0f9fa;
+  }
+
+  .slot-drop.filled {
+    border-style: solid;
+    border-color: #bbb;
+  }
+
+  .slot-drop.correct {
+    border-color: #2d7a3a;
+    background: #eaf7ec;
+    color: #2d7a3a;
+    cursor: default;
+  }
+
+  @keyframes flash-wrong {
+    0%,100% { background: #fff0ee; border-color: #c0392b; }
+    50%      { background: #ffd5cf; }
+  }
+
+  .slot-drop.wrong {
+    animation: flash-wrong 0.5s ease;
+  }
+
+  .word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f5f5f0;
+    border-radius: 8px;
+    min-height: 3rem;
+  }
+
+  .bank-word {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    padding: 0.3rem 0.8rem;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    color: #1a1a2e;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .bank-word:hover {
+    border-color: #15616d;
+  }
+
+  .bank-word.selected {
+    border-color: #15616d;
+    background: #e0f5f7;
+  }
+
+  .bank-word.dragging {
+    opacity: 0.35;
+    cursor: grabbing;
+  }
+
+  .slot-drop.drag-over {
+    border-color: #15616d;
+    background: #e0f5f7;
+    border-style: solid;
+  }
+
+  /* ── Score ───────────────────────────────────────────────────────────────── */
+  .score-display {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #15616d;
+    margin-bottom: 0.25rem;
+    transition: color 0.15s;
+  }
+
+  @keyframes score-bump {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.35); color: #ff7d00; }
+    100% { transform: scale(1); }
+  }
+
+  .score-display.score-bump {
+    animation: score-bump 0.4s ease;
+  }
+
+  @keyframes pts-pop {
+    0%   { opacity: 0; transform: scale(0.3); }
+    20%  { opacity: 1; transform: scale(1.1); }
+    65%  { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+
+  .pts-pop {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    animation: pts-pop 1.4s ease forwards;
+    z-index: 20;
+  }
+
+  .burst-svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 220px;
+    transform: translate(-50%, -50%);
+    overflow: visible;
+  }
+
+  @keyframes burst-line {
+    0%   { stroke-dashoffset: 22; opacity: 0; }
+    10%  { opacity: 1; }
+    55%  { stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+
+  .burst-line {
+    stroke: url(#burst-grad);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-dasharray: 22;
+    animation: burst-line 1.2s ease-out forwards;
+  }
+
+  .pts-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+    font-family: 'IM Fell English', serif;
+    font-size: 5rem;
+    color: #ff7d00;
+    white-space: nowrap;
+    text-shadow: 0 2px 20px rgba(255, 125, 0, 0.35);
+  }
+
+  /* ── Stars / complete score ───────────────────────────────────────────────── */
+  .stars {
+    font-size: 2rem;
+    color: #ff7d00;
+    letter-spacing: 0.1em;
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .complete-score {
+    font-size: 1.1rem;
+    font-weight: 200;
+    color: #555;
+    margin: 0 0 2rem;
+  }
+
+  /* ── Hints & reveal ─────────────────────────────────────────────────────── */
+  .hints-area {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .hint-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #999;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.3rem 0.85rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .hint-btn:hover {
+    color: #555;
+    border-color: #bbb;
+  }
+
+  .revealed-hints {
+    margin-bottom: 0.6rem;
+  }
+
+  .hint-text {
+    font-size: 0.9rem;
+    font-weight: 200;
+    color: #666;
+    margin: 0 0 0.4rem;
+    padding-left: 0.8rem;
+    border-left: 2px solid #ddd;
+  }
+
+  .hint-img {
+    display: block;
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 6px;
+    margin-bottom: 0.25rem;
+  }
+
+  .reveal-area {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: #f5fbf6;
+    border-radius: 8px;
+    border-left: 3px solid #2d7a3a;
+    margin-bottom: 1rem;
+  }
+
+  .reveal-text {
+    font-size: 0.95rem;
+    font-weight: 200;
+    color: #444;
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ── Next button ─────────────────────────────────────────────────────────── */
+  .next-btn {
+    display: inline-block;
+    background: #15616d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.8rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .next-btn:hover { background: #0f4a55; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .game-header { padding: 0.6rem 1rem; }
+    .sub-level-card, .complete-card { padding: 1.5rem 1rem; }
+    .game-main { padding: 1.5rem 0.75rem 4rem; }
+    .slot-drop { min-width: 110px; }
+  }
+</style>
