@@ -23,7 +23,7 @@
           "hint": "Drop the \"n(e)\" to find the English equivalent!"
         }
       ],
-      "reveal": "Some people believe that \"Darth Vader\" in Star Wars was meant to foreshadow \"Dark Father\", but there are lots of competing theories."
+      "reveal": "Some people believe that \"Darth Vader\" in Star Wars was meant to foreshadow \"Dark Father\"."
     },
     {
       "kind": "translate",
@@ -34,7 +34,7 @@
         {"word": "s"},
         {"word": "Day"},
         {"word": "is"},
-        {"word": "always", "given": true},
+        {"word": "always", "given": true, "challengingInput": true},
         {"word": "a"},
         {"word": "Sunday", "spaceAfter": false},
         {"word": ".", "given": true}
@@ -52,7 +52,7 @@
           "points": 5
         }
       ],
-      "reveal": "💐"
+      "reveal": "💐 Alles Gute zum Muttertag! 💐"
     },
     {
       "kind": "reorder",
@@ -66,7 +66,7 @@
         {"label": "Sa", "answer": "Samstag"},
         {"label": "Su", "answer": "Sonntag"}
       ],
-      "reveal": "Well done! Many of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, and thunder is \"donner\" in German!"
+      "reveal": "Well done! Several of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, which is \"donner\" in German."
     },
     {
       "kind": "translate",
@@ -85,14 +85,51 @@
           "hint": "What English words do they sound close to, that would make sense when put together to mean \"Wednesday\"?"
         }
       ],
-      "reveal": "That's right! Bonus question: what do you think \"Mittag\" would mean?"
+      "reveal": "Nice! This was originally \"Wodanstag\", but early Germanic-speaking Christian missionaries tried to remove the pagan god names from the days of the week...and succeeded only with this one."
     },
     {
       "kind": "translate",
-      "german": "Meine Woche beginnt am Montag und endet am Freitag.",
+      "german": "von Mittag bis Mitternacht",
+      "target": [
+        {"word": "from"},
+        {"word": "noon", "also": ["midday"]},
+        {"word": "to", "also": ["till", "until"]},
+        {"word": "midnight"}
+      ],
+      "hints": [
+        {
+          "hint": "\"von\" was sometimes used in aristocratic names to indicate where they were from. For example, Manfred von Richthofen was the WWI flying ace the Red Baron."
+        },
+        {
+          "hint": "\"Bis morgen!\" means \"Till tomorrow!\""
+        }
+      ],
+      "reveal": "The English word \"noon\" comes from Latin \"nona\" (ninth hour (after sunrise), i.e. 3 pm). The medieval prayer None was held then, but its timing crept earlier over centuries, winding up at midday and lending its name to the hour."
+    },
+    {
+      "kind": "translate",
+      "german": "Was ist ein Wochenende?",
+      "attribution": "Dowager Countess Violet Crawley, Downton Abbey",
+      "target": [
+        {"word": "What"},
+        {"word": "is"},
+        {"word": "a"},
+        {"word": "weekend", "spaceAfter": false},
+        {"word": "?", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "Split \"Wochenende\" between the two \"en\"s to read it correctly."
+        }
+      ],
+      "reveal": "You can now answer her: \"Ein Wochenende ist Samstag und Sonntag.\""
+    },
+    {
+      "kind": "translate",
+      "german": "Meine Arbeitswoche beginnt am Montag und endet am Freitag.",
       "target": [
         {"word": "My"},
-        {"word": "week"},
+        {"word": "workweek"},
         {"word": "begins"},
         {"word": "on"},
         {"word": "Monday"},
@@ -102,54 +139,15 @@
         {"word": "Friday", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "hints": [],
+      "hints": [
+        {
+          "hint": "The Japanese word \"arubaito\" is borrowed from \"Arbeit\", and means \"part-time ___\", but the German connotes more \"full-time ___\".",
+          "points": 2
+        }
+      ],
       "reveal": "Germans celebrate the end of their workweek with the phrase \"Feierabend\", literally \"celebration evening\". Colleagues often mark it with a \"Feierabendbier\"!"
     },
-    {
-      "kind": "translate",
-      "german": "Was ist ein Wochenende?",
-      "target": [
-        {"word": "What", "spaceAfter": false},
-        {"word": "'", "given": true, "spaceAfter": false},
-        {"word": "s"},
-        {"word": "a"},
-        {"word": "weekend", "spaceAfter": false},
-        {"word": "?", "given": true}
-      ],
-      "attribution": "Dowager Countess Violet Crawley, Downton Abbey",
-      "hints": [
-        {
-          "hint": "Split \"Wochenende\" between the two \"en\"s to read it correctly."
-        }
-      ],
-      "reveal": "You can now answer her: Wochenende = Samstag + Sonntag."
-    },
-    {
-      "kind": "translate",
-      "german": "Wochentage sind Arbeitstage für mich.",
-      "target": [
-        {"word": "Weekdays"},
-        {"word": "are"},
-        {"word": "workdays"},
-        {"word": "for"},
-        {"word": "me", "spaceAfter": false},
-        {"word": ".", "given": true}
-      ],
-      "hints": [
-        {
-          "hint": "There's a Japanese word \"arubaito\" borrowed from \"Arbeit\" that means part-time work, but the German word is more intense.",
-          "points": 2
-        },
-        {
-          "hint": "Beethoven wrote a famous piece for an unknown lady, \"<em>Für</em> Elise\".",
-          "points": 2
-        },
-        {
-          "hint": "\"mich\" is another form of \"ich\". It's actually pretty close to its English equivalent!"
-        }
-      ],
-      "reveal": "To answer the question two puzzles back, \"Mittag\" = \"midday\", or \"noon\"!"
-    },
+
     {
       "kind": "translate",
       "german": "Ich arbeite nicht am Wochenende.",
@@ -196,7 +194,7 @@
         {"word": "Mondays", "spaceAfter": false},
         {"word": ",", "given": true},
         {"word": "like"},
-        {"word": "Garfield", "spaceafter": false},
+        {"word": "Garfield", "spaceAfter": false},
         {"word": ".", "given": true},
         {"word": "I"},
         {"word": "don", "spaceAfter": false},
@@ -209,7 +207,7 @@
       ],
       "hints": [
         {
-          "hint": "möchte = 👍",
+          "hint": "Garfield might say \"Ich möchte Kaffee\" on a Monday morning.",
           "points": 2
         },
         {

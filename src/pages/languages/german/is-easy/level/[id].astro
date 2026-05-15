@@ -2,11 +2,13 @@
 import levels from '../../../../../data/german-is-easy/levels.json';
 import level1 from '../../../../../data/german-is-easy/level1.json';
 import level2 from '../../../../../data/german-is-easy/level2.json';
+import level3 from '../../../../../data/german-is-easy/level3.json';
 
 export function getStaticPaths() {
   return [
     { params: { id: '1' }, props: { levelData: level1 } },
     { params: { id: '2' }, props: { levelData: level2 } },
+    { params: { id: '3' }, props: { levelData: level3 } },
   ];
 }
 
@@ -36,7 +38,7 @@ const safeJson = JSON.stringify(levelData)
   <header class="game-header">
     <a href="/languages/german/is-easy/" class="back-link">← Levels</a>
     <div class="header-center">
-      <div class="game-name">German Is <span class="crayon-strike">Easy<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Exactly the Right Level of Challenging</div>
+      <div class="game-name">German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy</div>
       <div class="level-title">Level {levelData.id}: {levelMeta?.title}</div>
     </div>
     <div class="progress-indicator" id="progress-indicator">
@@ -51,6 +53,8 @@ const safeJson = JSON.stringify(levelData)
 
   <script>
     const STORAGE_KEY = 'gie-progress';
+    const MODE_KEY    = 'gie-mode';
+    const mode        = localStorage.getItem(MODE_KEY) || 'competitive';
 
     function getProgress() {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
@@ -62,16 +66,38 @@ const safeJson = JSON.stringify(levelData)
     const totalSubs = levelData.subLevels.length;
 
     const prog = getProgress();
-    if (!prog[levelId]) prog[levelId] = { current: 0, done: false };
+    const isCasual = mode === 'casual';
 
-    let currentIdx = prog[levelId].done ? 0 : prog[levelId].current;
+    // Progress is stored in two separate buckets: 'comp' (competitive/challenging) and 'cas' (casual).
+    // Old entries without these keys are treated as 'comp' for backward compatibility.
+    function getBucket(p) {
+      const entry = p[levelId];
+      if (!entry) return { current: 0, done: false };
+      if ('comp' in entry || 'cas' in entry) return entry[isCasual ? 'cas' : 'comp'] || { current: 0, done: false };
+      return isCasual ? { current: 0, done: false } : entry;
+    }
+
+    function setBucket(p, data) {
+      if (!p[levelId]) p[levelId] = {};
+      const entry = p[levelId];
+      // Migrate old flat format to bucketed format
+      if (!('comp' in entry) && !('cas' in entry) && Object.keys(entry).length > 0) {
+        p[levelId] = { comp: { ...entry } };
+      }
+      p[levelId][isCasual ? 'cas' : 'comp'] = data;
+    }
+
+    const saved = getBucket(prog);
+    let currentIdx = saved.done ? 0 : (saved.current || 0);
 
     const gameMain = document.getElementById('game-main');
 const progressDots = document.getElementById('progress-dots');
     const scoreDisplay = document.getElementById('score-display');
 
+    if (mode === 'casual') scoreDisplay.style.display = 'none';
+
     // ── Score ───────────────────────────────────────────────────────────────────
-    let score = prog[levelId].done ? 0 : (prog[levelId].score || 0);
+    let score = saved.done ? 0 : (saved.score || 0);
     const maxScore = totalSubs * 10;
 
     function subLevelPoints(mistakes) {
@@ -82,7 +108,7 @@ const progressDots = document.getElementById('progress-dots');
     }
 
     function updateScoreDisplay() {
-      scoreDisplay.textContent = `${score} pts`;
+      if (mode !== 'casual') scoreDisplay.textContent = `${score} pts`;
     }
 
     function popPoints(pts, card, onDone) {
@@ -154,39 +180,172 @@ progressDots.innerHTML = '';
       currentIdx++;
       const p = getProgress();
       if (currentIdx >= totalSubs) {
-        p[levelId] = { current: 0, done: true, score, maxScore };
+        setBucket(p, isCasual
+          ? { current: 0, done: true }
+          : { current: 0, done: true, score, maxScore });
         setProgress(p);
         showLevelComplete();
       } else {
-        p[levelId] = { current: currentIdx, done: false, score };
+        setBucket(p, isCasual
+          ? { current: currentIdx, done: false }
+          : { current: currentIdx, done: false, score });
         setProgress(p);
         renderSubLevel(currentIdx);
       }
     }
 
+    // ── Memory helpers ─────────────────────────────────────────────────────────
+    function targetToEnglish(target) {
+      let out = '';
+      let suppressNextSpace = false;
+      for (const item of target) {
+        const noSpaceBefore = suppressNextSpace || item.word === ',' || item.word === '.' || item.word === '!' || item.word === '?' || item.word === '\u201D' || item.word === ')' || item.word === '\u2019';
+        if (out && !noSpaceBefore) out += ' ';
+        out += item.word;
+        suppressNextSpace = item.spaceAfter === false;
+      }
+      return out.trim();
+    }
+
+    function subToSummary(sub) {
+      switch (sub.kind) {
+        case 'translate':
+          return { de: sub.german, en: targetToEnglish(sub.target) };
+        case 'choice': {
+          const correct = sub.choices.find(c => c.correct);
+          return { de: sub.german, en: correct ? correct.label : '—' };
+        }
+        case 'reorder': {
+          const ordered = sub.slots.map(s => `${s.label} – ${s.answer}`).join(', ');
+          return { de: ordered, en: null };
+        }
+        case 'categorize': {
+          const lines = sub.groups.map(g => `${g.label}: ${g.answers.join(', ')}`).join('\n');
+          return { de: sub.german, en: lines };
+        }
+        default:
+          return { de: sub.german || '', en: null };
+      }
+    }
+
+    function buildMemoryContent(upToIdx) {
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < upToIdx; i++) {
+        const sub = levelData.subLevels[i];
+        const { de, en } = subToSummary(sub);
+        const entry = document.createElement('div');
+        entry.className = 'memory-entry';
+        const deEl = document.createElement('div');
+        deEl.className = 'memory-de';
+        deEl.textContent = de;
+        entry.appendChild(deEl);
+        if (en) {
+          const enEl = document.createElement('div');
+          enEl.className = 'memory-en';
+          enEl.textContent = en;
+          entry.appendChild(enEl);
+        }
+        frag.appendChild(entry);
+      }
+      return frag;
+    }
+
+    function showMemoryModal(upToIdx) {
+      const backdrop = document.createElement('div');
+      backdrop.className = 'memory-backdrop';
+      const modal = document.createElement('div');
+      modal.className = 'memory-modal';
+      const header = document.createElement('div');
+      header.className = 'memory-header';
+      header.appendChild(Object.assign(document.createElement('h3'), { textContent: 'Memory' }));
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'memory-close';
+      closeBtn.textContent = '×';
+      closeBtn.setAttribute('aria-label', 'Close');
+      header.appendChild(closeBtn);
+      modal.appendChild(header);
+      const body = document.createElement('div');
+      body.className = 'memory-body';
+      body.appendChild(buildMemoryContent(upToIdx));
+      modal.appendChild(body);
+      backdrop.appendChild(modal);
+      document.body.appendChild(backdrop);
+      const close = () => {
+        backdrop.remove();
+        const next = document.querySelector('.task-area input:not(:disabled)');
+        if (next) next.focus();
+      };
+      closeBtn.addEventListener('click', close);
+      backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
+    }
+
+    function launchConfetti() {
+      const colors = ['#15616d', '#ff7d00', '#2d7a3a', '#b91c1c', '#f59e0b', '#6366f1'];
+      const pieces = 80;
+      const container = document.createElement('div');
+      container.style.cssText = 'position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:999';
+      document.body.appendChild(container);
+      for (let i = 0; i < pieces; i++) {
+        const piece = document.createElement('div');
+        const size = 6 + Math.random() * 6;
+        const x = Math.random() * 100;
+        const delay = Math.random() * 0.6;
+        const duration = 1.8 + Math.random() * 1.2;
+        const rotate = Math.random() * 720 - 360;
+        const drift = (Math.random() - 0.5) * 120;
+        piece.style.cssText = `
+          position:absolute;
+          left:${x}%;top:-10px;
+          width:${size}px;height:${size * (0.5 + Math.random())}px;
+          background:${colors[Math.floor(Math.random() * colors.length)]};
+          border-radius:${Math.random() > 0.5 ? '50%' : '1px'};
+          animation:confetti-fall ${duration}s ${delay}s ease-in forwards;
+          --drift:${drift}px;--rotate:${rotate}deg;
+        `;
+        container.appendChild(piece);
+      }
+      setTimeout(() => container.remove(), 3500);
+    }
+
     function showLevelComplete() {
       renderProgressDots();
       gameMain.innerHTML = '';
-      const pct = score / maxScore;
-      const stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : 1;
+      launchConfetti();
       const card = el('div', 'complete-card');
       card.appendChild(elText('div', 'complete-icon', '✓'));
       card.appendChild(elText('h2', '', 'Level complete!'));
-      const starsEl = elText('div', 'stars', '★'.repeat(stars) + '☆'.repeat(3 - stars));
-      card.appendChild(starsEl);
-      card.appendChild(elText('p', 'complete-score', `${score} / ${maxScore} pts`));
+      if (mode !== 'casual') {
+        card.appendChild(elText('p', 'complete-score', `${score} / ${maxScore} pts`));
+      }
+      const reviewSection = el('div', 'complete-review');
+      const reviewToggle = el('button', 'review-toggle');
+      reviewToggle.textContent = 'Review all sentences ▾';
+      const reviewBody = el('div', 'review-body');
+      reviewBody.style.display = 'none';
+      reviewBody.appendChild(buildMemoryContent(totalSubs));
+      reviewToggle.addEventListener('click', () => {
+        const open = reviewBody.style.display !== 'none';
+        reviewBody.style.display = open ? 'none' : '';
+        reviewToggle.textContent = open ? 'Review all sentences ▾' : 'Hide review ▴';
+      });
+      reviewSection.appendChild(reviewToggle);
+      reviewSection.appendChild(reviewBody);
+      card.appendChild(reviewSection);
+
       const btn = el('a', 'next-btn');
       btn.href = '/languages/german/is-easy/';
       btn.textContent = '← Back to levels';
       card.appendChild(btn);
       gameMain.appendChild(card);
-      btn.focus();
-      document.addEventListener('keydown', function onKey(e) {
-        if (e.key === 'Enter') {
-          document.removeEventListener('keydown', onKey);
-          window.location.href = '/languages/german/is-easy/';
-        }
-      });
+      setTimeout(() => {
+        btn.focus();
+        document.addEventListener('keydown', function onKey(e) {
+          if (e.key === 'Enter') {
+            document.removeEventListener('keydown', onKey);
+            window.location.href = '/languages/german/is-easy/';
+          }
+        });
+      }, 500);
     }
 
     // ── Sub-level renderer ─────────────────────────────────────────────────────
@@ -208,11 +367,19 @@ progressDots.innerHTML = '';
       // Instruction
       const instructionText =
         sub.instruction ||
-        (sub.kind === 'translate' ? 'Translate' :
-         sub.kind === 'choice'    ? 'Choose the correct answer' :
-         sub.kind === 'reorder'   ? 'Put in the correct order' : '');
+        (sub.kind === 'translate'  ? 'Translate' :
+         sub.kind === 'choice'     ? 'Choose the correct answer' :
+         sub.kind === 'reorder'    ? 'Put in the correct order' :
+         sub.kind === 'categorize' ? 'Sort into the correct group' : '');
+      let potentialPointsEl = null;
       if (instructionText) {
-        card.appendChild(elText('div', 'instruction', instructionText));
+        const instrRow = el('div', 'instruction-row');
+        instrRow.appendChild(elText('span', 'instruction', instructionText));
+        if (mode !== 'casual') {
+          potentialPointsEl = elText('span', 'potential-points', '(10 pts)');
+          instrRow.appendChild(potentialPointsEl);
+        }
+        card.appendChild(instrRow);
       }
 
       // Task area
@@ -228,10 +395,17 @@ progressDots.innerHTML = '';
       let hintDeduction = 0;
       let taskFailed = false;
       let mistakeCount = 0;
-      // choice: all-or-nothing; reorder: −1 pt per wrong placement; translate: no penalty
-      const onMistake = sub.kind === 'choice'  ? () => { taskFailed = true; }
-                      : sub.kind === 'reorder' ? () => { mistakeCount++; }
+      // choice: all-or-nothing; reorder/categorize: −1 pt per wrong placement; translate: no penalty
+      const onMistake = sub.kind === 'choice'                               ? () => { taskFailed = true; }
+                      : (sub.kind === 'reorder' || sub.kind === 'categorize') ? () => { mistakeCount++; }
                       : () => {};
+
+      const refreshPotentialPoints = () => {
+        if (!potentialPointsEl) return;
+        const pts = taskFailed ? 0 : Math.max(0, 10 - hintDeduction - mistakeCount);
+        potentialPointsEl.textContent = `(${pts} pts)`;
+      };
+      const onMistakeTracked = () => { onMistake(); refreshPotentialPoints(); };
 
       // focusNextInput is set after the task is rendered (translate only)
       let focusNextInput = null;
@@ -239,15 +413,18 @@ progressDots.innerHTML = '';
       // Hints area (visible before completion)
       const hints = sub.hints || [];
       const hintsArea = el('div', 'hints-area');
-      if (hints.length > 0) {
+      const btnRow = el('div', 'hints-btn-row');
+      hintsArea.appendChild(btnRow);
+      if (hints.length > 0 && mode !== 'challenging') {
         const revealedHints = el('div', 'revealed-hints');
+        hintsArea.insertBefore(revealedHints, btnRow);
         let hintIdx = 0;
         const hintBtn = el('button', 'hint-btn');
         const refreshHintBtn = () => {
           if (hintIdx < hints.length) {
             const cost = hints[hintIdx].points ?? 3;
             const num = hints.length > 1 ? `Hint ${hintIdx + 1} of ${hints.length}` : 'Hint';
-            const costStr = cost === 0 ? 'free' : `−${cost} pts`;
+            const costStr = mode === 'casual' ? 'free' : (cost === 0 ? 'free' : `−${cost} pts`);
             hintBtn.textContent = `${num} (${costStr})`;
           } else {
             hintBtn.style.display = 'none';
@@ -256,7 +433,8 @@ progressDots.innerHTML = '';
         refreshHintBtn();
         hintBtn.addEventListener('click', () => {
           const h = hints[hintIdx];
-          hintDeduction += h.points ?? 3;
+          if (mode !== 'casual') hintDeduction += h.points ?? 3;
+          refreshPotentialPoints();
           const hintEl = document.createElement('div');
           hintEl.className = 'hint-text';
           if (h.image) {
@@ -277,8 +455,45 @@ progressDots.innerHTML = '';
           refreshHintBtn();
           if (focusNextInput) focusNextInput();
         });
-        hintsArea.appendChild(revealedHints);
-        hintsArea.appendChild(hintBtn);
+        btnRow.appendChild(hintBtn);
+      }
+      if (sub.kind === 'translate') {
+        const revealBtn = el('button', 'reveal-letter-btn');
+        revealBtn.textContent = mode === 'casual' ? 'Reveal letter' : 'Reveal letter (−3 pts)';
+        revealBtn.addEventListener('click', () => {
+          const input = taskArea.querySelector('input:not(:disabled)');
+          if (!input || !input._acceptedWords) return;
+          const accepted = input._acceptedWords;
+          const current = input.value;
+          // Pick accepted word with longest matching prefix; tie-break: array order
+          let bestWord = accepted[0];
+          let bestPrefixLen = 0;
+          for (const w of accepted) {
+            let len = 0;
+            while (len < current.length && len < w.length &&
+                   current[len].toLowerCase() === w[len].toLowerCase()) {
+              len++;
+            }
+            if (len > bestPrefixLen) { bestPrefixLen = len; bestWord = w; }
+          }
+          const newValue = bestWord.slice(0, bestPrefixLen + 1);
+          if (newValue.toLowerCase() === current.toLowerCase()) return;
+          input.value = newValue;
+          if (mode !== 'casual') {
+            hintDeduction += 3;
+            updateScoreDisplay();
+            refreshPotentialPoints();
+          }
+          input.dispatchEvent(new Event('input'));
+          if (focusNextInput) focusNextInput();
+        });
+        btnRow.appendChild(revealBtn);
+      }
+      if (idx > 0) {
+        const memBtn = el('button', 'memory-btn');
+        memBtn.textContent = '📖 Memory';
+        memBtn.addEventListener('click', () => showMemoryModal(idx));
+        btnRow.appendChild(memBtn);
       }
 
       // Reveal area (hidden until completion)
@@ -295,19 +510,25 @@ progressDots.innerHTML = '';
         if (sub.reveal) revealArea.style.display = '';
         const pts = taskFailed ? 0 : Math.max(0, 10 - hintDeduction - mistakeCount);
         score += pts;
-        updateScoreDisplay();
-        scoreDisplay.classList.add('score-bump');
-        scoreDisplay.addEventListener('animationend', () => scoreDisplay.classList.remove('score-bump'), { once: true });
-        popPoints(pts, card, () => {
+        if (mode !== 'casual') {
+          updateScoreDisplay();
+          scoreDisplay.classList.add('score-bump');
+          scoreDisplay.addEventListener('animationend', () => scoreDisplay.classList.remove('score-bump'), { once: true });
+          popPoints(pts, card, () => {
+            nextBtn.style.display = '';
+            nextBtn.focus();
+          });
+        } else {
           nextBtn.style.display = '';
           nextBtn.focus();
-        });
+        }
       };
 
       switch (sub.kind) {
-        case 'translate': focusNextInput = renderTranslate(sub, taskArea, showNext, onMistake); break;
-        case 'choice':    renderChoice(sub, taskArea, showNext, onMistake);    break;
-        case 'reorder':   renderReorder(sub, taskArea, showNext, onMistake);   break;
+        case 'translate':  focusNextInput = renderTranslate(sub, taskArea, showNext, onMistakeTracked); break;
+        case 'choice':     renderChoice(sub, taskArea, showNext, onMistakeTracked);     break;
+        case 'reorder':    renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
+        case 'categorize': renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
       }
 
       card.appendChild(taskArea);
@@ -337,7 +558,8 @@ progressDots.innerHTML = '';
       const inputs = [];
 
       for (const item of sub.target) {
-        if (item.given) {
+        const renderAsGiven = item.given && !(mode === 'challenging' && item.challengingInput);
+        if (renderAsGiven) {
           const span = elText('span', 'given-word', item.word);
           if (item.spaceAfter === false) span.classList.add('tight');
           answerRow.appendChild(span);
@@ -345,15 +567,21 @@ progressDots.innerHTML = '';
           const input = document.createElement('input');
           input.type = 'text';
           input.className = 'word-input';
+          const acceptedWords = [item.word, ...(Array.isArray(item.also) ? item.also : item.also ? [item.also] : [])];
+          input._acceptedWords = acceptedWords;
           input.dataset.answer = item.word;
-          input.style.width = Math.max(5, item.word.length + 2) + 'ch';
+          const chWidth = w => {
+            const wides = (w.match(/[A-Zw]/g) || []).length;
+            return wides * 1.4 + (w.length - wides) * 0.85 + 2;
+          };
+          input.style.width = Math.max(5, ...acceptedWords.map(chWidth)) + 'ch';
           input.autocomplete = 'off';
           input.spellcheck = false;
           input.setAttribute('autocorrect', 'off');
           input.setAttribute('autocapitalize', 'off');
 
-          const accept = () => {
-            input.value = item.word; // correct case
+          const accept = (matched) => {
+            input.value = matched; // preserve which accepted form was typed
             input.classList.remove('wrong');
             input.classList.add('correct');
             input.disabled = true;
@@ -371,16 +599,20 @@ progressDots.innerHTML = '';
             if (input.disabled) return;
             const val = input.value.trim();
             if (!val) return;
+            const match = acceptedWords.find(w => w.toLowerCase() === val.toLowerCase());
+            if (match) { accept(match); return; }
             onMistake();
             input.classList.add('wrong');
             input.value = '';
             setTimeout(() => { input.classList.remove('wrong'); input.focus(); }, 500);
           };
 
-          // Accept as soon as the typed value matches, without needing Enter/Tab
+          // Accept as soon as the typed value matches any accepted word
           input.addEventListener('input', () => {
             if (input.disabled) return;
-            if (input.value.trim().toLowerCase() === item.word.toLowerCase()) accept();
+            const typed = input.value.trim().toLowerCase();
+            const match = acceptedWords.find(w => w.toLowerCase() === typed);
+            if (match) accept(match);
           });
 
           // Enter/Tab: explicit submit — reject with feedback if wrong
@@ -563,6 +795,124 @@ progressDots.innerHTML = '';
       }
     }
 
+    // ── Categorize task ────────────────────────────────────────────────────────
+    function renderCategorize(sub, container, onComplete, onMistake) {
+      const allWords = sub.groups.flatMap(g => g.answers).sort(() => Math.random() - 0.5);
+
+      // Two-column layout with a header and blank slots per group
+      const columnsEl = el('div', 'categorize-columns');
+      const allSlotEls = [];
+
+      sub.groups.forEach((group, groupIdx) => {
+        const colEl = el('div', 'categorize-col');
+        colEl.appendChild(elText('div', 'categorize-header', group.label));
+        const slotsEl = el('div', 'categorize-slots');
+        group.answers.forEach(() => {
+          const drop = el('div', 'slot-drop');
+          drop.dataset.groupIdx = groupIdx;
+          slotsEl.appendChild(drop);
+          allSlotEls.push(drop);
+        });
+        colEl.appendChild(slotsEl);
+        columnsEl.appendChild(colEl);
+      });
+
+      const bankEl = el('div', 'word-bank');
+      const wordEls = allWords.map(word => {
+        const w = elText('button', 'bank-word', word);
+        bankEl.appendChild(w);
+        return w;
+      });
+
+      container.appendChild(columnsEl);
+      container.appendChild(bankEl);
+
+      let selected = null;
+      let dragWord = null;
+
+      function selectWord(wordEl) {
+        if (selected) selected.classList.remove('selected');
+        selected = wordEl;
+        selected.classList.add('selected');
+      }
+
+      function returnToBank(slotEl) {
+        const prevWord = slotEl.dataset.placed;
+        const prevEl = wordEls.find(w => w.textContent === prevWord && w.style.display === 'none');
+        if (prevEl) prevEl.style.display = '';
+        delete slotEl.dataset.placed;
+        slotEl.textContent = '';
+        slotEl.classList.remove('filled', 'correct', 'wrong');
+      }
+
+      function placeWord(slotEl, wordEl) {
+        if (slotEl.classList.contains('locked')) return;
+        if (slotEl.dataset.placed) returnToBank(slotEl);
+
+        slotEl.textContent = wordEl.textContent;
+        slotEl.dataset.placed = wordEl.textContent;
+        slotEl.classList.add('filled');
+        wordEl.style.display = 'none';
+        wordEl.classList.remove('selected');
+        selected = null;
+
+        // Validate: does this word belong to this group?
+        const groupIdx = parseInt(slotEl.dataset.groupIdx);
+        if (sub.groups[groupIdx].answers.includes(wordEl.textContent)) {
+          slotEl.classList.add('correct', 'locked');
+          if (allSlotEls.every(s => s.classList.contains('locked'))) {
+            setTimeout(onComplete, 400);
+          }
+        } else {
+          onMistake();
+          slotEl.classList.add('wrong');
+          setTimeout(() => {
+            wordEl.style.display = '';
+            delete slotEl.dataset.placed;
+            slotEl.textContent = '';
+            slotEl.classList.remove('filled', 'wrong');
+          }, 600);
+        }
+      }
+
+      for (const wordEl of wordEls) {
+        wordEl.draggable = true;
+        wordEl.addEventListener('click', () => {
+          if (wordEl.style.display === 'none') return;
+          if (selected === wordEl) { wordEl.classList.remove('selected'); selected = null; }
+          else selectWord(wordEl);
+        });
+        wordEl.addEventListener('dragstart', (e) => {
+          dragWord = wordEl;
+          wordEl.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        wordEl.addEventListener('dragend', () => {
+          wordEl.classList.remove('dragging');
+          dragWord = null;
+        });
+      }
+
+      for (const slotEl of allSlotEls) {
+        slotEl.addEventListener('click', () => {
+          if (slotEl.classList.contains('locked')) return;
+          if (selected) { placeWord(slotEl, selected); }
+          else if (slotEl.dataset.placed) { returnToBank(slotEl); }
+        });
+        slotEl.addEventListener('dragover', (e) => {
+          if (slotEl.classList.contains('locked')) return;
+          e.preventDefault();
+          slotEl.classList.add('drag-over');
+        });
+        slotEl.addEventListener('dragleave', () => slotEl.classList.remove('drag-over'));
+        slotEl.addEventListener('drop', (e) => {
+          e.preventDefault();
+          slotEl.classList.remove('drag-over');
+          if (dragWord) placeWord(slotEl, dragWord);
+        });
+      }
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
     function el(tag, cls) {
       const e = document.createElement(tag);
@@ -688,7 +1038,7 @@ progressDots.innerHTML = '';
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 0 1rem 6rem;
+    padding: 2rem 1rem 6rem;
     min-height: calc(100vh - 70px);
   }
 
@@ -744,13 +1094,25 @@ progressDots.innerHTML = '';
     margin-bottom: 0.5rem;
   }
 
+  .instruction-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .instruction {
     font-size: 0.85rem;
     font-weight: 200;
     color: #888;
     letter-spacing: 0.03em;
-    margin-bottom: 1.5rem;
     text-transform: uppercase;
+  }
+
+  .potential-points {
+    font-size: 0.8rem;
+    font-weight: 200;
+    color: #15616d;
   }
 
   /* ── Task area ───────────────────────────────────────────────────────────── */
@@ -855,6 +1217,38 @@ progressDots.innerHTML = '';
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
+  }
+
+  /* Categorize */
+  .categorize-columns {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .categorize-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .categorize-header {
+    font-family: 'IM Fell English', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #15616d;
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+
+  .categorize-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .categorize-slots .slot-drop {
+    width: 100%;
+    min-width: 0;
   }
 
   .slot-row {
@@ -1029,12 +1423,10 @@ progressDots.innerHTML = '';
     text-shadow: 0 2px 20px rgba(255, 125, 0, 0.35);
   }
 
-  /* ── Stars / complete score ───────────────────────────────────────────────── */
-  .stars {
-    font-size: 2rem;
-    color: #ff7d00;
-    letter-spacing: 0.1em;
-    margin: 0.5rem 0 0.75rem;
+  /* ── Confetti ─────────────────────────────────────────────────────────────── */
+  @keyframes confetti-fall {
+    0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) translateX(var(--drift)) rotate(var(--rotate)); opacity: 0; }
   }
 
   .complete-score {
@@ -1044,11 +1436,137 @@ progressDots.innerHTML = '';
     margin: 0 0 2rem;
   }
 
+  /* ── Memory ──────────────────────────────────────────────────────────────── */
+  .memory-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #999;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.3rem 0.85rem;
+    cursor: pointer;
+  }
+  .memory-btn:hover { color: #555; border-color: #bbb; }
+
+  .reveal-letter-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #999;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.3rem 0.85rem;
+    cursor: pointer;
+  }
+  .reveal-letter-btn:hover { color: #555; border-color: #bbb; }
+
+  .memory-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+  .memory-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: min(480px, 92vw);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .memory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.5rem 0.8rem;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .memory-header h3 {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.4rem;
+    margin: 0;
+    color: #1a1a2e;
+  }
+  .memory-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    line-height: 1;
+  }
+  .memory-close:hover { color: #555; }
+  .memory-body {
+    overflow-y: auto;
+    padding: 1rem 1.5rem 1.5rem;
+  }
+  .memory-entry {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .memory-entry:last-child { border-bottom: none; }
+  .memory-de {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #1a1a2e;
+    margin-bottom: 0.2rem;
+  }
+  .memory-en {
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #555;
+    white-space: pre-line;
+  }
+
+  /* ── Complete review ─────────────────────────────────────────────────────── */
+  .complete-review {
+    margin: 0 0 1.5rem;
+    text-align: left;
+  }
+  .review-toggle {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #15616d;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+  .review-toggle:hover { text-decoration: underline; }
+  .review-body {
+    border-top: 1px solid #eee;
+    padding-top: 0.5rem;
+  }
+
   /* ── Hints & reveal ─────────────────────────────────────────────────────── */
   .hints-area {
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid #eee;
+  }
+
+  .hints-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hints-btn-row .memory-btn {
+    margin-left: auto;
+    margin-bottom: 0;
   }
 
   .hint-btn {
@@ -1129,7 +1647,7 @@ progressDots.innerHTML = '';
   @media (max-width: 600px) {
     .game-header { padding: 0.6rem 1rem; }
     .sub-level-card, .complete-card { padding: 1.5rem 1rem; }
-    .game-main { padding: 1.5rem 0.75rem 4rem; }
+    .game-main { padding: 2rem 0.75rem 4rem; }
     .slot-drop { min-width: 110px; }
   }
 </style>

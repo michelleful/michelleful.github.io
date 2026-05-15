@@ -10,13 +10,42 @@ const safeJson = JSON.stringify(levels)
 
 <Layout title="German Is Easy">
 
-<h1>German Is <span class="crayon-strike">Easy<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Exactly the Right Level of Challenge</h1>
+<h1>German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy</h1>
 <p>
-  A puzzle game of cognates and induction.
+  A puzzle game of linguistic decipherment.
 </p>
 
-<div class="total-score-row" id="total-score-row" style="display:none">
-  Total: <span id="total-score"></span>
+<div class="mode-row">
+  <div class="mode-selector" id="mode-selector">
+    <button class="mode-btn" data-mode="casual">Casual</button>
+    <button class="mode-btn" data-mode="competitive">Competitive</button>
+    <button class="mode-btn" data-mode="challenging">Challenging</button>
+    <button class="mode-help-btn" id="mode-help-btn" aria-label="Mode descriptions">?</button>
+  </div>
+  <div class="total-score-row" id="total-score-row" style="display:none">
+    Total: <span id="total-score"></span>
+  </div>
+</div>
+
+<div class="mode-modal-backdrop" id="mode-modal-backdrop" style="display:none">
+  <div class="mode-modal" role="dialog" aria-modal="true" aria-label="Game modes">
+    <button class="mode-modal-close" id="mode-modal-close" aria-label="Close">×</button>
+    <h2>Game Modes</h2>
+    <dl class="mode-descriptions">
+      <dt>Casual</dt>
+      <dd>No score tracking, use as many hints as you like. No time restrictions on timed levels. Just explore at your own pace.</dd>
+      <dt>Competitive</dt>
+      <dd>Scores are tracked. Hints, letter reveals, incorrect guesses on certain puzzles, and going beyond time restrictions all cost points.</dd>
+      <dt>Challenging</dt>
+      <dd>Like Competitive, except that there are no hints, only letter reveals. Some words won't be easily guessable from context, so out-of-the-box thinking is required!</dd>
+    </dl>
+    <p class="mode-note">
+      Switch modes whenever you like.
+      Replay old levels to get a new score or improve a previous one.
+      Your most recent score will be kept, even if you switch to
+      Casual mode and back.
+    </p>
+  </div>
 </div>
 
 <div class="map-container" id="map-container">
@@ -24,8 +53,10 @@ const safeJson = JSON.stringify(levels)
   {levels.map((level) => (
     <a class="map-node" href={`/languages/german/is-easy/level/${level.id}/`} data-level-id={level.id} data-requires={level.requires ?? ''}>
       <div class="node-title">{level.title}</div>
-      <div class="node-label">Level {level.id}</div>
-      <span class="node-status" data-status-id={level.id}></span>
+      <div class="node-label-row">
+        <div class="node-label">{level.id}</div>
+        <span class="node-status" data-status-id={level.id}></span>
+      </div>
       <span class="node-score" data-score-id={level.id}></span>
     </a>
   ))}
@@ -41,7 +72,37 @@ const safeJson = JSON.stringify(levels)
   import rough from 'roughjs';
 
   const STORAGE_KEY = 'gie-progress';
+  const MODE_KEY    = 'gie-mode';
   const levelsData  = JSON.parse(document.getElementById('levels-meta').textContent);
+
+  // ── Mode selector ───────────────────────────────────────────────────────────
+  let mode = localStorage.getItem(MODE_KEY) || 'competitive';
+
+  function applyScoreVisibility(m) {
+    const casual = m === 'casual';
+    document.querySelectorAll('.node-score').forEach(el => {
+      el.style.display = casual ? 'none' : '';
+    });
+    const totalRow = document.getElementById('total-score-row');
+    if (totalRow && casual) totalRow.style.display = 'none';
+    // Restore total row only if it has a value (it may never have been shown)
+    if (totalRow && !casual && totalRow.dataset.hasScore === 'true') totalRow.style.display = '';
+  }
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    if (btn.dataset.mode === mode) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode;
+      localStorage.setItem(MODE_KEY, mode);
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+      applyScoreVisibility(mode);
+    });
+  });
+
+  const backdrop = document.getElementById('mode-modal-backdrop');
+  document.getElementById('mode-help-btn').addEventListener('click', () => backdrop.style.display = '');
+  document.getElementById('mode-modal-close').addEventListener('click', () => backdrop.style.display = 'none');
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) backdrop.style.display = 'none'; });
 
   function getProgress() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
@@ -50,16 +111,35 @@ const safeJson = JSON.stringify(levels)
   const progress = getProgress();
 
   // ── Map layout ─────────────────────────────────────────────────────────────
-  const NODE_W   = 110;
-  const NODE_H   = 110;
-  const V_STEP   = 170;
-  const MARGIN_Y = 50;
+  const NODE_W   = 100;
+  const V_STEP   = 180;
+  const MARGIN_Y = 55;
 
   const container  = document.getElementById('map-container');
   const mapSvg     = document.getElementById('map-svg');
   const nodes      = Array.from(container.querySelectorAll('.map-node'));
   const cW         = container.offsetWidth;
-  const totalH     = MARGIN_Y * 2 + (levelsData.length - 1) * V_STEP;
+
+  // Serpentine layout: 5 per row on wider screens, 3 on narrow
+  const PER_ROW  = cW >= 420 ? 5 : 3;
+  const MARGIN_X = NODE_W / 2 + 5;
+  const H_STEP   = (cW - 2 * MARGIN_X) / (PER_ROW - 1);
+  const numRows  = Math.ceil(levelsData.length / PER_ROW);
+  const totalH   = MARGIN_Y * 2 + (numRows - 1) * V_STEP;
+
+  // Small deterministic vertical jitter per node for a hand-drawn feel
+  const jitter = i => Math.sin(i * 2.1) * 10;
+
+  // Odd-numbered rows (0-indexed) go right→left
+  const centers = levelsData.map((_, i) => {
+    const row = Math.floor(i / PER_ROW);
+    const col = i % PER_ROW;
+    const goingRight = row % 2 === 0;
+    return {
+      x: goingRight ? MARGIN_X + col * H_STEP : cW - MARGIN_X - col * H_STEP,
+      y: MARGIN_Y + row * V_STEP + jitter(i)
+    };
+  });
 
   container.style.height = totalH + 'px';
   Object.assign(mapSvg.style, {
@@ -70,59 +150,77 @@ const safeJson = JSON.stringify(levels)
   mapSvg.setAttribute('width',  cW);
   mapSvg.setAttribute('height', totalH);
 
-  // Alternate node centres left / right
-  const centers = levelsData.map((_, i) => ({
-    x: i % 2 === 0 ? cW * 0.22 : cW * 0.78,
-    y: MARGIN_Y + i * V_STEP
-  }));
-
   // Position HTML nodes
   nodes.forEach((node, i) => {
     const c = centers[i];
     node.style.left = (c.x - NODE_W / 2) + 'px';
-    node.style.top  = (c.y - NODE_H / 2) + 'px';
+    node.style.top  = (c.y - NODE_W / 2) + 'px';
   });
+
+  // ── Progress bucket helpers ─────────────────────────────────────────────────
+  // Progress per level is stored as { comp: {...}, cas: {...} }.
+  // Old entries without these keys are treated as 'comp' for backward compat.
+  function getBucket(entry, casual) {
+    if (!entry) return null;
+    if ('comp' in entry || 'cas' in entry) return entry[casual ? 'cas' : 'comp'] || null;
+    return casual ? null : entry;
+  }
+
+  function isAnyDone(entry) {
+    if (!entry) return false;
+    if ('comp' in entry || 'cas' in entry) return !!(entry.comp?.done || entry.cas?.done);
+    return !!entry.done;
+  }
 
   // ── Locked state ───────────────────────────────────────────────────────────
   const locked = levelsData.map(level =>
-    level.requires ? !progress[String(level.requires)]?.done : false
+    level.requires ? !isAnyDone(progress[String(level.requires)]) : false
   );
 
   // ── Rough drawing ──────────────────────────────────────────────────────────
   const rc = rough.svg(mapSvg);
 
-  // Paths first so node boxes render on top
+  // Paths first so node circles render on top
   for (let i = 0; i < centers.length - 1; i++) {
     const a = centers[i];
     const b = centers[i + 1];
-    const y0    = a.y + NODE_H / 2 + 4;
-    const y1    = b.y - NODE_H / 2 - 4;
-    const midX  = (a.x + b.x) / 2 + (i % 2 === 0 ? cW * 0.10 : -cW * 0.10);
-    const midY  = (y0 + y1) / 2;
-    mapSvg.appendChild(rc.curve(
-      [[a.x, y0], [midX, midY], [b.x, y1]],
-      {
-        stroke: locked[i + 1] ? '#ddd' : '#15616d',
-        strokeWidth: 7,
-        roughness: 1.2,
-        strokeLineDash: [10, 14],
-        seed: i + 1
-      }
-    ));
+    const rowA = Math.floor(i / PER_ROW);
+    const rowB = Math.floor((i + 1) / PER_ROW);
+    let pts;
+    if (rowA !== rowB) {
+      // Row-change: vertical connector, pushed slightly outward
+      const y0   = a.y + NODE_W / 2 + 4;
+      const y1   = b.y - NODE_W / 2 - 4;
+      const push = rowA % 2 === 0 ? 12 : -12;
+      pts = [[a.x, y0], [a.x + push, (y0 + y1) / 2], [b.x, y1]];
+    } else {
+      // Same row: horizontal connector trimmed to node edges
+      const goingRight = rowA % 2 === 0;
+      const x0   = a.x + (goingRight ? 1 : -1) * (NODE_W / 2 + 4);
+      const x1   = b.x - (goingRight ? 1 : -1) * (NODE_W / 2 + 4);
+      const midY = (a.y + b.y) / 2 + Math.sin(i * 1.9) * 7;
+      pts = [[x0, a.y], [(x0 + x1) / 2, midY], [x1, b.y]];
+    }
+    const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pathEl.setAttribute('d', `M ${pts[0][0]},${pts[0][1]} Q ${pts[1][0]},${pts[1][1]} ${pts[2][0]},${pts[2][1]}`);
+    pathEl.setAttribute('fill', 'none');
+    pathEl.setAttribute('stroke', locked[i + 1] ? '#ddd' : '#15616d');
+    pathEl.setAttribute('stroke-width', '5');
+    pathEl.setAttribute('stroke-dasharray', '10 12');
+    pathEl.setAttribute('stroke-linecap', 'round');
+    mapSvg.appendChild(pathEl);
   }
 
   // Node circles (filled white so they sit over the path)
   centers.forEach((c, i) => {
-    mapSvg.appendChild(rc.circle(c.x, c.y, NODE_W,
-      {
-        stroke: locked[i] ? '#bbb' : '#15616d',
-        strokeWidth: 2,
-        roughness: 0.6,
-        fill: '#fff',
-        fillStyle: 'solid',
-        seed: i + 10
-      }
-    ));
+    mapSvg.appendChild(rc.circle(c.x, c.y, NODE_W, {
+      stroke: locked[i] ? '#bbb' : '#15616d',
+      strokeWidth: 2,
+      roughness: 0.6,
+      fill: '#fff',
+      fillStyle: 'solid',
+      seed: i + 10
+    }));
   });
 
   // Crayon strikethrough on h1
@@ -133,12 +231,15 @@ const safeJson = JSON.stringify(levels)
 
   // ── Progress & locking ─────────────────────────────────────────────────────
   let totalScore = 0, totalMax = 0, anyScore = false;
+  const isCasual = mode === 'casual';
 
   nodes.forEach((node, i) => {
     const level    = levelsData[i];
     const statusEl = node.querySelector('[data-status-id]');
     const scoreEl  = node.querySelector('[data-score-id]');
-    const p        = progress[String(level.id)];
+    const entry    = progress[String(level.id)];
+    const p        = getBucket(entry, isCasual);   // current mode's bucket
+    const compData = getBucket(entry, false);       // competitive score (always)
 
     if (locked[i]) {
       node.removeAttribute('href');
@@ -149,14 +250,14 @@ const safeJson = JSON.stringify(levels)
 
     if (p?.done) {
       if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
-    } else if (p) {
-      if (statusEl) { statusEl.textContent = `${p.current}/${level.total}`; statusEl.classList.add('in-progress'); }
+    } else if (p?.current) {
+      if (statusEl) { statusEl.textContent = '▶'; statusEl.classList.add('in-progress'); statusEl.title = 'Resume level'; }
     }
 
-    if (p?.score != null) {
-      if (scoreEl) scoreEl.textContent = `${p.score}/${p.maxScore} pts`;
-      totalScore += p.score;
-      totalMax   += p.maxScore;
+    if (!isCasual && compData?.score != null && compData?.maxScore != null) {
+      if (scoreEl) scoreEl.textContent = `${compData.score}/${compData.maxScore}`;
+      totalScore += compData.score;
+      totalMax   += compData.maxScore;
       anyScore    = true;
     }
   });
@@ -166,12 +267,13 @@ const safeJson = JSON.stringify(levels)
     const totalSpan = document.getElementById('total-score');
     if (totalRow && totalSpan) {
       totalSpan.textContent = `${totalScore} / ${totalMax} pts`;
-      totalRow.style.display = '';
+      totalRow.dataset.hasScore = 'true';
+      if (!isCasual) totalRow.style.display = '';
     }
   }
 
   // Enter: jump to the next playable level (first unlocked + incomplete, or first unlocked)
-  const nextLevel = levelsData.find((l, i) => !locked[i] && !progress[String(l.id)]?.done);
+  const nextLevel = levelsData.find((l, i) => !locked[i] && !getBucket(progress[String(l.id)], isCasual)?.done);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && nextLevel) {
       window.location.href = `/languages/german/is-easy/level/${nextLevel.id}/`;
@@ -189,6 +291,14 @@ const safeJson = JSON.stringify(levels)
 </Layout>
 
 <style>
+  h1 {
+    margin-bottom: 0.2rem;
+  }
+
+  h1 + p {
+    margin-top: 0;
+  }
+
   .crayon-strike {
     position: relative;
     display: inline-block;
@@ -205,17 +315,80 @@ const safeJson = JSON.stringify(levels)
     pointer-events: none;
   }
 
+  /* ── Mode row ─────────────────────────────────────────────────────────────── */
+  .mode-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  /* ── Mode selector ────────────────────────────────────────────────────────── */
+  .mode-selector {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .mode-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    padding: 0.3rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .mode-btn:hover {
+    color: #15616d;
+    border-color: #15616d;
+  }
+
+  .mode-btn.active {
+    background: #15616d;
+    border-color: #15616d;
+    color: #fff;
+  }
+
+  .mode-help-btn {
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    border: 1px solid #15616d;
+    background: transparent;
+    color: #15616d;
+    font-size: 0.75rem;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .mode-help-btn:hover {
+    color: #15616d;
+    border-color: #15616d;
+  }
+
   /* ── Map ──────────────────────────────────────────────────────────────────── */
   .map-container {
     position: relative;
-    max-width: 480px;
     margin: 2rem auto 0;
   }
 
   .map-node {
     position: absolute;
-    width: 110px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -234,18 +407,24 @@ const safeJson = JSON.stringify(levels)
   }
 
   .node-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     line-height: 1;
+  }
+
+  .node-label-row {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
   }
 
   .node-label {
     font-family: 'IM Fell English', serif;
-    font-size: 0.7rem;
+    font-size: 1.2rem;
     color: #888;
   }
 
   .node-status {
-    font-size: 0.75rem;
+    font-size: 1rem;
     color: #888;
   }
 
@@ -259,11 +438,82 @@ const safeJson = JSON.stringify(levels)
 
   /* ── Total score ──────────────────────────────────────────────────────────── */
   .total-score-row {
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-weight: 400;
     color: #15616d;
-    margin-top: 1.5rem;
-    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ── Mode modal ───────────────────────────────────────────────────────────── */
+  .mode-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .mode-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 380px;
+    width: calc(100% - 2rem);
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+
+  .mode-modal h2 {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.8rem;
+    margin: 0 0 1.2rem;
+    color: #1a1a2e;
+  }
+
+  .mode-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .mode-modal-close:hover { color: #555; }
+
+  .mode-descriptions {
+    margin: 0;
+  }
+
+  .mode-descriptions dt {
+    font-weight: 400;
+    color: #15616d;
+    margin-top: 0.9rem;
+  }
+
+  .mode-descriptions dt:first-child { margin-top: 0; }
+
+  .mode-descriptions dd {
+    margin: 0.2rem 0 0 0;
+    font-size: 0.9rem;
+    font-weight: 200;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .mode-note {
+    margin: 1rem 0 0;
+    font-size: 0.85rem;
+    font-weight: 200;
+    color: #777;
+    line-height: 1.5;
+    font-style: italic;
   }
 
   /* ── Reset ────────────────────────────────────────────────────────────────── */

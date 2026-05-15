@@ -7,9 +7,72 @@
   },
   {
     "id": 2,
-    "title": "👨‍👩‍👧🗓️",
+    "title": "👨‍👩‍👧 🐈",
     "unlocked": false,
     "total": 10,
     "requires": 1
+  },
+  {
+    "id": 3,
+    "title": "🐪⚔️",
+    "unlocked": false,
+    "total": 10,
+    "requires": 2
+  },
+  {
+    "id": 4,
+    "title": "🐻🏔️",
+    "unlocked": false,
+    "total": 10,
+    "requires": 3
+  },
+  {
+    "id": 5,
+    "title": "🦊🍄",
+    "unlocked": false,
+    "total": 10,
+    "requires": 4
+  },
+  {
+    "id": 6,
+    "title": "🚂💨",
+    "unlocked": false,
+    "total": 10,
+    "requires": 5
+  },
+  {
+    "id": 7,
+    "title": "🦋🌸",
+    "unlocked": false,
+    "total": 10,
+    "requires": 6
+  },
+  {
+    "id": 8,
+    "title": "⚡🌩️",
+    "unlocked": false,
+    "total": 10,
+    "requires": 7
+  },
+  {
+    "id": 9,
+    "title": "🐋🌊",
+    "unlocked": false,
+    "total": 10,
+    "requires": 8
+  },
+  {
+    "id": 10,
+    "title": "🎭🗝️",
+    "unlocked": false,
+    "total": 10,
+    "requires": 9
+  },
+  {
+    "id": 11,
+    "title": "🌋🦎",
+    "unlocked": false,
+    "total": 10,
+    "requires": 10
   }
 ]

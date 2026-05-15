@@ -1,0 +1,213 @@
+{
+  "id": 3,
+  "subLevels": [
+    {
+      "kind": "translate",
+      "german": "Der Nil ist ein Fluss in Ägypten.",
+      "target": [
+        {"word": "The"},
+        {"word": "Nile"},
+        {"word": "is"},
+        {"word": "a"},
+        {"word": "river"},
+        {"word": "in"},
+        {"word": "Egypt", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"Fluss\" is distantly related to \"flood\" in English. Think something that might flood occasionally. Der Nil did once a year until the construction of the \"Assuan-Staudamm\"!"
+        }
+      ],
+      "reveal": "\"Denial\" is \"Verweigerung\" in German, so the pun doesn't work like in English."
+    },
+    {
+      "kind": "translate",
+      "german": "Der Nil ist der längste Fluss der Welt (7.088 km).",
+      "target": [
+        {"word": "The"},
+        {"word": "Nile"},
+        {"word": "is"},
+        {"word": "the"},
+        {"word": "longest"},
+        {"word": "river"},
+        {"word": "in"},
+        {"word": "the"},
+        {"word": "world"},
+        {"word": "(", "given": true, "spaceAfter": false},
+        {"word": "7,088", "also": ["7088"]},
+        {"word": "km", "spaceAfter": false},
+        {"word": ")", "given": true, "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "The English translation of \"längste\" has the same consonants, in order."
+        }
+      ],
+      "reveal": "You may be wondering why English has the word \"in\" in English while German doesn't! \"der Welt\" is in genitive case, so it already means \"of the world\"."
+    },
+    {
+      "kind": "translate",
+      "german": "WHO steht für die Weltgesundheitsorganisation.",
+      "target": [
+        {"word": "WHO"},
+        {"word": "stands"},
+        {"word": "for"},
+        {"word": "the"},
+        {"word": "World"},
+        {"word": "Health"},
+        {"word": "Organisation", "also": ["Organization"], "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "That's the longest compound word we've done yet! Well done!"
+    },
+    {
+      "kind": "translate",
+      "german": "Gesundheit!",
+      "instruction": "Translate literally.",
+      "target": [
+        {"word": "Health", "spaceAfter": false},
+        {"word": "!", "given": true}
+      ],
+      "hints": [],
+      "reveal": "\"Gesundheit\" was once also used as a toast while drinking, much like English \"To your health!\", but \"Zum Wohl!\" with the same meaning is now more common, or even more colloquially \"Prost!\" (\"Cheers!\")."
+    },
+    {
+      "kind": "translate",
+      "german": "Englisch, Deutsch und Mandarin sind Weltsprachen.",
+      "target": [
+        {"word": "English", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "German"},
+        {"word": "and"},
+        {"word": "Mandarin"},
+        {"word": "are"},
+        {"word": "world"},
+        {"word": "languages", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "The word \"Deutsch\" derives from Proto-Germanic \"þeudō\" meaning \"the people, folk\". The same root gives us \"Dutch\", \"Teuton\", and the Italian word for German, \"Tedesco\"!"
+    },
+    {
+      "kind": "translate",
+      "german": "Ich spreche Englisch und Deutsch, aber kein Mandarin.",
+      "target": [
+        {"word": "I"},
+        {"word": "speak"},
+        {"word": "English"},
+        {"word": "and"},
+        {"word": "German", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "but"},
+        {"word": "not"},
+        {"word": "Mandarin", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "The word \"Mandarin\" also had a long linguistic journey, starting with the Sanskrit word \"mantrin\" meaning a minister, via Malay \"menteri\", and then to Portuguese \"mandarim\". The Portuguese used this word for the scholar-officials of the Qing court, and for the court's lingua franca."
+    },
+    {
+      "kind": "translate",
+      "german": "Spanisch spreche ich mit Gott, Italienisch mit Frauen, Französisch mit Männern und Deutsch mit meinem Pferd 🐴.",
+      "attribution": "Karl V, Kaiser des Heiligen Römischen Reiches Deutscher Nation",
+      "target": [
+        {"word": "I"},
+        {"word": "speak"},
+        {"word": "Spanish"},
+        {"word": "with", "also": "to"},
+        {"word": "God", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "Italian"},
+        {"word": "with", "also": "to"},
+        {"word": "women", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "French"},
+        {"word": "with", "also": "to"},
+        {"word": "men"},
+        {"word": "and"},
+        {"word": "German"},
+        {"word": "with", "also": "to"},
+        {"word": "my"},
+        {"word": "horse", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "The word order of the first clause may be a bit confusing, but you know or can easily guess most of the words. Translate into natural English word order.",
+          "points": 1
+        },
+        {
+          "hint": "\"Frauen\" and \"Männern\" contrast in gender, and the latter is pretty close to its English equivalent!"
+        }
+      ],
+      "reveal": "You may be wondering what on earth is going on with the verb order in the first clause. It's all about German's determination to keep the verb as the second element in the sentence. We'll do more with this \"V2\" phenomenon later! Also, were you able to decode Karl V's title? Most of the words have English cognates!"
+    },
+    {
+      "kind": "categorize",
+      "german": "Zweiter Weltkrieg",
+      "instruction": "Sort the countries into the correct group (−1 pt per wrong placement)",
+      "groups": [
+        {
+          "label": "Die Alliierten",
+          "answers": ["Vereinigtes Königreich", "Vereinigte Staaten", "Sowjetunion"]
+        },
+        {
+          "label": "Die Achsenmächte",
+          "answers": ["Deutschland", "Italien", "Japan"]
+        }
+      ],
+      "reveal": "You've probably worked out what \"Zweiter\" means. The \"First\" would have been \"Erster\" &mdash; can you think of an English word containing the now-rare morpheme \"erst\"?"
+    },
+    {
+      "kind": "translate",
+      "german": "„Krieg und Frieden\" ist ein russisches Buch von Leo Tolstoi.",
+      "target": [
+        {"word": "\u201C", "given": true, "spaceAfter": false},
+        {"word": "War"},
+        {"word": "and"},
+        {"word": "Peace"},
+        {"word": "\u201D", "given": true},
+        {"word": "is"},
+        {"word": "a"},
+        {"word": "Russian"},
+        {"word": "book"},
+        {"word": "by"},
+        {"word": "Leo"},
+        {"word": "Tolstoy", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "This is notorious as a very \"langes Buch\"."
+        }
+      ],
+      "reveal": "I've personally never finished it, though many people have told me I should...also, the word I was thinking of is \"erstwhile\"!"
+    },
+    {
+      "kind": "translate",
+      "german": "Friede den Hütten, Krieg den Palästen!",
+      "attribution": "Georg Büchner, Deutscher Dramatiker und Revolutionär",
+      "target": [
+        {"word": "Peace"},
+        {"word": "to", "given": true},
+        {"word": "the"},
+        {"word": "huts", "also": ["cottages", "shacks"]},
+        {"word": ",", "given": true},
+        {"word": "war"},
+        {"word": "to"},
+        {"word": "the"},
+        {"word": "palaces"},
+        {"word": "!", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"Hütten\" and \"Palästen\" are two contrasting types of abodes, both close to their English equivalents."
+        }
+      ],
+      "reveal": "And on that stirring call to action, congratulations on finishing Level 3!"
+    }
+  ]
+}

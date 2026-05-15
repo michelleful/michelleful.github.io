@@ -14,7 +14,7 @@
           "hint": "🧂 + 🧂, but in grey"
         }
       ],
-      "reveal": "Well done! Pay attention to these reveals - they may help with future puzzles!"
+      "reveal": "Well done! Pay attention to these reveals - they may help with future puzzles, tell you a fun fact, or pose a bonus mini-puzzle! For example, what mineral do you think the city of Salzburg 🎵 in Austria is famous for mining? You can already guess!"
     },
     {
       "kind": "translate",
@@ -69,6 +69,7 @@
     {
       "kind": "translate",
       "german": "Wasser, Wasser überall, und nicht ein Tropfen zu trinken.",
+      "attribution": "Samuel Taylor Coleridge",
       "target": [
         {"word": "Water", "spaceAfter": false},
         {"word": ",", "given": true},
@@ -83,7 +84,6 @@
         {"word": "drink", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "attribution": "Samuel Taylor Coleridge",
       "hints": [
         {
           "hint": "The lament of the Ancient Mariner"
@@ -148,18 +148,18 @@
       ],
       "hints": [
         {
-          "hint": "Word order should be in natural English word order, not following the German, unless otherwise instructed.",
+          "hint": "This is our first sentence with a significant word order difference. Where one language has 1234, the other language has 1243.",
           "points": 0
         },
         {
-          "hint": "Turn the \"u\" to an \"i\" to find a more familiar form.",
+          "hint": "Change the \"u\" to an \"i\" to find a more familiar verb we've seen a few times already.",
           "points": 2
         },
         {
-          "hint": "\"getrunken\" is a past participle of a verb we've already seen a couple of times."
+          "hint": "\"getrunken\" is the past participle of \"trinken\". For example \"taken\" is the past participle of \"take\"."
         }
       ],
-      "reveal": "This was not an easy one! Well done!"
+      "reveal": "This was objectively the hardest puzzle in this level! Well done!"
     },
     {
       "kind": "translate",
@@ -168,14 +168,18 @@
         {"word": "I"},
         {"word": "have"},
         {"word": "drunk"},
-        {"word": "too", "given": true},
-        {"word": "much"},
+        {"word": "too"},
+        {"word": "much", "given": true, "challengingInput": true},
         {"word": "beer", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
       "hints": [
         {
-          "hint": "There's no close cognate to \"viel\" in Modern English. It means \"much\".",
+          "hint": "\"viel\" corresponds to \"much\". What other words are there that you haven't seen before?",
+          "points": 2
+        },
+        {
+          "hint": "If \"Salz\" ~ \"salt\", then \"zu\" ~ ?",
           "points": 2
         }
       ]
