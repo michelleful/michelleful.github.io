@@ -14,7 +14,7 @@
           "hint": "🧂 + 🧂, but in grey"
         }
       ],
-      "reveal": "Well done! Pay attention to these reveals - they may help with future puzzles, tell you a fun fact, or pose a bonus mini-puzzle! For example, what mineral do you think the city of Salzburg 🎵 in Austria is famous for mining? You can already guess!"
+      "reveal": "Well done! Pay attention to these reveals &mdash; they may help with future puzzles, tell you a fun fact, or pose a bonus mini-puzzle! For example, the city of Salzburg in Austria is famous for its music 🎵 but what else is it famous for mining? You can already guess!"
     },
     {
       "kind": "translate",
@@ -46,7 +46,7 @@
           "points": 1
         },
         {
-          "hint": "Meer = 🌊"
+          "hint": "\"Meer\" = 🌊"
         }
       ],
       "reveal": "English still retains \"mere\" in some place names like \"Windermere\", the largest lake in England."
@@ -64,7 +64,7 @@
           "alt": "Image of a water fountain, with the words \"Trinkwasser\" and \"Drinking water\" on its sign"
         }
       ],
-      "reveal": "Indeed, the excess salt in seawater would dehydrate you more than drinking nothing at all."
+      "reveal": "Indeed, the excess salt in seawater would dehydrate you more than drinking nothing at all. Therefore, <em>Meerwasser ist kein Trinkwasser</em>."
     },
     {
       "kind": "translate",
@@ -134,7 +134,7 @@
           "points": 4
         }
       ],
-      "reveal": "Old English had \"ic hæbbe\" too, but English gradually smooshed together most present tense forms (except \"has\"!) while German kept alllll its verb distinctions."
+      "reveal": "Old English said \"ic hæbbe\" too, but English gradually smooshed together most present tense forms (except \"has\") while German kept alllll its verb distinctions."
     },
     {
       "kind": "translate",
@@ -155,6 +155,7 @@
           "hint": "Change the \"u\" to an \"i\" to find a more familiar verb we've seen a few times already.",
           "points": 2
         },
+
         {
           "hint": "\"getrunken\" is the past participle of \"trinken\". For example \"taken\" is the past participle of \"take\"."
         }
@@ -175,14 +176,11 @@
       ],
       "hints": [
         {
-          "hint": "\"viel\" corresponds to \"much\". What other words are there that you haven't seen before?",
-          "points": 2
-        },
-        {
           "hint": "If \"Salz\" ~ \"salt\", then \"zu\" ~ ?",
           "points": 2
         }
-      ]
+      ],
+      "reveal": "We saw \"zu\" meaning \"to\" earlier, and as you can see here, it also means \"too\", whereas English spells them differently."
     },
     {
       "kind": "translate",

@@ -3,12 +3,16 @@ import levels from '../../../../../data/german-is-easy/levels.json';
 import level1 from '../../../../../data/german-is-easy/level1.json';
 import level2 from '../../../../../data/german-is-easy/level2.json';
 import level3 from '../../../../../data/german-is-easy/level3.json';
+import level4 from '../../../../../data/german-is-easy/level4.json';
+import level5 from '../../../../../data/german-is-easy/level5.json';
 
 export function getStaticPaths() {
   return [
     { params: { id: '1' }, props: { levelData: level1 } },
     { params: { id: '2' }, props: { levelData: level2 } },
     { params: { id: '3' }, props: { levelData: level3 } },
+    { params: { id: '4' }, props: { levelData: level4 } },
+    { params: { id: '5' }, props: { levelData: level5 } },
   ];
 }
 
@@ -32,7 +36,8 @@ const safeJson = JSON.stringify(levelData)
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:ital,wght@0,200;0,400;1,400&display=swap" rel="stylesheet" />
-  <title>Level {levelData.id} — German Is Easy</title>
+  <title>Level {levelData.id} — German Is A̶w̶f̶u̶l̶ Easy</title>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="fa1bd294-88ac-4c65-b29d-8c7656bc9bbc"></script>
 </head>
 <body>
   <header class="game-header">
@@ -50,6 +55,7 @@ const safeJson = JSON.stringify(levelData)
   <main class="game-main" id="game-main"></main>
 
   <script type="application/json" id="level-data" set:html={safeJson}></script>
+  <script type="application/json" id="level-meta" set:html={JSON.stringify({ requires: levelMeta?.requires ?? null })}></script>
 
   <script>
     const STORAGE_KEY = 'gie-progress';
@@ -67,6 +73,21 @@ const safeJson = JSON.stringify(levelData)
 
     const prog = getProgress();
     const isCasual = mode === 'casual';
+
+    // Redirect to map if this level is locked
+    const levelMeta = JSON.parse(document.getElementById('level-meta').textContent);
+    const requires = levelMeta.requires;
+    if (requires != null) {
+      const reqEntry = prog[String(requires)];
+      const reqDone = reqEntry && (
+        reqEntry.done ||
+        (reqEntry.comp && reqEntry.comp.done) ||
+        (reqEntry.cas  && reqEntry.cas.done)
+      );
+      if (!reqDone) {
+        window.location.replace('/languages/german/is-easy/');
+      }
+    }
 
     // Progress is stored in two separate buckets: 'comp' (competitive/challenging) and 'cas' (casual).
     // Old entries without these keys are treated as 'comp' for backward compatibility.
@@ -98,7 +119,8 @@ const progressDots = document.getElementById('progress-dots');
 
     // ── Score ───────────────────────────────────────────────────────────────────
     let score = saved.done ? 0 : (saved.score || 0);
-    const maxScore = totalSubs * 10;
+    const maxScore = levelData.subLevels.reduce((sum, s) =>
+      sum + (s.kind === 'match' ? s.pairs.length * (s.points ?? 5) : 10), 0);
 
     function subLevelPoints(mistakes) {
       if (mistakes === 0) return 10;
@@ -184,6 +206,7 @@ progressDots.innerHTML = '';
           ? { current: 0, done: true }
           : { current: 0, done: true, score, maxScore });
         setProgress(p);
+        if (typeof umami !== 'undefined') umami.track('Level complete', { level: levelData.id, mode, score, maxScore });
         showLevelComplete();
       } else {
         setBucket(p, isCasual
@@ -223,6 +246,8 @@ progressDots.innerHTML = '';
           const lines = sub.groups.map(g => `${g.label}: ${g.answers.join(', ')}`).join('\n');
           return { de: sub.german, en: lines };
         }
+        case 'match':
+          return { de: 'Word pairs', en: sub.pairs.map(p => `${p.german} – ${p.english}`).join('\n') };
         default:
           return { de: sub.german || '', en: null };
       }
@@ -232,20 +257,55 @@ progressDots.innerHTML = '';
       const frag = document.createDocumentFragment();
       for (let i = 0; i < upToIdx; i++) {
         const sub = levelData.subLevels[i];
-        const { de, en } = subToSummary(sub);
-        const entry = document.createElement('div');
-        entry.className = 'memory-entry';
-        const deEl = document.createElement('div');
-        deEl.className = 'memory-de';
-        deEl.textContent = de;
-        entry.appendChild(deEl);
-        if (en) {
-          const enEl = document.createElement('div');
-          enEl.className = 'memory-en';
-          enEl.textContent = en;
-          entry.appendChild(enEl);
+
+        if (sub.kind === 'match' && sub.useGroupingsToDisplay) {
+          // Build grouped display: collect groups in order of first appearance
+          const groupOrder = [];
+          const groupMap = new Map();
+          for (const pair of sub.pairs) {
+            const groups = pair.groupings && pair.groupings.length > 0 ? pair.groupings : ['Other'];
+            for (const g of groups) {
+              if (!groupMap.has(g)) { groupMap.set(g, []); groupOrder.push(g); }
+              groupMap.get(g).push(pair);
+            }
+          }
+          for (const label of groupOrder) {
+            const header = document.createElement('div');
+            header.className = 'memory-group-header';
+            header.textContent = label;
+            frag.appendChild(header);
+            for (const pair of groupMap.get(label)) {
+              const entry = document.createElement('div');
+              entry.className = 'memory-entry memory-entry-compact';
+              const deSpan = document.createElement('span');
+              deSpan.className = 'memory-de';
+              deSpan.textContent = pair.german;
+              const enSpan = document.createElement('span');
+              enSpan.className = 'memory-en';
+              enSpan.style.fontFamily = "'Jost', sans-serif";
+              enSpan.textContent = pair.english;
+              entry.appendChild(deSpan);
+              entry.append(' ~ ');
+              entry.appendChild(enSpan);
+              frag.appendChild(entry);
+            }
+          }
+        } else {
+          const { de, en } = subToSummary(sub);
+          const entry = document.createElement('div');
+          entry.className = 'memory-entry';
+          const deEl = document.createElement('div');
+          deEl.className = 'memory-de';
+          deEl.textContent = de;
+          entry.appendChild(deEl);
+          if (en) {
+            const enEl = document.createElement('div');
+            enEl.className = 'memory-en';
+            enEl.textContent = en;
+            entry.appendChild(enEl);
+          }
+          frag.appendChild(entry);
         }
-        frag.appendChild(entry);
       }
       return frag;
     }
@@ -257,7 +317,7 @@ progressDots.innerHTML = '';
       modal.className = 'memory-modal';
       const header = document.createElement('div');
       header.className = 'memory-header';
-      header.appendChild(Object.assign(document.createElement('h3'), { textContent: 'Memory' }));
+      header.appendChild(Object.assign(document.createElement('h3'), { textContent: 'Review' }));
       const closeBtn = document.createElement('button');
       closeBtn.className = 'memory-close';
       closeBtn.textContent = '×';
@@ -319,14 +379,14 @@ progressDots.innerHTML = '';
       }
       const reviewSection = el('div', 'complete-review');
       const reviewToggle = el('button', 'review-toggle');
-      reviewToggle.textContent = 'Review all sentences ▾';
+      reviewToggle.textContent = 'Review ▾';
       const reviewBody = el('div', 'review-body');
       reviewBody.style.display = 'none';
       reviewBody.appendChild(buildMemoryContent(totalSubs));
       reviewToggle.addEventListener('click', () => {
         const open = reviewBody.style.display !== 'none';
         reviewBody.style.display = open ? 'none' : '';
-        reviewToggle.textContent = open ? 'Review all sentences ▾' : 'Hide review ▴';
+        reviewToggle.textContent = open ? 'Review ▾' : 'Hide review ▴';
       });
       reviewSection.appendChild(reviewToggle);
       reviewSection.appendChild(reviewBody);
@@ -370,12 +430,13 @@ progressDots.innerHTML = '';
         (sub.kind === 'translate'  ? 'Translate' :
          sub.kind === 'choice'     ? 'Choose the correct answer' :
          sub.kind === 'reorder'    ? 'Put in the correct order' :
-         sub.kind === 'categorize' ? 'Sort into the correct group' : '');
+         sub.kind === 'categorize' ? 'Sort into the correct group' :
+         sub.kind === 'match'      ? 'Matching game' : '');
       let potentialPointsEl = null;
       if (instructionText) {
-        const instrRow = el('div', 'instruction-row');
+        const instrRow = el('div', sub.kind === 'match' ? 'instruction-row instruction-row-match' : 'instruction-row');
         instrRow.appendChild(elText('span', 'instruction', instructionText));
-        if (mode !== 'casual') {
+        if (mode !== 'casual' && sub.kind !== 'match') {
           potentialPointsEl = elText('span', 'potential-points', '(10 pts)');
           instrRow.appendChild(potentialPointsEl);
         }
@@ -443,12 +504,18 @@ progressDots.innerHTML = '';
             img.alt = h.alt || h.hint || 'Hint';
             img.className = 'hint-img';
             hintEl.appendChild(img);
-            if (h.hint) hintEl.appendChild(document.createTextNode(h.hint));
+            if (h.hint) {
+              const span = document.createElement('span');
+              span.innerHTML = h.hint;
+              hintEl.appendChild(span);
+            }
           } else {
             const label = document.createElement('strong');
             label.textContent = 'Hint: ';
             hintEl.appendChild(label);
-            hintEl.appendChild(document.createTextNode(h.hint));
+            const span = document.createElement('span');
+            span.innerHTML = h.hint;
+            hintEl.appendChild(span);
           }
           revealedHints.appendChild(hintEl);
           hintIdx++;
@@ -491,7 +558,7 @@ progressDots.innerHTML = '';
       }
       if (idx > 0) {
         const memBtn = el('button', 'memory-btn');
-        memBtn.textContent = '📖 Memory';
+        memBtn.textContent = 'Memory';
         memBtn.addEventListener('click', () => showMemoryModal(idx));
         btnRow.appendChild(memBtn);
       }
@@ -504,10 +571,18 @@ progressDots.innerHTML = '';
         revealP.innerHTML = sub.reveal;
         revealArea.appendChild(revealP);
       }
+      if (sub.revealImage) {
+        const img = document.createElement('img');
+        img.src = sub.revealImage;
+        img.alt = sub.revealImageAlt || '';
+        img.className = 'hint-img';
+        revealArea.appendChild(img);
+      }
 
       const showNext = () => {
         hintsArea.style.display = 'none';
-        if (sub.reveal) revealArea.style.display = '';
+        if (sub.reveal || sub.revealImage) revealArea.style.display = '';
+        if (typeof umami !== 'undefined') umami.track('Sub-level complete', { level: levelData.id, sublevel: idx + 1, kind: sub.kind, mode });
         const pts = taskFailed ? 0 : Math.max(0, 10 - hintDeduction - mistakeCount);
         score += pts;
         if (mode !== 'casual') {
@@ -529,10 +604,20 @@ progressDots.innerHTML = '';
         case 'choice':     renderChoice(sub, taskArea, showNext, onMistakeTracked);     break;
         case 'reorder':    renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
         case 'categorize': renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
+        case 'match':
+          renderMatch(sub, taskArea,
+            (pts) => { score += pts; if (mode !== 'casual') updateScoreDisplay(); },
+            () => {
+              if (sub.reveal || sub.revealImage) revealArea.style.display = '';
+              nextBtn.style.display = '';
+              nextBtn.focus();
+            }
+          );
+          break;
       }
 
       card.appendChild(taskArea);
-      card.appendChild(hintsArea);
+      if (sub.kind !== 'match') card.appendChild(hintsArea);
       card.appendChild(revealArea);
       card.appendChild(nextBtn);
       gameMain.appendChild(card);
@@ -557,12 +642,12 @@ progressDots.innerHTML = '';
       const answerRow = el('div', 'answer-row');
       const inputs = [];
 
+      let currentGroup = null;
       for (const item of sub.target) {
         const renderAsGiven = item.given && !(mode === 'challenging' && item.challengingInput);
+        let domEl;
         if (renderAsGiven) {
-          const span = elText('span', 'given-word', item.word);
-          if (item.spaceAfter === false) span.classList.add('tight');
-          answerRow.appendChild(span);
+          domEl = elText('span', 'given-word', item.word);
         } else {
           const input = document.createElement('input');
           input.type = 'text';
@@ -571,7 +656,7 @@ progressDots.innerHTML = '';
           input._acceptedWords = acceptedWords;
           input.dataset.answer = item.word;
           const chWidth = w => {
-            const wides = (w.match(/[A-Zw]/g) || []).length;
+            const wides = (w.match(/[A-Zwm]/g) || []).length;
             return wides * 1.4 + (w.length - wides) * 0.85 + 2;
           };
           input.style.width = Math.max(5, ...acceptedWords.map(chWidth)) + 'ch';
@@ -623,9 +708,23 @@ progressDots.innerHTML = '';
             }
           });
 
-          if (item.spaceAfter === false) input.classList.add('tight');
           inputs.push(input);
-          answerRow.appendChild(input);
+          domEl = input;
+        }
+
+        if (item.spaceAfter === false) {
+          if (!currentGroup) {
+            currentGroup = el('span', 'tight-group');
+            answerRow.appendChild(currentGroup);
+          }
+          currentGroup.appendChild(domEl);
+        } else {
+          if (currentGroup) {
+            currentGroup.appendChild(domEl);
+            currentGroup = null;
+          } else {
+            answerRow.appendChild(domEl);
+          }
         }
       }
 
@@ -925,6 +1024,209 @@ progressDots.innerHTML = '';
       return e;
     }
 
+    // ── Match task ─────────────────────────────────────────────────────────────
+    function renderMatch(sub, container, onAddPoints, onDone) {
+      const isMobile   = window.innerWidth < 520;
+      const INITIAL    = isMobile ? 6 : 7;
+      const BATCH_SIZE = 2;
+      const REFILL_AT  = isMobile ? 4 : 5;
+
+      // Shuffle pairs, assign stable ids
+      const allPairs = sub.pairs.map((p, i) => ({ ...p, id: i }));
+      const queue = [...allPairs].reverse(); // reversed so pop() yields pairs in original order
+      let tiles = []; // { el, pairId, matched }
+      let zTop = 1;
+      let done = false;
+
+      // Timer
+      const timeLimit = sub.timeLimit;
+      let timeLeft = timeLimit;
+      let timerInterval = null;
+
+      function fmtTime(s) {
+        return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+      }
+
+      let timerEl = null;
+      if (mode !== 'casual' && timeLimit) {
+        timerEl = elText('div', 'match-timer', fmtTime(timeLeft));
+      }
+
+      // Draggable area (added to DOM when game starts)
+      const area = el('div', 'match-area');
+
+      function spawnTile(word, pairId, lang) {
+        const tile = elText('button', 'match-tile', word);
+        if (lang === 'en') tile.classList.add('match-tile-en');
+        tile.style.left = '0px';
+        tile.style.top  = '0px';
+        tile.style.opacity = '0';
+        const entry = { el: tile, pairId, matched: false, positioned: false };
+        tiles.push(entry);
+        makeDraggable(tile, entry);
+        area.appendChild(tile);
+        return entry;
+      }
+
+      function placeEntry(entry) {
+        const pad = 10;
+        const aW  = area.offsetWidth;
+        const aH  = area.offsetHeight;
+        const tw  = entry.el.offsetWidth  || 80;
+        const th  = entry.el.offsetHeight || 36;
+        const maxX = Math.max(pad, aW - tw - pad);
+        const maxY = Math.max(pad, aH - th - pad);
+
+        let bestX = pad + Math.random() * (maxX - pad);
+        let bestY = pad + Math.random() * (maxY - pad);
+        let bestOverlap = Infinity;
+
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const x = pad + Math.random() * (maxX - pad);
+          const y = pad + Math.random() * (maxY - pad);
+          let overlap = 0;
+          for (const other of tiles) {
+            if (other === entry || other.matched || !other.positioned) continue;
+            const ox = parseFloat(other.el.style.left);
+            const oy = parseFloat(other.el.style.top);
+            const ow = other.el.offsetWidth  || 80;
+            const oh = other.el.offsetHeight || 36;
+            const dx = Math.min(x + tw + 8, ox + ow + 8) - Math.max(x, ox);
+            const dy = Math.min(y + th + 8, oy + oh + 8) - Math.max(y, oy);
+            if (dx > 0 && dy > 0) overlap += dx * dy;
+          }
+          if (overlap < bestOverlap) { bestOverlap = overlap; bestX = x; bestY = y; }
+          if (overlap === 0) break;
+        }
+        entry.el.style.left = bestX + 'px';
+        entry.el.style.top  = bestY + 'px';
+        entry.positioned = true;
+        entry.el.style.opacity = '';
+      }
+
+      function addBatch(count = BATCH_SIZE) {
+        const newEntries = [];
+        for (let i = 0; i < count && queue.length > 0; i++) {
+          const pair = queue.pop();
+          newEntries.push(spawnTile(pair.german, pair.id, 'de'));
+          newEntries.push(spawnTile(pair.english, pair.id, 'en'));
+        }
+        requestAnimationFrame(() => newEntries.forEach(placeEntry));
+      }
+
+      function makeDraggable(tile, entry) {
+        let startX, startY, startLeft, startTop, moved;
+
+        function dragStart(cx, cy) {
+          if (entry.matched) return;
+          startX = cx; startY = cy;
+          startLeft = parseFloat(tile.style.left);
+          startTop  = parseFloat(tile.style.top);
+          tile.style.zIndex = ++zTop;
+          moved = false;
+        }
+
+        function dragMove(cx, cy) {
+          tile.style.left = (startLeft + cx - startX) + 'px';
+          tile.style.top  = (startTop  + cy - startY) + 'px';
+          moved = true;
+        }
+
+        function dragEnd() {
+          if (!moved || entry.matched) return;
+          const tRect = tile.getBoundingClientRect();
+          for (const other of tiles) {
+            if (other === entry || other.matched) continue;
+            const oRect = other.el.getBoundingClientRect();
+            const overlaps = !(tRect.right < oRect.left || tRect.left > oRect.right ||
+                                tRect.bottom < oRect.top || tRect.top > oRect.bottom);
+            if (overlaps && other.pairId === entry.pairId) {
+              dismissPair(entry, other);
+              return;
+            }
+          }
+        }
+
+        tile.addEventListener('mousedown', e => {
+          e.preventDefault();
+          dragStart(e.clientX, e.clientY);
+          const onMove = e => dragMove(e.clientX, e.clientY);
+          const onUp   = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); dragEnd(); };
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+
+        tile.addEventListener('touchstart', e => {
+          dragStart(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+        tile.addEventListener('touchmove', e => {
+          e.preventDefault();
+          dragMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        tile.addEventListener('touchend', () => dragEnd());
+      }
+
+      function dismissPair(a, b) {
+        a.matched = b.matched = true;
+        a.el.classList.add('matched');
+        b.el.classList.add('matched');
+        onAddPoints(sub.points ?? 5);
+        setTimeout(() => {
+          a.el.remove(); b.el.remove();
+          tiles = tiles.filter(t => t !== a && t !== b);
+          const remaining = new Set(tiles.filter(t => !t.matched).map(t => t.pairId)).size;
+          if (queue.length > 0 && remaining <= REFILL_AT) addBatch(BATCH_SIZE);
+          if (tiles.length === 0 && queue.length === 0) endMatch();
+        }, 350);
+      }
+
+      function endMatch() {
+        if (done) return;
+        done = true;
+        if (timerInterval) clearInterval(timerInterval);
+        // Fade out any remaining tiles
+        tiles.forEach(t => { if (!t.matched) t.el.classList.add('matched'); });
+        setTimeout(onDone, 400);
+      }
+
+      // Intro screen — shown before the timer starts
+      const intro = el('div', 'match-intro');
+      const introLines = [
+        'Drag each word onto its cognate to dismiss the pair.',
+        `Each pair is worth ${sub.points ?? 5} points.`,
+        "We'll start with word pairs you've already seen, then expand to unseen pairs that display the same letter correspondences.",
+        mode === 'casual'
+          ? 'Take your time — there\'s no timer in Casual mode.'
+          : `You have ${timeLimit} seconds to match all ${sub.pairs.length} pairs.`
+      ];
+      introLines.forEach(line => intro.appendChild(elText('p', '', line)));
+      const startBtn = elText('button', 'match-start-btn', 'Start ↵');
+      intro.appendChild(startBtn);
+      container.appendChild(intro);
+
+      function startGame() {
+        intro.remove();
+        container.closest('.sub-level-card')?.classList.add('match-playing');
+        container.appendChild(area);
+        if (timerEl) container.insertBefore(timerEl, area);
+        if (mode !== 'casual' && timeLimit) {
+          timerInterval = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = fmtTime(timeLeft);
+            if (timeLeft <= 10) timerEl.classList.add('warning');
+            if (timeLeft <= 0) endMatch();
+          }, 1000);
+        }
+        addBatch(INITIAL);
+      }
+
+      startBtn.addEventListener('click', startGame);
+      document.addEventListener('keydown', function onEnter(e) {
+        if (e.key === 'Enter') { document.removeEventListener('keydown', onEnter); startGame(); }
+      });
+      setTimeout(() => startBtn.focus(), 50);
+    }
+
     // ── Boot ───────────────────────────────────────────────────────────────────
     renderSubLevel(currentIdx);
   </script>
@@ -948,8 +1250,12 @@ progressDots.innerHTML = '';
     min-height: 100%;
     background: #f0efeb;
     font-family: 'Jost', sans-serif;
-    font-size: 1rem;
+    font-size: 21px;
     color: #1a1a2e;
+  }
+
+  @media (max-width: 600px) {
+    html, body { font-size: 16px; }
   }
 
   /* ── Crayon strikethrough ────────────────────────────────────────────────── */
@@ -1049,7 +1355,7 @@ progressDots.innerHTML = '';
     border-radius: 12px;
     padding: 2.5rem 2rem;
     width: 100%;
-    max-width: 640px;
+    max-width: 780px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
   }
 
@@ -1087,7 +1393,7 @@ progressDots.innerHTML = '';
   .attribution {
     text-align: right;
     font-family: 'IM Fell English', serif;
-    font-style: italic;
+    font-style: normal;
     font-size: 0.9rem;
     color: #999;
     margin-top: 0.15rem;
@@ -1097,7 +1403,8 @@ progressDots.innerHTML = '';
   .instruction-row {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
     margin-bottom: 1.5rem;
   }
 
@@ -1135,7 +1442,15 @@ progressDots.innerHTML = '';
     margin-right: 0.45em;
   }
 
-  .given-word.tight { margin-right: 0; }
+  .tight-group {
+    display: inline-flex;
+    align-items: baseline;
+    margin-right: 0.45em;
+  }
+  .tight-group .given-word,
+  .tight-group .word-input {
+    margin-right: 0;
+  }
 
   .word-input {
     font-family: 'IM Fell English', serif;
@@ -1269,14 +1584,16 @@ progressDots.innerHTML = '';
     font-family: 'IM Fell English', serif;
     font-size: 1.1rem;
     min-width: 140px;
-    height: 2.2rem;
+    min-height: 2.2rem;
+    height: auto;
     border: 2px dashed #ccc;
     border-radius: 6px;
     display: flex;
     align-items: center;
-    padding: 0 0.6rem;
+    padding: 0.3rem 0.6rem;
     cursor: pointer;
     color: #1a1a2e;
+    word-break: break-word;
     transition: border-color 0.15s, background 0.15s;
   }
 
@@ -1325,6 +1642,8 @@ progressDots.innerHTML = '';
     background: #fff;
     cursor: pointer;
     color: #1a1a2e;
+    white-space: normal;
+    text-align: left;
     transition: border-color 0.15s, background 0.15s;
   }
 
@@ -1436,7 +1755,7 @@ progressDots.innerHTML = '';
     margin: 0 0 2rem;
   }
 
-  /* ── Memory ──────────────────────────────────────────────────────────────── */
+  /* ── Review (in-level) ───────────────────────────────────────────────────── */
   .memory-btn {
     font-family: 'Jost', sans-serif;
     font-size: 0.85rem;
@@ -1509,6 +1828,30 @@ progressDots.innerHTML = '';
     overflow-y: auto;
     padding: 1rem 1.5rem 1.5rem;
   }
+  .memory-group-header {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #15616d;
+    letter-spacing: 0.05em;
+    margin: 1rem 0 0.1rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #ddd;
+  }
+  .memory-group-header:first-child { margin-top: 0; }
+  .memory-entry-compact {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.95rem;
+    padding: 0.05rem 0;
+    border-bottom: none;
+    color: #1a1a2e;
+  }
+  .memory-entry-compact .memory-en {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #555;
+  }
+
   .memory-entry {
     padding: 0.6rem 0;
     border-bottom: 1px solid #f0f0f0;
@@ -1643,11 +1986,144 @@ progressDots.innerHTML = '';
 
   .next-btn:hover { background: #0f4a55; }
 
+  /* ── Match game ─────────────────────────────────────────────────────────── */
+  .match-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    background: #fafaf8;
+    border: 1px solid #eee;
+    border-radius: 10px;
+  }
+  .match-intro p {
+    font-size: 0.95rem;
+    font-weight: 200;
+    color: #444;
+    margin: 0;
+    line-height: 1.5;
+  }
+  .match-intro p:last-of-type {
+    font-weight: 400;
+    color: #15616d;
+  }
+  .match-start-btn {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 0.5rem 1.5rem;
+    background: #15616d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .match-start-btn:hover { background: #0f4a55; }
+
+  .match-timer {
+    font-family: 'Jost', sans-serif;
+    font-size: 2rem;
+    font-weight: 200;
+    color: #15616d;
+    text-align: center;
+    margin-bottom: 0.75rem;
+    transition: color 0.3s;
+  }
+  .match-timer.warning { color: #c0392b; }
+
+  .match-area {
+    position: relative;
+    height: 420px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background: #fafaf8;
+    overflow: hidden;
+  }
+
+  .match-tile {
+    position: absolute;
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    padding: 0.4rem 0.85rem;
+    border: 2px solid #15616d;
+    border-radius: 6px;
+    background: #fff;
+    color: #1a1a2e;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    white-space: nowrap;
+    transition: opacity 0.3s, transform 0.35s;
+  }
+  .match-tile-en {
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    background: #FFECD1;
+    border-color: #690C22;
+    color: #690C22;
+  }
+  .match-tile:active { cursor: grabbing; }
+  .match-tile.matched {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .match-tile { font-size: 0.8rem; padding: 0.2rem 0.5rem; }
+    .match-timer { font-size: 1.2rem; margin-bottom: 0.3rem; }
+    .match-playing .instruction-row-match { display: none; }
+    .instruction-row { margin-bottom: 0.5rem; }
+
+    /* During play: stretch the whole page so match area fills all available space */
+    body:has(.match-playing) {
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    body:has(.match-playing) .game-main {
+      flex: 1;
+      min-height: 0;
+      padding: 0;
+      align-items: stretch;
+    }
+    .match-playing {
+      border-radius: 0;
+      padding: 0.5rem 0 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .match-playing .task-area {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .match-playing .match-timer {
+      margin-bottom: 0.2rem;
+    }
+    .match-playing .match-area {
+      flex: 1;
+      height: auto;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+    }
+  }
+
   /* ── Responsive ──────────────────────────────────────────────────────────── */
   @media (max-width: 600px) {
     .game-header { padding: 0.6rem 1rem; }
     .sub-level-card, .complete-card { padding: 1.5rem 1rem; }
     .game-main { padding: 2rem 0.75rem 4rem; }
-    .slot-drop { min-width: 110px; }
+    .slot-drop { min-width: 0; font-size: 0.95rem; }
+    .bank-word { font-size: 0.95rem; }
+    .categorize-columns { gap: 0.75rem; }
+    .categorize-header { font-size: 0.9rem; }
   }
 </style>

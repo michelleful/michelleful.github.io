@@ -13,7 +13,8 @@
       ],
       "hints": [
         {
-          "hint": "👫"
+          "hint": "\"Mutter\" + \"Vater\" = 👫 in 👪",
+          "points": 2
         },
         {
           "hint": "The \"ei\" of \"mein(e)\" is pronounced \"eye\". Sound it out, does it sound similar to anything in English?",
@@ -23,7 +24,7 @@
           "hint": "Drop the \"n(e)\" to find the English equivalent!"
         }
       ],
-      "reveal": "Some people believe that \"Darth Vader\" in Star Wars was meant to foreshadow \"Dark Father\"."
+      "reveal": "There's a popular fan theory that \"Darth Vader\" was meant to foreshadow \"Dark Father\", but George Lucas has said that the father-son connection wasn't even on his mind while writing <em>Star Wars: A New Hope</em>."
     },
     {
       "kind": "translate",
@@ -52,7 +53,7 @@
           "points": 5
         }
       ],
-      "reveal": "💐 Alles Gute zum Muttertag! 💐"
+      "reveal": "💐 <em>Alles Gute zum Muttertag!</em> 💐"
     },
     {
       "kind": "reorder",
@@ -66,7 +67,7 @@
         {"label": "Sa", "answer": "Samstag"},
         {"label": "Su", "answer": "Sonntag"}
       ],
-      "reveal": "Well done! Several of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, which is \"donner\" in German."
+      "reveal": "Well done! Several of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, which is \"Donner\" in German."
     },
     {
       "kind": "translate",
@@ -104,7 +105,7 @@
           "hint": "\"Bis morgen!\" means \"Till tomorrow!\""
         }
       ],
-      "reveal": "The English word \"noon\" comes from Latin \"nona\" (ninth hour (after sunrise), i.e. 3 pm). The medieval prayer None was held then, but its timing crept earlier over centuries, winding up at midday and lending its name to the hour."
+      "reveal": "The English word \"noon\" comes from Latin \"nona\" (ninth hour (after sunrise), i.e. 3 pm). The medieval prayer None was held then, but its associated meal crept earlier over centuries, winding up at midday and lending its name to the hour."
     },
     {
       "kind": "translate",
@@ -147,7 +148,6 @@
       ],
       "reveal": "Germans celebrate the end of their workweek with the phrase \"Feierabend\", literally \"celebration evening\". Colleagues often mark it with a \"Feierabendbier\"!"
     },
-
     {
       "kind": "translate",
       "german": "Ich arbeite nicht am Wochenende.",
@@ -161,7 +161,8 @@
         {"word": "the"},
         {"word": "weekend", "spaceAfter": false},
         {"word": ".", "given": true}
-      ]
+      ],
+      "reveal": "We've seen a few negative words by now. \"Nein\" is \"no\" and \"nicht\" is for negating verbs. \"Kein\" is for negating nouns, e.g. \"isn't drinking water\"."
     },
     {
       "kind": "translate",
@@ -181,9 +182,12 @@
           "points": 2
         },
         {
-          "hint": "Katze = 🐱"
+          "hint": "\"Katze\" = 🐱"
         }
-      ]
+      ],
+      "reveal": "Cat tax!",
+      "revealImage": "/images/german-is-easy/katze.jpg",
+      "revealImageAlt": "A very cute orange tabby cat sleeping with its paw over its eyes."
     },
     {
       "kind": "translate",
@@ -211,10 +215,11 @@
           "points": 2
         },
         {
-          "hint": "If Wasser ~ water, then hasse ~ ?"
+          "hint": "If \"Wasser\" ~ \"water\", then \"hasse\" ~ ?",
+          "points": 2
         }
       ],
-      "reveal": "Why <em>does</em> Garfield hate Mondays, when he doesn't have to work? I hope completing this level didn't feel like Arbeit!"
+      "reveal": "Why <em>does</em> Garfield hate Mondays, when he doesn't have to work? I hope completing this level didn't feel like <em>Arbeit</em>!"
     }
   ]
 }

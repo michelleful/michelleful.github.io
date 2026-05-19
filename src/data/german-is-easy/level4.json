@@ -1,0 +1,333 @@
+{
+  "id": 4,
+  "subLevels": [
+    {
+      "kind": "translate",
+      "german": "Es waren einmal drei Bären: Vater Bär, Mutter Bär und Bärchen.",
+      "instruction": "Translate, using the traditional English character names",
+      "target": [
+        {"word": "Once"},
+        {"word": "upon", "given": true, "challengingInput": true},
+        {"word": "a"},
+        {"word": "time", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "there"},
+        {"word": "were"},
+        {"word": "three"},
+        {"word": "bears", "spaceAfter": false},
+        {"word": ":", "given": true},
+        {"word": "Papa", "also": ["Father"]},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "Mama", "also": ["Mother"]},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "and"},
+        {"word": "Baby"},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+            "hint": "This is the beginning of a familiar fairytale. Use the traditional English beginning to such a story.",
+            "points": 1
+        },
+        {
+            "hint": "\"-chen\" is a diminutive, making a <em>Bär</em> a little <em>Bär</em>.",
+            "points": 2
+        }
+      ],
+      "reveal": "The original story had three male bears: <em>Der große Bär, der mittlere Bär und der kleine Bär</em>, by size."
+    },
+    {
+      "kind": "translate",
+      "german": "Ein Bär ist ein Tier.",
+      "target": [
+        {"word": "A"},
+        {"word": "bear"},
+        {"word": "is"},
+        {"word": "an"},
+        {"word": "animal", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<em>Ein Nilpferd ist auch ein Tier.</em>",
+          "points": 1
+        },
+        {
+          "hint": "Think of how you would answer the traditional first question in Twenty Questions if the target was a <em>Bär</em>."
+        }
+      ],
+      "reveal": "The English word \"deer\" used to mean all animals, just like \"Tier\" in German, but its scope shrank to just one type of animal."
+    },
+    {
+      "kind": "translate",
+      "german": "Im Tiergarten Schönbrunn, dem ältesten Zoo der Welt, kann man Bären finden.",
+      "instruction": "Translate, keeping the same clause order.",
+      "target": [
+        {"word": "At"},
+        {"word": "Tiergarten", "given": true},
+        {"word": "Schönbrunn", "given": true, "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "the"},
+        {"word": "oldest"},
+        {"word": "zoo"},
+        {"word": "in"},
+        {"word": "the"},
+        {"word": "world", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "you", "also": ["one"]},
+        {"word": "can"},
+        {"word": "find"},
+        {"word": "bears", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "English uses a slightly different preposition for the first word.",
+          "points": 1
+        },
+        {
+          "hint": "If \"Tier\" ~ \"deer\", then \"ält\" ~ what English adjective?",
+          "points": 2
+        },
+        {
+          "hint": "German \"Mann\" means \"man\" but German \"man\", which derives from it, is an impersonal pronoun.",
+          "points": 3
+        }
+      ],
+      "reveal": "German used to use \"Tiergarten\" for zoos in general when they grew out of private hunting grounds, but now the word \"Zoo\" is more widely used. Our word \"kindergarten\" was also borrowed from German, with \"Kind\" meaning a child. Not to imply that kindergartens were conceived of as zoos for children!"
+    },
+    {
+      "kind": "translate",
+      "german": "Aber diese drei Bären leben in einem kleinen Haus im Wald.",
+      "target": [
+        {"word": "But"},
+        {"word": "these"},
+        {"word": "three"},
+        {"word": "bears"},
+        {"word": "live"},
+        {"word": "in"},
+        {"word": "a"},
+        {"word": "little", "also": ["small"]},
+        {"word": "house"},
+        {"word": "in"},
+        {"word": "the"},
+        {"word": "forest", "also": ["woods"], "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+            "hint": "It may be tempting to think that \"Wald\" ~ \"wild\", but they are unrelated. Think 🌲🌲 instead.",
+            "points": 2
+        }
+      ],
+      "reveal": "\"Wald\" only persists in English in the archaic word \"weald\" and place names like the Cotswolds."
+    },
+    {
+      "kind": "translate",
+      "german": "„Ich bin so hungrig!“ denkt Goldlöckchen. „Ich möchte den Bärenbrei essen!“",
+      "target": [
+        {"word": "\u201C", "given": true},
+        {"word": "I"},
+        {"word": "am"},
+        {"word": "so"},
+        {"word": "hungry", "spaceAfter": false},
+        {"word": "!", "given": true},
+        {"word": "\u201D", "given": true},
+        {"word": "thinks"},
+        {"word": "Goldilocks", "spaceAfter": false},
+        {"word": ".", "given": true},
+        {"word": "\u201C", "given": true},
+        {"word": "I"},
+        {"word": "want"},
+        {"word": "to"},
+        {"word": "eat"},
+        {"word": "the"},
+        {"word": "bears", "spaceAfter": false},
+        {"word": "'", "given": true},
+        {"word": "porridge", "given": true, "challengingInput": true, "spaceAfter": false},
+        {"word": "!", "given": true, "spaceAfter": false},
+        {"word": "\u201D", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "If \"Donner\" ~ \"thunder\", then \"denk(t)\" ~ ?",
+          "points": 2
+        },
+        {
+          "hint": "We've seen \"möchte\" before in the lament \"Ich möchte nicht arbeiten!\""
+        }
+      ],
+      "reveal": "Notice how \"bears\" and \"porridge\" fused together to form a single word \"Bärenbrei\"? German compounds productively, but we'll see its limits in a bit..."
+    },
+    {
+      "kind": "translate",
+      "german": "Sie klopft an die Tür des Bärenhauses.",
+      "target": [
+        {"word": "She"},
+        {"word": "knocks"},
+        {"word": "at"},
+        {"word": "the"},
+        {"word": "door"},
+        {"word": "of"},
+        {"word": "the"},
+        {"word": "bears", "spaceAfter": false},
+        {"word": "'", "given": true},
+        {"word": "house", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "If \"Tier\" ~ \"deer\", then \"Tür\" ~ ? The vowel does change a bit!",
+          "points": 2
+        },
+        {
+          "hint": "The verb \"klopfen\" is onomatopoeic. Try saying \"klop klop\" to yourself."
+        }
+      ],
+      "reveal": "It looks very much like the bears own multiple houses, but \"Bärenhauses\" is still singular, it's just in the genitive case just like \"der Welt\" (\"of the world\"), which we saw in level 3."
+    },
+    {
+      "kind": "translate",
+      "german": "Vater Bärs Brei war zu heiß, Mutter Bärs Brei war zu kalt, aber Bärchens Brei war genau richtig.",
+      "target": [
+        {"word": "Papa", "also": ["Father"]},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "porridge"},
+        {"word": "was"},
+        {"word": "too"},
+        {"word": "hot", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "Mama", "also": ["Mother"]},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "porridge"},
+        {"word": "was"},
+        {"word": "too"},
+        {"word": "cold", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "but"},
+        {"word": "Baby", "also": ["Little"]},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "porridge"},
+        {"word": "was"},
+        {"word": "just"},
+        {"word": "right", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "This is our first time seeing ß, it represents \"ss\".",
+          "points": 0
+        },
+        {
+          "hint": "\"war\" is the past tense of \"ist\".",
+          "points": 2
+        },
+        {
+          "hint": "You'll hear \"genau\" (\"exactly\" is its more usual translation) a lot in conversational German to express agreement.",
+          "points": 2
+        }
+      ],
+      "reveal": "We have the more English-like possessive \"Vater Bärs Brei\" here rather than something like \"Vaterbärenbrei\". German uses \"s\" rather than compounding when indicating specific ownership."
+    },
+    {
+      "kind": "translate",
+      "german": "Goldlöckchen schläft in Bärchens Bett ein.",
+      "target": [
+        {"word": "Goldilocks"},
+        {"word": "falls"},
+        {"word": "asleep"},
+        {"word": "in"},
+        {"word": "Baby", "also": ["Little"]},
+        {"word": "Bear", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "bed", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"ein\" here is part of the verb \"einschlafen\" and implies that Goldilocks is <em>entering a state</em> of \"Schlaf\". The English cognate to this word goes in the third slot, and has an additional vowel before it.",
+          "points": 0
+        },
+        {
+          "hint": "If \"Gott\" ~ \"god\", then \"Bett\" ~ ? And what does one do <em>in Bett</em>?",
+          "points": 3
+        }
+      ],
+      "reveal": "We've encountered our first separable verb! The verb part of \"einschlafen\" (to fall asleep) moves to the second position, stranding its prefix in its original position!"
+    },
+    {
+      "kind": "translate",
+      "german": "„Jemand hat von meinem Brei gegessen ... und hat ihn aufgegessen!“",
+      "target": [
+        {"word": "\u201C", "given": true, "spaceAfter": false},
+        {"word": "Someone", "given": true, "challengingInput": true},
+        {"word": "has"},
+        {"word": "eaten"},
+        {"word": "from"},
+        {"word": "my"},
+        {"word": "porridge", "spaceAfter": false},
+        {"word": "...", "given": true},
+        {"word": "and"},
+        {"word": "has"},
+        {"word": "eaten"},
+        {"word": "it"},
+        {"word": "all", "given": true, "challengingInput": true},
+        {"word": "up", "spaceAfter": false},
+        {"word": "!", "given": true, "spaceAfter": false},
+        {"word": "\u201D", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"ihn\" is a pronoun replacing a noun seen earlier in the sentence.",
+          "points": 1
+        },
+        {
+          "hint": "<em>getrunken : trinken :: ge(g)essen : ?</em>. (We've already seen this verb in this level!)",
+          "points": 2
+        },
+       {
+          "hint": "\"auf-\" is another separable prefix. It often intensifies a verb to mean something has happened <em>completely</em>.",
+          "points": 2
+        },
+        {
+          "hint": "Recall that noble names like \"von Clausewitz\" indicate that the person's family is ___ a place called Clausewitz."
+        }
+      ],
+      "reveal": "\"aufessen\" is another separable verb (\"to eat up/completely\"). In both clauses, the verb stays in the final position because \"hat\" (\"has\") already occupies the verb-second slot. Because \"essen\" doesn't move, the prefix never gets separated from its verb, unlike in the previous sentence. Interestingly, the past participle marker \"ge-\" gets added <em>in between</em> the separable prefix and the verb. And it has an extra \"g-\", purely because \"essen\" is irregular."
+    },
+    {
+      "kind": "translate",
+      "german": "Goldlöckchen wacht auf und läuft weg.",
+      "target": [
+        {"word": "Goldilocks"},
+        {"word": "wakes"},
+        {"word": "up"},
+        {"word": "and"},
+        {"word": "runs"},
+        {"word": "away", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "\"sag\" ~ \"say\" so \"weg\" ~ ? Add an \"a\" to the beginning to get the English equivalent.",
+          "points": 2
+        },
+        {
+          "hint": "If \"Buch\" ~ \"book\" then \"wach(t)\" ~ ?",
+          "points": 2
+        }
+      ],
+      "reveal": "\"Aufwachen\" and \"weglaufen\" are both separable verbs. Most such verbs correspond to phrasal verbs in English, like \"wake up\" and \"run away\", but sometimes we have \"fall asleep\" rather than \"sleep into\", as with \"einschlafen\" earlier. I hope this level wasn't <em>zu schwer oder zu leicht, aber genau richtig</em>!"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": 4,
+  "subLevels": [
+    {
+      "kind": "translate",
+      "german": "Mittelerde ist die Welt von „Der Herr der Ringe“.",
+      "target": [
+        {"word": "Middle"},
+        {"word": "Earth"},
+        {"word": "is"},
+        {"word": "the"},
+        {"word": "world"},
+        {"word": "of"},
+        {"word": "\u201C", "given": true, "spaceAfter": false},
+        {"word": "Lord"},
+        {"word": "of"},
+        {"word": "Peace"},
+        {"word": "\u201D", "given": true},
+        {"word": "Egypt", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+      ]
+    }
+  ]
+}

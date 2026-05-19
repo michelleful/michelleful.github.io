@@ -8,12 +8,75 @@ const safeJson = JSON.stringify(levels)
   .replace(/&/g, '\\u0026');
 ---
 
-<Layout title="German Is Easy">
+<Layout title="German Is A̶w̶f̶u̶l̶ Easy">
 
-<h1>German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy</h1>
-<p>
-  A puzzle game of linguistic decipherment.
+<h1>German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy <button class="info-btn info-btn-title" aria-label="About this game">?</button></h1>
+<p class="subtitle-row">
+  <span>A puzzle game of linguistic decipherment by <a href="/">Michelle Fullwood</a>.<button class="info-btn info-btn-subtitle" aria-label="About this game">?</button></span>
 </p>
+
+<div class="info-backdrop" id="info-backdrop" style="display:none">
+  <div class="info-modal" role="dialog" aria-modal="true" aria-label="About German Is Easy">
+    <button class="info-modal-close" id="info-modal-close" aria-label="Close">×</button>
+    <h2>About this game</h2>
+    <section class="info-section">
+      <h3>Was ist das?</h3>
+      <p>
+        German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy is a puzzle game where you decipher German and phrases and sentences
+        using cognates (words from a common ancestor), shared cultural knowledge, and
+        your own pattern recognition skills.
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>Why <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span>?</h3>
+      <p>
+        Mark Twain has a hilarious essay about <a href="https://faculty.georgetown.edu/jod/texts/twain.german.html" target="_blank" rel="noopener">"The Awful German Language"</a>.
+        (Read it, by all means, though be warned: there are spoilers.)
+        And, to be honest, he's right, it can get pretty gnarly!
+        (Though no gnarlier than English can be, for the unsuspecting learner.)
+        However, when you're not trying to <em>produce</em> German, you can
+        ignore some of the most tedious parts &mdash; and I hope that the
+        remainder that we cover here is, well perhaps not easy, but precisely
+        the right level of difficulty to begin having fun.
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>Why build this?</h3>
+      <p>
+        I was trying to recapture the memories I have of wandering around Germany,
+        trying to make sense of the language, and the little jolts
+        of delight and recognition whenever I figured something out.
+        If that sounds like something you would do, this is the game for you!
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>Do I need to know any German?</h3>
+      <p>
+        Absolutely not. The less the better.
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>Will I actually learn any German?</h3>
+      <p>
+        That's not the goal, but the goal is to learn something <em>about</em>
+        German, especially the shortcuts you can use if you do want to pick it up
+        for real.
+        If your memory is good, you may well learn many German words,
+        but that's entirely optional. The goal is a fun game!
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>But I already know German...</h3>
+      <p>
+        In that case, this game may be boring, but hey, give it a try!
+        Maybe you'll like it anyway!
+      </p>
+    </section>
+    <div class="info-modal-bottom">
+      <button class="info-modal-close-bottom" id="info-modal-close-bottom">Close</button>
+    </div>
+  </div>
+</div>
 
 <div class="mode-row">
   <div class="mode-selector" id="mode-selector">
@@ -37,7 +100,7 @@ const safeJson = JSON.stringify(levels)
       <dt>Competitive</dt>
       <dd>Scores are tracked. Hints, letter reveals, incorrect guesses on certain puzzles, and going beyond time restrictions all cost points.</dd>
       <dt>Challenging</dt>
-      <dd>Like Competitive, except that there are no hints, only letter reveals. Some words won't be easily guessable from context, so out-of-the-box thinking is required!</dd>
+      <dd>Like Competitive, except that there are no hints, only letter reveals. Some words won't be easily guessable from context, so out-of-the-box thinking and trial & error are required!</dd>
     </dl>
     <p class="mode-note">
       Switch modes whenever you like.
@@ -62,6 +125,16 @@ const safeJson = JSON.stringify(levels)
   ))}
 </div>
 
+<div class="signup-section">
+  <p class="signup-prompt" id="signup-prompt">🚧 This game is in alpha, with 5 levels currently available. 🚧<br/>Would you like to be notified when new levels are added?</p>
+  <form class="signup-form" id="signup-form" novalidate>
+    <input type="email" id="signup-email" class="signup-input" placeholder="your@email.com" autocomplete="email" />
+    <button type="submit" class="signup-btn" id="signup-btn" disabled>Notify me</button>
+  </form>
+  <p class="signup-message" id="signup-message" aria-live="polite"></p>
+  <a href="https://forms.gle/8M9ATcgTTMYhiRC27" target="_blank" rel="noopener" class="feedback-link">Have feedback?</a>
+</div>
+
 <div class="reset-row">
   <button id="reset-btn" class="reset-btn">Reset all progress</button>
 </div>
@@ -69,6 +142,7 @@ const safeJson = JSON.stringify(levels)
 <script type="application/json" id="levels-meta" set:html={safeJson}></script>
 
 <script>
+  // @ts-nocheck
   import rough from 'roughjs';
 
   const STORAGE_KEY = 'gie-progress';
@@ -99,6 +173,13 @@ const safeJson = JSON.stringify(levels)
     });
   });
 
+  const infoBackdrop = document.getElementById('info-backdrop');
+  document.querySelectorAll('.info-btn').forEach(btn => btn.addEventListener('click', () => infoBackdrop.style.display = ''));
+  const closeInfo = () => infoBackdrop.style.display = 'none';
+  document.getElementById('info-modal-close').addEventListener('click', closeInfo);
+  document.getElementById('info-modal-close-bottom').addEventListener('click', closeInfo);
+  infoBackdrop.addEventListener('click', e => { if (e.target === infoBackdrop) closeInfo(); });
+
   const backdrop = document.getElementById('mode-modal-backdrop');
   document.getElementById('mode-help-btn').addEventListener('click', () => backdrop.style.display = '');
   document.getElementById('mode-modal-close').addEventListener('click', () => backdrop.style.display = 'none');
@@ -111,14 +192,14 @@ const safeJson = JSON.stringify(levels)
   const progress = getProgress();
 
   // ── Map layout ─────────────────────────────────────────────────────────────
-  const NODE_W   = 100;
-  const V_STEP   = 180;
-  const MARGIN_Y = 55;
-
   const container  = document.getElementById('map-container');
   const mapSvg     = document.getElementById('map-svg');
   const nodes      = Array.from(container.querySelectorAll('.map-node'));
   const cW         = container.offsetWidth;
+
+  const NODE_W   = cW < 420 ? 80 : 115;
+  const V_STEP   = cW < 420 ? 100 : 195;
+  const MARGIN_Y = 55;
 
   // Serpentine layout: 5 per row on wider screens, 3 on narrow
   const PER_ROW  = cW >= 420 ? 5 : 3;
@@ -153,8 +234,10 @@ const safeJson = JSON.stringify(levels)
   // Position HTML nodes
   nodes.forEach((node, i) => {
     const c = centers[i];
-    node.style.left = (c.x - NODE_W / 2) + 'px';
-    node.style.top  = (c.y - NODE_W / 2) + 'px';
+    node.style.width  = NODE_W + 'px';
+    node.style.height = NODE_W + 'px';
+    node.style.left   = (c.x - NODE_W / 2) + 'px';
+    node.style.top    = (c.y - NODE_W / 2) + 'px';
   });
 
   // ── Progress bucket helpers ─────────────────────────────────────────────────
@@ -286,9 +369,54 @@ const safeJson = JSON.stringify(levels)
       location.reload();
     }
   });
+
+  // ── Email signup ────────────────────────────────────────────────────────────
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1kNfWseXUyGouJ7antjNhKNZICX6TthIPbdbSOMSZ2RX8yAC3jvUuucoSXpc9uSvB/exec';
+  const signupForm = document.getElementById('signup-form');
+  const signupEmail = document.getElementById('signup-email');
+  const signupMessage = document.getElementById('signup-message');
+  const signupBtn = document.getElementById('signup-btn');
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+  signupEmail.addEventListener('input', () => {
+    signupBtn.disabled = !isValidEmail(signupEmail.value.trim());
+  });
+
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = signupEmail.value.trim();
+    const btn = signupBtn;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      await fetch(`${SCRIPT_URL}?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        mode: 'no-cors',
+      });
+      signupForm.style.display = 'none';
+      document.getElementById('signup-prompt').style.display = 'none';
+      signupMessage.textContent = 'Thank you for playing! You\'ll be notified if/when new levels are released.';
+      signupMessage.className = 'signup-message signup-success';
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Notify me';
+      signupMessage.textContent = 'Something went wrong — please try again.';
+      signupMessage.className = 'signup-message signup-error';
+    }
+  });
 </script>
 
 </Layout>
+
+<style is:global>
+  /* Scale this page to match the 133% zoom experience */
+  :root { font-size: 21px; }
+  @media (max-width: 600px) {
+    :root { font-size: 15px; }
+  }
+  /* Cap the game container so it doesn't stretch at low zoom levels */
+  body { max-width: 900px !important; }
+</style>
 
 <style>
   h1 {
@@ -407,7 +535,7 @@ const safeJson = JSON.stringify(levels)
   }
 
   .node-title {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     line-height: 1;
   }
 
@@ -419,12 +547,12 @@ const safeJson = JSON.stringify(levels)
 
   .node-label {
     font-family: 'IM Fell English', serif;
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #888;
   }
 
   .node-status {
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: #888;
   }
 
@@ -442,6 +570,7 @@ const safeJson = JSON.stringify(levels)
     font-weight: 400;
     color: #15616d;
     white-space: nowrap;
+    margin-right: 0.75rem;
   }
 
   /* ── Mode modal ───────────────────────────────────────────────────────────── */
@@ -522,6 +651,19 @@ const safeJson = JSON.stringify(levels)
     text-align: center;
   }
 
+  .feedback-link {
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    color: #15616d;
+    text-decoration: underline;
+    margin-top: 0.75rem;
+    display: inline-block;
+  }
+
+  .feedback-link:hover {
+    color: #0e4550;
+  }
+
   .reset-btn {
     font-family: 'Jost', sans-serif;
     font-size: 0.8rem;
@@ -538,4 +680,185 @@ const safeJson = JSON.stringify(levels)
     color: #c0392b;
     border-color: #c0392b;
   }
+
+  .subtitle-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.2rem;
+  }
+
+  .subtitle-row a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .subtitle-row a:hover {
+    color: #15616d;
+  }
+
+  .info-btn {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    border: 1px solid #15616d;
+    background: none;
+    color: #15616d;
+    font-size: 0.6rem;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    vertical-align: middle;
+    margin-left: 0.2rem;
+  }
+  .info-btn:hover { background: #15616d; color: #fff; }
+  .info-btn-title { display: none; }
+
+  .info-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .info-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    width: min(520px, 92vw);
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .info-modal h2 {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.8rem;
+    margin: 0 0 1rem;
+    color: #1a1a2e;
+  }
+  .info-section {
+    margin-top: 2rem;
+  }
+  .info-section h3 {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #15616d;
+    margin: 0 0 0.5rem;
+  }
+  .info-modal p {
+    font-size: 0.9rem;
+    font-weight: 200;
+    color: #444;
+    line-height: 1.6;
+    margin: 0.5rem 0;
+  }
+  .info-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    line-height: 1;
+  }
+  .info-modal-close:hover { color: #555; }
+
+  .info-modal-bottom {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .info-modal-close-bottom {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.4rem 1.5rem;
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .info-modal-close-bottom:hover { color: #555; border-color: #999; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.3rem; }
+    .mode-row { flex-wrap: wrap; gap: 0.4rem; }
+    .mode-selector { gap: 0.35rem; }
+    .mode-btn { padding: 0.3rem 0.75rem; font-size: 0.9rem; }
+    .total-score-row { margin-right: 0.35rem; }
+    .node-title { font-size: 1.3rem; }
+    .node-label { font-size: 0.8rem; }
+    .node-score { font-size: 0.6rem; }
+    .info-modal p, .mode-descriptions dd { font-size: 1rem; }
+    .info-section h3, .mode-descriptions dt { font-size: 1.2rem; }
+    .mode-note { font-size: 0.95rem; }
+    .signup-form { flex-direction: column; align-items: stretch; }
+    .info-btn-title { display: inline-flex; width: 1.6rem; height: 1.6rem; font-size: 0.85rem; }
+    .info-btn-subtitle { display: none; }
+    .total-score-row { font-size: 1.1rem; margin-left: auto; }
+    .map-container { margin-top: 0.5rem; }
+    .signup-section { margin-top: 0.75rem; }
+  }
+
+  /* ── Email signup ─────────────────────────────────────────────────────────── */
+  .signup-section {
+    text-align: center;
+    margin: 4rem auto 1rem;
+    max-width: 600px;
+  }
+  .signup-prompt {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0 0 0.75rem;
+  }
+  .signup-form {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 460px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .signup-input {
+    flex: 1;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+  }
+  .signup-input:focus { border-color: #15616d; }
+  .signup-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+    background: #15616d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .signup-btn:hover { background: #0f4a54; }
+  .signup-btn:disabled { opacity: 0.6; cursor: default; }
+  .signup-message {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
+    min-height: 1.2em;
+  }
+  .signup-error { color: #b91c1c; }
+  .signup-success { color: #15616d; }
 </style>

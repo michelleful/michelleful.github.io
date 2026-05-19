@@ -9,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
 <nav class="section-nav">
   <a href="#languages">Languages</a>
   <a href="#maps">Maps</a>
-  <a href="#miscellany">Miscellany</a>
+  <a href="#literature">Literature</a>
   <a href="#about">About</a>
 </nav>
 
@@ -47,7 +47,7 @@ import Layout from '../layouts/Layout.astro';
   <a href="https://graphics.straitstimes.com/STI/STIMEDIA/Interactives/2019/06/singapore-street-names/index.html">remade by the Straits Times digital team</a> in 2021.</p>
 </div>
 
-<h2 id="miscellany">Miscellany</h2>
+<h2 id="literature">Books and Literature</h2>
 
 <div>
 <h3><a href="/misc/twide-and-twejudice/">Twide and Twejudice</a></h3>
@@ -57,7 +57,15 @@ import Layout from '../layouts/Layout.astro';
   in a similar context...on Twitter. For example:
 </p>
 
-<blockquote>"Miss Elizabeth Bennet!" repeated Miss Bingley. "I am all neurosis. How loooooooong has shhe been suuuch a sxey?"</blockquote>
+<div class="video-embed">
+  <iframe
+    src="https://www.youtube.com/embed/i4Vjifxbhnc?cc_load_policy=1&cc_lang_pref=en"
+    title="Twide and Twejudice"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
 This received some media coverage on <a href="https://www.theverge.com/2014/11/25/7276157/nanogenmo-robot-author-novel">Verge</a> and <a href="https://clarkesworldmagazine.com/another_word_01_16/">Clarkesworld</a>. The "Making Of ..." blogpost is <a href="https://michelleful.github.io/code-blog/2014/12/07/nanogenmo-2014/">here</a>.
 </div>
 
@@ -72,7 +80,8 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
 <h2 id="about">About Me</h2>
 
 <p>
-  I solve problems with language in my job as a Principal Natural Language Processing
+  I'm from Singapore 🇸🇬 but live near Boston, Massachusetts.
+  I solve problems with language in my career as a Natural Language Processing
   Scientist. My academic background is in mathematics and linguistics (MIT PhD).
 </p>
 <p>
@@ -82,7 +91,7 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
   I am also a big fan of cats and maps.
 </p>
 <p>
-  Current language I'm studying: Polish.
+  Current language I'm studying: Polish 🇵🇱.
 </p>
 
 </Layout>
@@ -96,8 +105,14 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
   h2, h3 {
     margin-bottom: -10px;
   }
-  blockquote {
-    font-family: 'Kalam', cursive;
+  .video-embed {
+    margin: 1rem 0;
+  }
+  .video-embed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
   }
   .section-nav {
     text-align: center;

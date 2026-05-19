@@ -1,0 +1,41 @@
+{
+  "id": 5,
+  "subLevels": [
+    {
+      "kind": "match",
+      "timeLimit": 90,
+      "points": 4,
+      "useGroupingsToDisplay": true,
+      "pairs": [
+        { "german": "Wasser", "english": "water", "groupings": ["ss ~ t"] },
+        { "german": "Tropfen", "english": "drop", "groupings": ["t ~ d", "pf ~ p(p)"]},
+        { "german": "Donner", "english": "thunder", "groupings": ["d ~ th"] },
+        { "german": "Milch", "english": "milk", "groupings": ["ch ~ k"] },
+        { "german": "Vatertag", "english": "Father's Day", "groupings": ["v ~ f", "t(t) ~ th", "g ~ Ø"] },
+        { "german": "essen", "english": "to eat", "groupings": ["ss ~ t"] },
+
+        { "german": "Nacht", "english": "night", "groupings": ["ch ~ gh"] },
+        { "german": "y-Achse", "english": "y-axis", "groupings": ["chs ~ x"] },
+        { "german": "haben", "english": "to have", "groupings": ["b ~ v"] },
+        { "german": "Langhaarkatze", "english": "long-haired cat", "groupings": ["tz ~ t"] },
+        { "german": "salzig", "english": "salty", "groupings": ["z ~ t"]},
+        { "german": "zwei", "english": "two", "groupings": ["z ~ t"] },
+        { "german": "sprechen", "english": "to speak", "groupings": ["ch ~ k"] },
+
+        { "german": "Apfel", "english": "apple", "groupings": ["pf ~ p(p)"] },
+        { "german": "dass", "english": "that", "groupings": ["d ~ t", "ss ~ t"] },
+        { "german": "Kuchen", "english": "cake", "groupings": ["ch ~ k"]},
+        { "german": "Vogel", "english": "fowl", "groupings": ["v ~ f", "g ~ Ø"] },
+        { "german": "Tochter", "english": "daughter", "groupings": ["ch ~ gh", "t ~ d"] },
+        { "german": "Nuss", "english": "nut", "groupings": ["ss ~ t"] },
+        { "german": "Fuchs", "english": "fox", "groupings": ["chs ~ x"] },
+        { "german": "geben", "english": "to give", "groupings": ["b ~ v"] },
+        { "german": "schmutzig", "english": "smutty", "groupings": ["tz ~ t"] },
+        { "german": "dick", "english": "thick", "groupings": ["d ~ th"] },
+        { "german": "zwölf", "english": "twelve", "groupings": ["z ~ t"] },
+        { "german": "Wetter", "english": "weather", "groupings": ["t(t) ~ th"] }
+      ],
+      "reveal": "A couple of examples of semantic drift here, as with \"Tier\" (\"animal\") and \"deer\". \"Vogel\" is birds generally in German, while \"fowl\" has contracted to mean specifically poultry and large birds in English. \"schmutzig\" is more general \"dirty\" and \"messy\", while English \"smutty\" has evolved to mean \"obscene\"."
+    }
+  ]
+}
