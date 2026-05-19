@@ -13,7 +13,7 @@ import Layout from '../layouts/Layout.astro';
   <a href="#about">About</a>
 </nav>
 
-<h2 id="languages">Language tools</h2>
+<h2 id="languages">Languages</h2>
 
 <div>
 <h3><a href="/languages/arabic/fuzzy/">Fuzzy Arabic Dictionary</a></h3>
@@ -57,14 +57,23 @@ import Layout from '../layouts/Layout.astro';
   in a similar context...on Twitter. For example:
 </p>
 
-<div class="video-embed">
-  <iframe
-    src="https://www.youtube.com/embed/i4Vjifxbhnc?cc_load_policy=1&cc_lang_pref=en"
-    title="Twide and Twejudice"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-  ></iframe>
+<div class="twide-toggle">
+  <button class="twide-btn active" id="twide-btn-video">Dubbed Example</button>
+  <button class="twide-btn" id="twide-btn-text">Text Example</button>
+</div>
+<div id="twide-video">
+  <div class="video-embed">
+    <iframe
+      src="https://www.youtube.com/embed/YT0eIxhHzAE?cc_load_policy=1&cc_lang_pref=en"
+      title="Twide and Twejudice: Mr. Collins' pleasing backflips"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+</div>
+<div id="twide-text" class="twide-text" hidden>
+  <blockquote>"Miss Elizabeth Bennet!" repeated Miss Bingley. "I am all neurosis. How loooooooong has shhe been suuuch a sxey?"</blockquote>
 </div>
 This received some media coverage on <a href="https://www.theverge.com/2014/11/25/7276157/nanogenmo-robot-author-novel">Verge</a> and <a href="https://clarkesworldmagazine.com/another_word_01_16/">Clarkesworld</a>. The "Making Of ..." blogpost is <a href="https://michelleful.github.io/code-blog/2014/12/07/nanogenmo-2014/">here</a>.
 </div>
@@ -80,7 +89,7 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
 <h2 id="about">About Me</h2>
 
 <p>
-  I'm from Singapore 🇸🇬 but live near Boston, Massachusetts.
+  I'm from Singapore 🇸🇬 and now live near Boston, Massachusetts.
   I solve problems with language in my career as a Natural Language Processing
   Scientist. My academic background is in mathematics and linguistics (MIT PhD).
 </p>
@@ -147,4 +156,54 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
       width: 100%;
     }
   }
+  blockquote {
+    font-family: 'Kalam', cursive;
+  }
+  .twide-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0.25rem;
+  }
+  .twide-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    padding: 0.3rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .twide-btn:hover {
+    color: #15616d;
+    border-color: #15616d;
+  }
+  .twide-btn.active {
+    background: #15616d;
+    border-color: #15616d;
+    color: #fff;
+  }
 </style>
+
+<script>
+  const btnVideo = document.getElementById('twide-btn-video');
+  const btnText = document.getElementById('twide-btn-text');
+  const divVideo = document.getElementById('twide-video');
+  const divText = document.getElementById('twide-text');
+
+  btnVideo?.addEventListener('click', () => {
+    divVideo?.removeAttribute('hidden');
+    divText?.setAttribute('hidden', '');
+    btnVideo.classList.add('active');
+    btnText?.classList.remove('active');
+  });
+
+  btnText?.addEventListener('click', () => {
+    divText?.removeAttribute('hidden');
+    divVideo?.setAttribute('hidden', '');
+    btnText.classList.add('active');
+    btnVideo?.classList.remove('active');
+  });
+</script>
