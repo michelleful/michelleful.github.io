@@ -22,9 +22,21 @@ const safeJson = JSON.stringify(levels)
     <section class="info-section">
       <h3>Was ist das?</h3>
       <p>
-        German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy is a puzzle game where you decipher German and phrases and sentences
-        using cognates (words from a common ancestor), shared cultural knowledge, and
-        your own pattern recognition skills.
+        German Is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy
+        is a puzzle game where you decipher German phrases and sentences.
+        We'll start with phrases and sentences that are easy to guess using
+        cognates (words from a common ancestor) and shared cultural knowledge, and
+        quickly get to decoding complex sentences using your pattern recognition
+        and logical induction skills.
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>Why build this?</h3>
+      <p>
+        I'm trying to recapture the memories I have of wandering around Germany,
+        trying to make sense of the language, and the little jolts
+        of delight and recognition whenever I figured something out.
+        If that sounds like something you would do, this is the game for you!
       </p>
     </section>
     <section class="info-section">
@@ -32,21 +44,12 @@ const safeJson = JSON.stringify(levels)
       <p>
         Mark Twain has a hilarious essay about <a href="https://faculty.georgetown.edu/jod/texts/twain.german.html" target="_blank" rel="noopener">"The Awful German Language"</a>.
         (Read it, by all means, though be warned: there are spoilers.)
-        And, to be honest, he's right, it can get pretty gnarly!
+        And, to be honest, it can get pretty gnarly!
         (Though no gnarlier than English can be, for the unsuspecting learner.)
         However, when you're not trying to <em>produce</em> German, you can
         ignore some of the most tedious parts &mdash; and I hope that the
-        remainder that we cover here is, well perhaps not easy, but precisely
-        the right level of difficulty to begin having fun.
-      </p>
-    </section>
-    <section class="info-section">
-      <h3>Why build this?</h3>
-      <p>
-        I was trying to recapture the memories I have of wandering around Germany,
-        trying to make sense of the language, and the little jolts
-        of delight and recognition whenever I figured something out.
-        If that sounds like something you would do, this is the game for you!
+        remainder that we cover here is, perhaps not <em>easy</em>, but precisely
+        the right level of difficulty to be fun.
       </p>
     </section>
     <section class="info-section">
@@ -58,22 +61,41 @@ const safeJson = JSON.stringify(levels)
     <section class="info-section">
       <h3>Will I actually learn any German?</h3>
       <p>
-        That's not the goal, but the goal is to learn something <em>about</em>
+        That's not the goal. I hope you'll learn something <em>about</em>
         German, especially the shortcuts you can use if you do want to pick it up
-        for real.
-        If your memory is good, you may well learn many German words,
-        but that's entirely optional. The goal is a fun game!
+        for real, and some of the logic behind the gnarliness of the language.
+        If you have a great memory, you may well learn many German words,
+        but that's entirely optional. The goal is those moments of epiphany!
       </p>
     </section>
     <section class="info-section">
       <h3>But I already know German...</h3>
       <p>
-        In that case, this game may be boring, but hey, give it a try!
-        Maybe you'll like it anyway!
+        You may find that this game is more "German is Too Easy",
+        but you may enjoy joining the dots on the common etymological
+        origins of the words, and other logic behind the German language. 
+        Give it a try!
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>I'm bad at remembering stuff...</h3>
+      <p>
+        No worries, just use the "Memory" button within each round to see
+        the previous sentences in the round. And make liberal use of the hints,
+        especially the free ones! If using hints stresses you out because
+        points are deducted, consider playing in Casual mode.
+      </p>
+    </section>
+    <section class="info-section">
+      <h3>How are <em>you</em> remembering my progress?</h3>
+      <p>
+        Your progress is stored in the local storage of your browser.
+        That means you won't be able to open it up on a different browser
+        or device and continue from where you left off.
       </p>
     </section>
     <div class="info-modal-bottom">
-      <button class="info-modal-close-bottom" id="info-modal-close-bottom">Close</button>
+      <button class="info-modal-close-bottom" id="info-modal-close-bottom">Start playing!</button>
     </div>
   </div>
 </div>
@@ -97,10 +119,14 @@ const safeJson = JSON.stringify(levels)
     <dl class="mode-descriptions">
       <dt>Casual</dt>
       <dd>No score tracking, use as many hints as you like. No time restrictions on timed levels. Just explore at your own pace.</dd>
-      <dt>Competitive</dt>
+      <dt>Competitive (default)</dt>
       <dd>Scores are tracked. Hints, letter reveals, incorrect guesses on certain puzzles, and going beyond time restrictions all cost points.</dd>
       <dt>Challenging</dt>
-      <dd>Like Competitive, except that there are no hints, only letter reveals. Some words won't be easily guessable from context, so out-of-the-box thinking and trial & error are required!</dd>
+      <dd>
+        Like Competitive, except that there are no hints, only letter reveals (3 points each).
+        Some words won't be easily guessable from context, so strong pattern recognition skills are a must.
+        You may need some trial & error to hit upon the desired wording.
+      </dd>
     </dl>
     <p class="mode-note">
       Switch modes whenever you like.
@@ -132,7 +158,7 @@ const safeJson = JSON.stringify(levels)
     <button type="submit" class="signup-btn" id="signup-btn" disabled>Notify me</button>
   </form>
   <p class="signup-message" id="signup-message" aria-live="polite"></p>
-  <a href="https://forms.gle/8M9ATcgTTMYhiRC27" target="_blank" rel="noopener" class="feedback-link">Have feedback?</a>
+  <a href="https://forms.gle/8M9ATcgTTMYhiRC27" target="_blank" rel="noopener" class="feedback-link">Tell me what you think</a>
 </div>
 
 <div class="reset-row">
@@ -357,6 +383,10 @@ const safeJson = JSON.stringify(levels)
 
   // Enter: jump to the next playable level (first unlocked + incomplete, or first unlocked)
   const nextLevel = levelsData.find((l, i) => !locked[i] && !getBucket(progress[String(l.id)], isCasual)?.done);
+  if (nextLevel) {
+    const nextNode = nodes.find(n => n.dataset.levelId === String(nextLevel.id));
+    if (nextNode) nextNode.classList.add('next-level');
+  }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && nextLevel) {
       window.location.href = `/languages/german/is-easy/level/${nextLevel.id}/`;
@@ -526,6 +556,14 @@ const safeJson = JSON.stringify(levels)
     color: inherit;
     background: transparent;
     gap: 1px;
+  }
+
+  @keyframes level-pulse {
+    0%, 100% { box-shadow: 0 0 4px 2px rgba(21, 97, 109, 0.1); }
+    50%       { box-shadow: 0 0 10px 6px rgba(21, 97, 109, 0.28); }
+  }
+  .map-node.next-level {
+    animation: level-pulse 2.5s ease-in-out infinite;
   }
 
   .map-node.locked {
@@ -698,13 +736,13 @@ const safeJson = JSON.stringify(levels)
   }
 
   .info-btn {
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 1.3rem;
+    height: 1.3rem;
     border-radius: 50%;
     border: 1px solid #15616d;
     background: none;
     color: #15616d;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-family: 'Jost', sans-serif;
     cursor: pointer;
     flex-shrink: 0;
@@ -712,8 +750,8 @@ const safeJson = JSON.stringify(levels)
     align-items: center;
     justify-content: center;
     padding: 0;
-    vertical-align: middle;
-    margin-left: 0.2rem;
+    vertical-align: 0.25em;
+    margin-left: 0.25rem;
   }
   .info-btn:hover { background: #15616d; color: #fff; }
   .info-btn-title { display: none; }

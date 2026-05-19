@@ -4,7 +4,6 @@
     {
       "kind": "translate",
       "german": "Es waren einmal drei Bären: Vater Bär, Mutter Bär und Bärchen.",
-      "instruction": "Translate, using the traditional English character names",
       "target": [
         {"word": "Once"},
         {"word": "upon", "given": true, "challengingInput": true},
@@ -255,7 +254,7 @@
       ],
       "hints": [
         {
-          "hint": "\"ein\" here is part of the verb \"einschlafen\" and implies that Goldilocks is <em>entering a state</em> of \"Schlaf\". The English cognate to this word goes in the third slot, and has an additional vowel before it.",
+          "hint": "\"ein\" here is part of the verb \"einschlafen\" and implies that Goldilocks is <em>entering a state</em> of \"Schlaf\". The English cognate to this word goes in the third slot, and has an additional vowel before it. Also, we're back to present tense here and for the rest of the level.",
           "points": 0
         },
         {
@@ -307,7 +306,7 @@
     },
     {
       "kind": "translate",
-      "german": "Goldlöckchen wacht auf und läuft weg.",
+      "german": "Goldlöckchen wacht auf und rennt weg, so schnell sie kann!",
       "target": [
         {"word": "Goldilocks"},
         {"word": "wakes"},
@@ -315,7 +314,13 @@
         {"word": "and"},
         {"word": "runs"},
         {"word": "away", "spaceAfter": false},
-        {"word": ".", "given": true}
+        {"word": ",", "given": true},
+        {"word": "as", "given": true, "challengingInput": true},
+        {"word": "fast", "also": ["quickly"]},
+        {"word": "as"},
+        {"word": "she"},
+        {"word": "can", "spaceAfter": false},
+        {"word": "!", "given": true}
       ],
       "hints": [
         {
@@ -325,9 +330,13 @@
         {
           "hint": "If \"Buch\" ~ \"book\" then \"wach(t)\" ~ ?",
           "points": 2
+        },
+        {
+          "hint": "\"schnell\" is commonly heard in <em>Zweiter Weltkrieg</em> movies being shouted at POWs or underlings to hurry up.",
+          "points": 2
         }
       ],
-      "reveal": "\"Aufwachen\" and \"weglaufen\" are both separable verbs. Most such verbs correspond to phrasal verbs in English, like \"wake up\" and \"run away\", but sometimes we have \"fall asleep\" rather than \"sleep into\", as with \"einschlafen\" earlier. I hope this level wasn't <em>zu schwer oder zu leicht, aber genau richtig</em>!"
+      "reveal": "\"Aufwachen\" and \"wegrennen\" are both separable verbs. Most such verbs correspond to phrasal verbs in English, like \"wake up\" and \"run away\", but sometimes we have \"fall asleep\" rather than \"sleep into\", as with \"einschlafen\" earlier. I hope this level wasn't <em>zu schwer oder zu leicht, aber genau richtig</em>!"
     }
   ]
 }

@@ -211,7 +211,7 @@
       ],
       "hints": [
         {
-          "hint": "Garfield might say \"Ich möchte Kaffee\" on a Monday morning.",
+          "hint": "Garfield might say \"Ich möchte Kaffee\" on a <em>Montag</em> morning.",
           "points": 2
         },
         {
