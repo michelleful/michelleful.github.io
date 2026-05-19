@@ -11,15 +11,21 @@ const uniControls: Record<string, string> = {
 ---
 
 <Layout title="Hieroglyphic Egyptian Typewriter">
+<Fragment slot="head">
+  <link rel="stylesheet" href="/hieroglyphs/hierojax.css" />
+  <script is:inline src="/hieroglyphs/hierojax.js"></script>
+</Fragment>
 
 <h1>Hieroglyphic Egyptian Typewriter</h1>
+<p>
+  Powered by <a href="https://nederhof.github.io/hierojax/">HieroJax by Mark-Jan Nederhof</a>.
+  Developed by <a href="/">Michelle Fullwood</a>.
+</p>
 <p>
   Type <a href="https://en.wikipedia.org/wiki/Manuel_de_Codage">Manuel de Codage</a>
   (MdC) notation and see it rendered as hieroglyphs instantly.
   Use codes like <code>anx</code>, <code>nfr</code>, or Gardiner numbers like <code>A1</code>.
   Separate signs with <code>-</code>, stack with <code>:</code> or <code>*</code>.<br/>
-  Powered by <a href="https://nederhof.github.io/hierojax/">HieroJax by Mark-Jan Nederhof</a>.
-  Developed by <a href="/">Michelle Fullwood</a>.
 </p>
 
 <textarea id="mdc-input" rows="3"><1-i-mn:n-anx-w^sbt^ett-S38-O28-M26-2>-mAa:xrw-W-x:r
@@ -400,10 +406,9 @@ nTr^sbZ2a-nb-w^etZ2-W19-i-r:a-N5*N5:nb</textarea>
 </Layout>
 
 <style is:global>
+  h1 { font-size: 3.2rem; }
   @media (max-width: 600px) {
-    h1 {
-      font-size: 2.5rem;
-    }
+    h1 { font-size: 2rem; }
   }
 
   #mdc-input {

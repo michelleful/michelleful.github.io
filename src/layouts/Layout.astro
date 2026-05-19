@@ -23,8 +23,7 @@ const { title = "Michelle Fullwood" } = Astro.props;
 			href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:ital,wght@0,200;0,400;1,400&family=Kalam:wght@300&display=swap"
 			rel="stylesheet"
 		/>
-		<link rel="stylesheet" href="/hieroglyphs/hierojax.css" />
-		<script is:inline src="/hieroglyphs/hierojax.js"></script>
+		<slot name="head" />
 		<title>{title}</title>
 	<script defer src="https://cloud.umami.is/script.js" data-website-id="fa1bd294-88ac-4c65-b29d-8c7656bc9bbc"></script>
 	</head>
