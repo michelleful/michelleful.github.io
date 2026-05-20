@@ -71,6 +71,13 @@ const safeJson = JSON.stringify(levelData)
     const levelId = String(levelData.id);
     const totalSubs = levelData.subLevels.length;
 
+    // Preload all images in the level so they're ready when needed
+    levelData.subLevels.forEach(s => {
+      [s.revealImage, ...( s.hints?.map(h => h.image).filter(Boolean) ?? [])].forEach(url => {
+        if (url) new Image().src = url;
+      });
+    });
+
     const prog = getProgress();
     const isCasual = mode === 'casual';
 
