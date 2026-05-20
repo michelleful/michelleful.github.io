@@ -23,13 +23,12 @@ export class TimerSync {
   }
 
   get currentActiveWordId() {
-    let last = null;
     for (const ts of this.timestamps) {
-      if (this.currentTime < ts.start) break;
-      if (this.currentTime < ts.end) return ts.id;
-      last = ts.id;
+      if (this.currentTime >= ts.start && this.currentTime < ts.end) {
+        return ts.id;
+      }
     }
-    return last;
+    return null;
   }
 
   play() {

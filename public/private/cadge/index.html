@@ -1319,9 +1319,8 @@ function doGiveUp() {
 // ─── SHARE ────────────────────────────────────────────────────────────────────
 function shareGame() {
   const url    = `${location.origin}${location.pathname}?game=${BOARD_KEY.replace(/\|/g, '')}`;
-  const wordPct = Math.round(foundWords.length / TARGET_WORDS.size * 100);
-  const ptsPct  = Math.round(score / MAX_SCORE * 100);
-  const text    = `CADGE #${BOARD_NUM} — ${foundWords.length}/${TARGET_WORDS.size} words (${wordPct}%) · ${score}/${MAX_SCORE} pts (${ptsPct}%)\n${url}`;
+  const pct    = Math.round(foundWords.length / TARGET_WORDS.size * 100);
+  const text   = `CADGE #${BOARD_NUM} — ${foundWords.length}/${TARGET_WORDS.size} words (${pct}%) · ${score} pts\n${url}`;
   if (navigator.share) {
     navigator.share({ text }).catch(() => {});
   } else {
@@ -1715,7 +1714,7 @@ function showWin() {
   const banner     = document.getElementById('winBanner');
   const speedRound = !overtime;
   document.getElementById('winTitle').textContent =
-    speedRound ? '🏆 Perfect Speed Round!' : `You found ${foundWords.length} / ${TARGET_WORDS.size} words!`;
+    speedRound ? '🏆 Perfect Speed Round!' : 'You got them all!';
   banner.style.borderColor = speedRound ? 'rgba(245,200,66,0.5)' : '';
   banner.style.background  = speedRound ? 'rgba(245,200,66,0.07)' : '';
   document.getElementById('winTitle').style.color = speedRound ? 'var(--accent)' : '';

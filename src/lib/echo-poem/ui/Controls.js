@@ -8,13 +8,6 @@ export class Controls {
     this._playing = false;
 
     this._render();
-
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && e.target === document.body) {
-        e.preventDefault();
-        this._togglePlay();
-      }
-    });
   }
 
   _render() {

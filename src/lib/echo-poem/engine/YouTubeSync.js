@@ -26,13 +26,10 @@ export class YouTubeSync {
   }
 
   get currentActiveWordId() {
-    let last = null;
     for (const ts of this.timestamps) {
-      if (this.currentTime < ts.start) break;
-      if (this.currentTime < ts.end) return ts.id;
-      last = ts.id;
+      if (this.currentTime >= ts.start && this.currentTime < ts.end) return ts.id;
     }
-    return last;
+    return null;
   }
 
   play() {
@@ -86,13 +83,6 @@ export class YouTubeSync {
     // but YouTube may still report the old end-of-poem position for a few frames
     // while the seek to startOffset completes. Skip those frames.
     if (ytTime > this.currentTime + 5000) {
-      this._rafId = requestAnimationFrame(this._tick.bind(this));
-      return;
-    }
-    // Guard against the video not having seeked yet: getCurrentTime() returns ~0
-    // while the initial seek to startOffset is still pending, which converts to
-    // ytTime=0 and fires word 0 immediately before audio has started.
-    if (ytRaw * 1000 < this.startOffset + this.currentTime - 2000) {
       this._rafId = requestAnimationFrame(this._tick.bind(this));
       return;
     }

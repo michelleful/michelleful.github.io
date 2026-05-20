@@ -25,13 +25,7 @@ const safeJson = JSON.stringify(poem)
   <header class="poem-header">
     <h1 class="poem-title">{poem.title}</h1>
     <p class="poem-author">{poem.author}</p>
-    {poem.performer && (
-      <p class="poem-performer">
-        performed by {poem.youtubeId
-          ? <a class="poem-performer-link" href={`https://www.youtube.com/watch?v=${poem.youtubeId}`} target="_blank" rel="noopener noreferrer">{poem.performer}</a>
-          : poem.performer}
-      </p>
-    )}
+    {poem.performer && <p class="poem-performer">performed by {poem.performer}</p>}
   </header>
   <div class="sonnet-container"></div>
   <canvas class="echo-canvas"></canvas>
@@ -93,18 +87,6 @@ const safeJson = JSON.stringify(poem)
     letter-spacing: 0.05em;
   }
 
-  .echo-poem-root .poem-performer-link {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    text-decoration-color: #353230;
-  }
-
-  .echo-poem-root .poem-performer-link:hover {
-    color: #8a8278;
-    text-decoration-color: #8a8278;
-  }
-
   .echo-poem-root .sonnet-container {
     position: relative;
     z-index: 1;
@@ -135,18 +117,12 @@ const safeJson = JSON.stringify(poem)
     line-height: 2.2;
     letter-spacing: 0.02em;
     color: #c8c0b4;
-    text-align: left;
-    width: fit-content;
-    margin: 0 auto;
+    text-align: center;
   }
 
   .echo-poem-root .line {
     display: block;
     word-spacing: 0.3em;
-  }
-
-  .echo-poem-root .stanza-break {
-    height: 0.8em;
   }
 
   .echo-poem-root .word {
@@ -227,12 +203,6 @@ const safeJson = JSON.stringify(poem)
   .controls-bar .ctrl-speed-group .ctrl-btn:last-child {
     border-radius: 0 4px 4px 0;
     border-right-width: 1px;
-  }
-
-  .controls-bar .controls-loading {
-    font-size: 0.8rem;
-    color: #7a7a88;
-    letter-spacing: 0.04em;
   }
 
   @media (max-width: 600px) {

@@ -19,14 +19,11 @@ function _loadYouTubeAPI() {
 }
 
 function _createYTPlayer(el, videoId, startSec = 0) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     new window.YT.Player(el, {
       videoId,
       playerVars: { autoplay: 0, controls: 0, rel: 0, start: Math.floor(startSec) },
-      events: {
-        onReady: e => resolve(e.target),
-        onError: () => reject(new Error('Video unavailable')),
-      },
+      events: { onReady: e => resolve(e.target) },
     });
   });
 }
@@ -66,7 +63,6 @@ async function _initInstance(root, poem) {
     canvasEl,
     words: poem.words,
     lines: poem.lines,
-    stanzaBreaks: poem.stanzaBreaks || [],
   });
   textRenderer.render();
 
@@ -106,22 +102,9 @@ async function _initInstance(root, poem) {
   // Timer — YouTube-backed if youtubeId present, otherwise internal rAF clock
   let timerSync;
   if (poem.youtubeId) {
-    const loadingEl = document.createElement('div');
-    loadingEl.className = 'controls-loading';
-    loadingEl.textContent = 'Loading audio…';
-    controlsEl.appendChild(loadingEl);
-
     await _loadYouTubeAPI();
     const ytEl = root.querySelector('.yt-player');
-    let ytPlayer;
-    try {
-      ytPlayer = await _createYTPlayer(ytEl, poem.youtubeId, (poem.audioStartOffset ?? 0) / 1000);
-    } catch {
-      controlsEl.style.display = 'none';
-      return;
-    }
-    loadingEl.remove();
-
+    const ytPlayer = await _createYTPlayer(ytEl, poem.youtubeId, (poem.audioStartOffset ?? 0) / 1000);
     timerSync = new YouTubeSync({
       player: ytPlayer,
       startOffset: poem.audioStartOffset ?? 0,
@@ -157,7 +140,6 @@ async function _initInstance(root, poem) {
     textRenderer,
     echoEngine: engine,
     controlsEl,
-    annotations: poem.annotations || [],
   });
 
   // Text update loop — runs continuously for smooth decay animation
