@@ -5,6 +5,10 @@
 //   semantic:     [255, 190, 80]    (amber)
 //   etymological: [140, 220, 160]   (sage green)
 //   pun:          [220, 130, 220]   (mauve)
+const ANNOTATION_COLORS = {
+  surprise: [255, 140, 60],  // warm orange
+};
+
 const TYPE_COLORS = {
   primary:      [255, 255, 255],
   phonetic:     [120, 152, 255],  // periwinkle blue
@@ -15,7 +19,7 @@ const TYPE_COLORS = {
 };
 
 export class CanvasRenderer {
-  constructor({ canvasEl, textRenderer, echoEngine, controlsEl }) {
+  constructor({ canvasEl, textRenderer, echoEngine, controlsEl, annotations = [] }) {
     this.canvasEl = canvasEl;
     this.textRenderer = textRenderer;
     this.echoEngine = echoEngine;
@@ -39,6 +43,12 @@ export class CanvasRenderer {
     this._finalCircles = null;
     this._hoverWordId = null;
     this._hoverStartTime = null;
+
+    // Map<wordId, annotationType> for words with special annotations
+    this._annotations = new Map();
+    for (const a of annotations) {
+      this._annotations.set(a.wordId, a.type);
+    }
   }
 
   resize() {
@@ -113,6 +123,10 @@ export class CanvasRenderer {
       this._drawFinalCircles(ctx, now);
     } else {
       this._drawLiveEchoes(ctx, now);
+    }
+
+    if (this._annotations.size > 0) {
+      this._drawAnnotations(ctx, now);
     }
 
     this._rafId = requestAnimationFrame(this._draw.bind(this));
@@ -361,6 +375,35 @@ export class CanvasRenderer {
     ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
     ctx.lineWidth = 1.5;
     ctx.stroke();
+  }
+
+  // ── Annotations (surprise etc.) — always drawn on top ───────────────────────
+
+  _drawAnnotations(ctx, now) {
+    const canvasRect = this.canvasEl.getBoundingClientRect();
+
+    for (const [wordId, type] of this._annotations) {
+      // Show in final state (pre/post-play), or once the word has been spoken during playback
+      const state = this.echoEngine.wordStates.get(wordId);
+      const hasBeenSpoken = state && state.echoes.length > 0;
+      if (!this._finalStateActive && !hasBeenSpoken) continue;
+
+      const color = ANNOTATION_COLORS[type];
+      if (!color) continue;
+
+      const el = this.textRenderer.wordEls.get(wordId);
+      if (!el) continue;
+      const wordRect = el.getBoundingClientRect();
+      const x = wordRect.right - canvasRect.left - 4;
+      const y = wordRect.top - canvasRect.top + (wordRect.bottom - wordRect.top) * 0.4;
+
+      const [r, g, b] = color;
+      ctx.font = "bold 16px 'Jost', sans-serif";
+      ctx.fillStyle = `rgba(${r},${g},${b},0.95)`;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('!', x, y);
+    }
   }
 
   // ── Helpers ─────────────────────────────────────────────────────────────────

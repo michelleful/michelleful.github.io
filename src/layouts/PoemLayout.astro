@@ -1,9 +1,11 @@
 ---
 interface Props {
   title?: string;
+  backHref?: string;
+  backLabel?: string;
 }
 
-const { title = "Michelle Fullwood" } = Astro.props;
+const { title = "Michelle Fullwood", backHref, backLabel = "Back" } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,6 +28,9 @@ const { title = "Michelle Fullwood" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    {backHref && (
+      <a class="back-link" href={backHref}>&#8592; {backLabel}</a>
+    )}
     <slot />
   </body>
 </html>
@@ -44,5 +49,24 @@ const { title = "Michelle Fullwood" } = Astro.props;
   body {
     font-family: 'Jost', sans-serif;
     font-size: 1rem;
+  }
+
+  .back-link {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 200;
+    letter-spacing: 0.05em;
+    color: #4a4642;
+    text-decoration: none;
+    z-index: 20;
+    padding: 0.3rem 0.5rem;
+    transition: color 0.15s;
+  }
+
+  .back-link:hover {
+    color: #9a9288;
   }
 </style>

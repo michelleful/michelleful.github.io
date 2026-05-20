@@ -1,9 +1,93 @@
 ---
-import PoemLayout from '../../../../layouts/PoemLayout.astro';
-import EchoPoem from '../../../../components/EchoPoem.astro';
-import sonnet2 from './sonnet2.json';
+import Layout from '../../../../layouts/Layout.astro';
+
+const sonnets = [
+  { slug: 'sonnet2',  label: 'Sonnet 2',  subtitle: 'When forty winters shall besiege thy brow' },
+  { slug: 'sonnet29', label: 'Sonnet 29', subtitle: 'When, in disgrace with Fortune and men\'s eyes' },
+];
 ---
 
-<PoemLayout title="Sonnet 2 — Shakespeare">
-  <EchoPoem poem={sonnet2} />
-</PoemLayout>
+<Layout title="Shakespeare Echo Visualizer">
+
+<h1>Shakespeare Echo Visualizer</h1>
+
+<p>
+  Shakespeare's sonnets are dense with internal echoes — words that rhyme, repeat,
+  or share roots in ways that create a web of meaning beneath the surface.
+  Stephen Booth, in his landmark commentary on the sonnets, catalogues hundreds of
+  these connections: phonetic links where sounds mirror each other across lines,
+  semantic links where a word quietly calls back to an earlier one, and cases where
+  the two are inseparable.
+</p>
+<p>
+  This visualizer makes those links visible. As each word is spoken, you'll see
+  ripples reach back to the words it resonates with. You can also hover over any
+  word to explore its connections directly.
+</p>
+
+<h2>Key</h2>
+
+<ul class="key-list">
+  <li class="key-item">
+    <span class="key-swatch" style="background: rgb(120,152,255)"></span>
+    <strong>Phonetic</strong> — shared sounds (rhyme, alliteration, assonance)
+  </li>
+  <li class="key-item">
+    <span class="key-swatch" style="background: rgb(255,190,80)"></span>
+    <strong>Semantic</strong> — shared meaning (synonyms, antonyms, word fields)
+  </li>
+  <li class="key-item">
+    <span class="key-swatch" style="background: rgb(140,220,160)"></span>
+    <strong>Both</strong> — same word repeated, or inseparable sound and sense
+  </li>
+  <li class="key-item">
+    <strong style="color: rgb(255,140,60)">!</strong> — surprising usage (e.g. a noun used as a verb)
+  </li>
+</ul>
+
+<h2>Sonnets</h2>
+
+<ul class="sonnet-list">
+  {sonnets.map(s => (
+    <li>
+      <a href={`/languages/english/shakespeare/${s.slug}`}>
+        {s.label} — <em>{s.subtitle}</em>
+      </a>
+    </li>
+  ))}
+</ul>
+
+</Layout>
+
+<style>
+  .key-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .key-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .key-swatch {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .sonnet-list {
+    padding-left: 1.5rem;
+  }
+
+  .sonnet-list li {
+    margin-bottom: 0.4rem;
+  }
+</style>

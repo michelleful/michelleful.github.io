@@ -1,9 +1,10 @@
 export class TextRenderer {
-  constructor({ containerEl, canvasEl, words, lines }) {
+  constructor({ containerEl, canvasEl, words, lines, stanzaBreaks = [] }) {
     this.containerEl = containerEl;
     this.canvasEl = canvasEl;
     this.words = words;
     this.lines = lines;
+    this.stanzaBreaks = new Set(stanzaBreaks);
     this.wordEls = new Map(); // wordId → <span>
   }
 
@@ -19,6 +20,12 @@ export class TextRenderer {
     }
 
     for (let lineIdx = 0; lineIdx < this.lines.length; lineIdx++) {
+      if (this.stanzaBreaks.has(lineIdx)) {
+        const breakEl = document.createElement('div');
+        breakEl.className = 'stanza-break';
+        sonnet.appendChild(breakEl);
+      }
+
       const lineEl = document.createElement('div');
       lineEl.className = 'line';
       lineEl.dataset.line = lineIdx;

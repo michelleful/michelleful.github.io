@@ -1,0 +1,9 @@
+---
+import PoemLayout from '../../../../layouts/PoemLayout.astro';
+import EchoPoem from '../../../../components/EchoPoem.astro';
+import sonnet2 from './sonnet2.json';
+---
+
+<PoemLayout title="Sonnet 2 — Shakespeare" backHref="/languages/english/shakespeare/" backLabel="Back to main">
+  <EchoPoem poem={sonnet2} />
+</PoemLayout>
