@@ -16,10 +16,10 @@
       ],
       "hints": [
         {
-          "hint": "\"Fluss\" is distantly related to \"flood\" in English. Think something that might flood occasionally. Der Nil did once a year until the construction of the \"Assuan-Staudamm\"!"
+          "hint": "<span lang=\"de\">Fluss</span> is distantly related to \"flood\" in English. Think something that might flood occasionally. <span lang=\"de\">Der Nil</span> did once a year until the construction of the <span lang=\"de\">Assuan-Staudamm</span>!"
         }
       ],
-      "reveal": "\"Denial\" is \"Verweigerung\" in German, so the pun doesn't work like in English."
+      "reveal": "\"Denial\" is <span lang=\"de\">Verweigerung</span> in German, so the pun doesn't work like in English."
     },
     {
       "kind": "translate",
@@ -42,10 +42,10 @@
       ],
       "hints": [
         {
-          "hint": "The English translation of \"längste\" has the same consonants, in order."
+          "hint": "The English translation of <span lang=\"de\">längste</span> has the same consonants, in order."
         }
       ],
-      "reveal": "Why does the English sentence have \"in\" while the German doesn't? \"der Welt\" is in genitive case, so it already means \"of the world\"."
+      "reveal": "Why does the English sentence have \"in\" while the German doesn't? <span lang=\"de\">der Welt</span> is in genitive case, so it already means \"of the world\"!"
     },
     {
       "kind": "translate",
@@ -69,18 +69,18 @@
       ],
       "hints": [
         {
-          "hint": "\"Pferd\" = 🐴",
+          "hint": "<span lang=\"de\">Pferd</span> = 🐴",
           "points": 0
         },
         {
-          "hint": "Think of a large and dangerous <em>Fluss</em> mammal that was worshipped <em>im alten Ägypten</em>.",
+          "hint": "Think of a large and dangerous <span lang=\"de\">Fluss</span> mammal that was worshipped <span lang=\"de\">im alten Ägypten</span>.",
           "points": 1
         },
         {
-          "hint": "\"Nilpferd\" = 🦛"
+          "hint": "<span lang=\"de\">Nilpferd</span> = 🦛"
         }
       ],
-      "reveal": "\"Flusspferd\" (the more scientific term) and \"Nilpferd\" (the everyday German term) are calques — word-for-word translations of the Greek \"hippopotamos\" (river horse). English just borrowed the Greek directly. But hippos aren't horses! Their closest living relatives are whales and dolphins."
+      "reveal": "<span lang=\"de\">Flusspferd</span> (the more scientific term) and <span lang=\"de\">Nilpferd</span> (the everyday German term) are calques — word-for-word translations of the Greek \"hippopotamos\" (river horse). English just borrowed the Greek directly. But hippos aren't horses! Their closest living relatives are whales and dolphins."
     },
     {
       "kind": "translate",
@@ -96,7 +96,7 @@
         {"word": ".", "given": true}
       ],
       "hints": [],
-      "reveal": "And now you know what people are literally saying when they wish someone \"Gesundheit\"!"
+      "reveal": "And now you know what people are literally saying when they wish someone <span lang=\"de\">Gesundheit</span>!"
     },
     {
       "kind": "translate",
@@ -113,7 +113,7 @@
         {"word": ".", "given": true}
       ],
       "hints": [],
-      "reveal": "The word \"Deutsch\" derives from Proto-Germanic \"þeudō\" meaning \"the people, folk\". The same root gives us \"Dutch\", \"Teuton\", and the Italian word for German, \"Tedesco\"!"
+      "reveal": "The word <span lang=\"de\">Deutsch</span> derives from Proto-Germanic \"þeudō\" meaning \"the people, folk\". The same root gives us \"Dutch\", \"Teuton\", and the Italian word for German, \"Tedesco\"!"
     },
     {
       "kind": "translate",
@@ -137,7 +137,7 @@
     {
       "kind": "translate",
       "german": "Spanisch spreche ich mit Gott, Italienisch mit Frauen, Französisch mit Männern und Deutsch mit meinem Pferd.",
-      "attribution": "Karl V, Kaiser des Heiligen Römischen Reiches",
+      "attribution": "<span class=\"de\">Karl V, Kaiser des Heiligen Römischen Reiches</span>",
       "target": [
         {"word": "I"},
         {"word": "speak"},
@@ -165,10 +165,10 @@
           "points": 0
         },
         {
-          "hint": "\"Frauen\" and \"Männern\" are plural and contrast in gender, and the latter is pretty close to its English equivalent!"
+          "hint": "<span lang=\"de\">Frauen</span> and <span lang=\"de\">Männern</span> are plural and contrast in gender, and the latter is pretty close to its English equivalent!"
         }
       ],
-      "reveal": "Were you able to decode Karl V's title? \"Kaiser\" was borrowed from Latin \"Caesar\", as was Russian \"Tsar/Czar\". And \"Reich\" (\"empire\", \"realm\") still appears in English as the \"-ric\" in \"bishopric\"."
+      "reveal": "Were you able to decode Karl V's title? <span lang=\"de\">Kaiser</span> was borrowed from Latin \"Caesar\", as was Russian \"Tsar/Czar\". And <span lang=\"de\">Reich</span> (\"empire\", \"realm\") still appears in English as the \"-ric\" in \"bishopric\"."
     },
     {
       "kind": "categorize",
@@ -189,7 +189,7 @@
           "hint": "What were the sides in WWII?"
         }
       ],
-      "reveal": "You've probably worked out what \"Zweiter\" means. The \"First\" would have been \"Erster\" &mdash; can you think of an English word containing the now-rare morpheme \"erst\"?"
+      "reveal": "You've probably worked out what <span lang=\"de\">Zweiter</span> means. The \"First\" would have been <span lang=\"de\">Erster</span> &mdash; can you think of an English word containing the now-rare morpheme \"erst\"?"
     },
     {
       "kind": "translate",
@@ -211,15 +211,15 @@
       ],
       "hints": [
         {
-          "hint": "This is notorious as a very <em>langes Buch</em>."
+          "hint": "This is notorious as a very <span lang=\"de\">langes Buch</span>."
         }
       ],
-      "reveal": "The English word I was thinking of with \"erst\" (\"first\", \"former\" in German) is \"erstwhile\"!"
+      "reveal": "The English word I was thinking of with \"erst\" is \"erstwhile\"."
     },
     {
       "kind": "translate",
       "german": "Friede den Hütten, Krieg den Palästen!",
-      "attribution": "Georg Büchner, Deutscher Dramatiker und Revolutionär",
+      "attribution": "Georg Büchner, <span lang=\"de\">Deutscher Dramatiker und Revolutionär</span>",
       "target": [
         {"word": "Peace"},
         {"word": "to", "given": true, "challengingInput": true},
@@ -234,7 +234,7 @@
       ],
       "hints": [
         {
-          "hint": "\"Hütten\" and \"Palästen\" are two contrasting types of abodes, both close to their English equivalents."
+          "hint": "<span lang=\"de\">Hütten</span> and <span lang=\"de\">Palästen</span> are two contrasting types of abodes, both close to their English equivalents."
         }
       ],
       "reveal": "And on that stirring call to action, congratulations on finishing Level 3!"

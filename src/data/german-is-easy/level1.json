@@ -42,11 +42,11 @@
       ],
       "hints": [
         {
-          "hint": "\"Meer\" and French \"mer\" have the same meaning.",
+          "hint": "<span lang=\"de\">Meer</span> and French \"mer\" have the same meaning.",
           "points": 1
         },
         {
-          "hint": "\"Meer\" = 🌊"
+          "hint": "<span lang=\"de\">Meer</span> = 🌊"
         }
       ],
       "reveal": "English still retains \"mere\" in some place names like \"Windermere\", the largest lake in England."
@@ -64,7 +64,7 @@
           "alt": "Image of a water fountain, with the words \"Trinkwasser\" and \"Drinking water\" on its sign"
         }
       ],
-      "reveal": "Indeed, the excess salt in seawater would dehydrate you more than drinking nothing at all. Therefore, <em>Meerwasser ist kein Trinkwasser</em>."
+      "reveal": "Indeed, the excess salt in seawater would dehydrate you more than drinking nothing at all. Therefore, <span lang=\"de\">Meerwasser ist kein Trinkwasser</span>."
     },
     {
       "kind": "translate",
@@ -110,7 +110,7 @@
           "points": 5
         }
       ],
-      "reveal": "Fun fact! German \"du\" ~ \"thou\" in English!"
+      "reveal": "Fun fact! German <span lang=\"de\">du</span> ~ \"thou\" in English!"
     },
     {
       "kind": "translate",
@@ -127,7 +127,7 @@
       ],
       "hints": [
         {
-          "hint": "Since \"du/thou\" is just old-timey \"you\", \"hast\" is just old-timey...?"
+          "hint": "Since <span lang=\"de\">du</span> is just old-timey \"thou\", <span lang=\"de\">hast</span> is just old-timey...?"
         },
         {
           "hint": "☕ + 🍵",
@@ -152,12 +152,12 @@
           "points": 0
         },
         {
-          "hint": "Change the \"u\" to an \"i\" to find a more familiar verb we've seen a few times already.",
+          "hint": "Change the <span lang=\"de\">u</span> of <span lang=\"de\">getrunken</span> to an <span lang=\"de\">i</span> to find a more familiar verb we've seen a few times already.",
           "points": 2
         },
 
         {
-          "hint": "\"getrunken\" is the past participle of \"trinken\". For example \"taken\" is the past participle of \"take\"."
+          "hint": "<span lang=\"de\">getrunken</span> is the past participle of <span lang=\"de\">trinken</span>. For example \"taken\" is the past participle of \"take\"."
         }
       ],
       "reveal": "This was objectively the hardest puzzle in this level! Well done!"
@@ -176,11 +176,11 @@
       ],
       "hints": [
         {
-          "hint": "If \"Salz\" ~ \"salt\", then \"zu\" ~ ?",
+          "hint": "If <span lang=\"de\">Salz</span> ~ \"salt\", then <span lang=\"de\">zu</span> ~ ?",
           "points": 2
         }
       ],
-      "reveal": "We saw \"zu\" meaning \"to\" earlier, and as you can see here, it also means \"too\", whereas English spells them differently."
+      "reveal": "We saw <span lang=\"de\">zu</span> meaning \"to\" earlier, and as you can see here, it also means \"too\", whereas English spells them differently."
     },
     {
       "kind": "translate",

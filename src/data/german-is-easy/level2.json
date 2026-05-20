@@ -13,15 +13,15 @@
       ],
       "hints": [
         {
-          "hint": "\"Mutter\" + \"Vater\" = 👫 in 👪",
+          "hint": "<span lang=\"de\">Mutter</span> + <span lang=\"de\">Vater</span> = 👫 in 👪",
           "points": 2
         },
         {
-          "hint": "The \"ei\" of \"mein(e)\" is pronounced \"eye\". Sound it out, does it sound similar to anything in English?",
+          "hint": "The <span lang=\"de\">ei</span> of <span lang=\"de\">mein(e)</span> is pronounced \"eye\". Sound it out, does it sound similar to anything in English?",
           "points": 2
         },
         {
-          "hint": "Drop the \"n(e)\" to find the English equivalent!"
+          "hint": "Drop the <span lang=\"de\">n(e)</span> to find the English equivalent!"
         }
       ],
       "reveal": "There's a popular fan theory that \"Darth Vader\" was meant to foreshadow \"Dark Father\", but George Lucas has said that the father-son connection wasn't even on his mind while writing <em>Star Wars: A New Hope</em>."
@@ -42,18 +42,18 @@
       ],
       "hints": [
         {
-          "hint": "There is also a Vatertag, but it's on a different Sonntag in the Jahr.",
+          "hint": "There is also a <span lang=\"de\">Vatertag</span>, but it's on a different <span lang=\"de\">Sonntag</span> in the <span lang=\"de\">Jahr</span>.",
           "points": 1
         },
         {
-          "hint": "\"Hello\" in German is \"Guten Tag!\""
+          "hint": "\"Hello\" in German is <span lang=\"de\">Guten Tag!</span>"
         },
         {
-          "hint": "Replace the \"o\" with \"u\" to get a hint to what celestial body \"Sonn\" could mean.",
+          "hint": "Replace the \"o\" with \"u\" to get a hint to what celestial body <span lang=\"de\">Sonn</span> could refer to.",
           "points": 5
         }
       ],
-      "reveal": "💐 <em>Alles Gute zum Muttertag!</em> 💐"
+      "reveal": "💐 <span lang=\"de\">Alles Gute zum Muttertag!</span> 💐"
     },
     {
       "kind": "reorder",
@@ -67,7 +67,7 @@
         {"label": "Sa", "answer": "Samstag"},
         {"label": "Su", "answer": "Sonntag"}
       ],
-      "reveal": "Well done! Several of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, which is \"Donner\" in German."
+      "reveal": "Well done! Several of these were named after the same Germanic gods, e.g. \"Thor\" for \"Thursday\" is the god of thunder, which is <span lang=\"de\">Donner</span> in German."
     },
     {
       "kind": "translate",
@@ -79,7 +79,7 @@
       ],
       "hints": [
         {
-          "hint": "The two parts you have to translate are \"mitt\" and \"woch\".",
+          "hint": "The two parts you have to translate are <span lang=\"de\">mitt</span> and <span lang=\"de\">woch</span>.",
           "points": 1
         },
         {
@@ -99,10 +99,10 @@
       ],
       "hints": [
         {
-          "hint": "\"von\" was sometimes used in aristocratic names to indicate where they were from. For example, Manfred von Richthofen was the WWI flying ace the Red Baron."
+          "hint": "<span lang=\"de\">von</span> was sometimes used in aristocratic names to indicate where they were from. For example, <span lang=\"de\">Manfred von Richthofen</span> was the WWI flying ace the Red Baron."
         },
         {
-          "hint": "\"Bis morgen!\" means \"Till tomorrow!\""
+          "hint": "<span lang=\"de\">Bis morgen!</span> means \"Till tomorrow!\""
         }
       ],
       "reveal": "The English word \"noon\" comes from Latin \"nona\" (ninth hour (after sunrise), i.e. 3 pm). The medieval prayer None was held then, but its associated meal crept earlier over centuries, winding up at midday and lending its name to the hour."
@@ -120,10 +120,10 @@
       ],
       "hints": [
         {
-          "hint": "Split \"Wochenende\" between the two \"en\"s to read it correctly."
+          "hint": "Split <span lang=\"de\">Wochenende</span> between the two <span lang=\"de\">en</span>s to read it correctly."
         }
       ],
-      "reveal": "You can now answer her: \"Ein Wochenende ist Samstag und Sonntag.\""
+      "reveal": "You can now answer her: <span lang=\"de\">Ein Wochenende ist Samstag und Sonntag.</span>"
     },
     {
       "kind": "translate",
@@ -142,11 +142,11 @@
       ],
       "hints": [
         {
-          "hint": "The Japanese word \"arubaito\" is borrowed from \"Arbeit\", and means \"part-time ___\", but the German connotes more \"full-time ___\".",
+          "hint": "The Japanese word \"arubaito\" is borrowed from <span lang=\"de\">Arbeit</span>, and means \"part-time ___\", but the German connotes more \"full-time ___\".",
           "points": 2
         }
       ],
-      "reveal": "Germans celebrate the end of their workweek with the phrase \"Feierabend\", literally \"celebration evening\". Colleagues often mark it with a \"Feierabendbier\"!"
+      "reveal": "Germans celebrate the end of their workweek with the phrase <span lang=\"de\">Feierabend</span>, literally \"celebration evening\". Colleagues often mark it with a <span lang=\"de\">Feierabendbier</span>!"
     },
     {
       "kind": "translate",
@@ -162,7 +162,7 @@
         {"word": "weekend", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "reveal": "We've seen a few negative words by now. \"Nein\" is \"no\" and \"nicht\" is for negating verbs. \"Kein\" is for negating nouns, e.g. \"isn't drinking water\"."
+      "reveal": "<span lang=\"de\">Sonntage</span> especially are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday quiet\")."
     },
     {
       "kind": "translate",
@@ -178,14 +178,14 @@
       ],
       "hints": [
         {
-          "hint": "\"nie\" is a negation word, more emphatic than \"nicht\".",
+          "hint": "<span lang=\"de\">nie</span> is a negation word, more emphatic than <span lang=\"de\">nicht</span>.",
           "points": 2
         },
         {
-          "hint": "\"Katze\" = 🐱"
+          "hint": "<span lang=\"de\">Katze</span> = 🐱"
         }
       ],
-      "reveal": "Cat tax!",
+      "reveal": "<span lang=\"de\">Katze</span> tax!",
       "revealImage": "/images/german-is-easy/katze.jpg",
       "revealImageAlt": "A very cute orange tabby cat sleeping with its paw over its eyes."
     },
@@ -211,15 +211,15 @@
       ],
       "hints": [
         {
-          "hint": "Garfield might say \"Ich möchte Kaffee\" on a <em>Montag</em> morning.",
+          "hint": "Garfield might say <span lang=\"de\">Ich möchte Kaffee</span> on a <span lang=\"de\">Montag</span> morning.",
           "points": 2
         },
         {
-          "hint": "If \"Wasser\" ~ \"water\", then \"hasse\" ~ ?",
+          "hint": "If <span lang=\"de\">Wasser</span> ~ \"water\", then <span lang=\"de\">hasse</span> ~ ?",
           "points": 2
         }
       ],
-      "reveal": "Why <em>does</em> Garfield hate Mondays, when he doesn't have to work? I hope completing this level didn't feel like <em>Arbeit</em>!"
+      "reveal": "Why <em>does</em> Garfield hate Mondays, when he doesn't have to work? I hope completing this level didn't feel like <span lang=\"de\">Arbeit</span>!"
     }
   ]
 }
