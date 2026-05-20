@@ -24,7 +24,7 @@
           "hint": "Drop the <span lang=\"de\">n(e)</span> to find the English equivalent!"
         }
       ],
-      "reveal": "There's a popular fan theory that \"Darth Vader\" was meant to foreshadow \"Dark Father\", but George Lucas has said that the father-son connection wasn't even on his mind while writing <em>Star Wars: A New Hope</em>."
+      "reveal": "A popular fan theory says \"Darth Vader\" was meant to foreshadow \"Dark Father\", but George Lucas has said that the father-son connection hadn't occurred to him while writing <em>Star Wars: A New Hope</em>."
     },
     {
       "kind": "translate",
@@ -162,7 +162,7 @@
         {"word": "weekend", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "reveal": "<span lang=\"de\">Sonntage</span> especially are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday quiet\")."
+      "reveal": "<span lang=\"de\">Sonntage</span>   are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday quiet\")."
     },
     {
       "kind": "translate",

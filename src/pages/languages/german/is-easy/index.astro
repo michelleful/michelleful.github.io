@@ -134,6 +134,9 @@ const safeJson = JSON.stringify(levels)
       Your most recent score will be kept, even if you switch to
       Casual mode and back.
     </p>
+    <div class="info-modal-bottom">
+      <button class="info-modal-close-bottom" id="mode-modal-close-bottom">Start playing!</button>
+    </div>
   </div>
 </div>
 
@@ -209,6 +212,7 @@ const safeJson = JSON.stringify(levels)
   const backdrop = document.getElementById('mode-modal-backdrop');
   document.getElementById('mode-help-btn').addEventListener('click', () => backdrop.style.display = '');
   document.getElementById('mode-modal-close').addEventListener('click', () => backdrop.style.display = 'none');
+  document.getElementById('mode-modal-close-bottom').addEventListener('click', () => backdrop.style.display = 'none');
   backdrop.addEventListener('click', e => { if (e.target === backdrop) backdrop.style.display = 'none'; });
 
   function getProgress() {
@@ -628,6 +632,8 @@ const safeJson = JSON.stringify(levels)
     padding: 2rem;
     max-width: 380px;
     width: calc(100% - 2rem);
+    max-height: 80vh;
+    overflow-y: auto;
     position: relative;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   }
@@ -838,9 +844,9 @@ const safeJson = JSON.stringify(levels)
     .node-title { font-size: 1.3rem; }
     .node-label { font-size: 0.8rem; }
     .node-score { font-size: 0.6rem; }
-    .info-modal p, .mode-descriptions dd { font-size: 1rem; }
+    .info-modal p, .mode-descriptions dd { font-size: 1rem; font-weight: 400; }
     .info-section h3, .mode-descriptions dt { font-size: 1.2rem; }
-    .mode-note { font-size: 0.95rem; }
+    .mode-note { font-size: 0.95rem; font-weight: 400; }
     .signup-form { flex-direction: column; align-items: stretch; }
     .info-btn-title { display: inline-flex; width: 1.6rem; height: 1.6rem; font-size: 0.85rem; }
     .info-btn-subtitle { display: none; }
