@@ -222,7 +222,7 @@
     {
       "kind": "wordorder",
       "points": 5,
-      "english": "I've drunk beer.",
+      "english": "I drank beer.",
       "elements": [
         {"id": "subj", "text": "ich"},
         {"id": "obj", "text": "Bier"},
