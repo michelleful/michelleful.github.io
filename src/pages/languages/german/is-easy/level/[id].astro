@@ -238,6 +238,29 @@ progressDots.innerHTML = '';
       return out.trim();
     }
 
+    function reconstructWordOrder(sub) {
+      const clauses = sub.clauses || [{ elements: sub.elements, target: sub.target, prefix: sub.prefix, separator: sub.separator }];
+      return clauses.map((clause, ci) => {
+        const prefixWords = clause.prefix
+          ? (Array.isArray(clause.prefix) ? clause.prefix : [clause.prefix]).map(p => p.text)
+          : [];
+        const s1   = clause.elements.find(e => e.id === clause.target.slot1);
+        const s2   = clause.elements.find(e => e.id === clause.target.slot2);
+        const rest = clause.elements.filter(e => e.id !== clause.target.slot1 && e.id !== clause.target.slot2);
+        const parts = [...prefixWords];
+        if (s1) {
+          let t = s1.text;
+          if (ci === 0 && prefixWords.length === 0) t = t.charAt(0).toUpperCase() + t.slice(1);
+          parts.push(t);
+        }
+        if (s2) parts.push(s2.text);
+        rest.forEach(e => parts.push(e.text));
+        const sepElem = [s1, s2, ...rest].find(e => e?.separablePrefix);
+        if (sepElem) parts.push(sepElem.separablePrefix);
+        return parts.join(' ') + (clause.separator || '');
+      }).join(' ');
+    }
+
     function subToSummary(sub) {
       switch (sub.kind) {
         case 'translate':
@@ -256,6 +279,8 @@ progressDots.innerHTML = '';
         }
         case 'match':
           return { de: 'Word pairs', en: sub.pairs.map(p => `${p.german} – ${p.english}`).join('\n') };
+        case 'wordorder':
+          return { de: reconstructWordOrder(sub), en: sub.english || null };
         default:
           return { de: sub.german || '', en: null };
       }
@@ -298,6 +323,25 @@ progressDots.innerHTML = '';
               frag.appendChild(entry);
             }
           }
+        } else if (sub.kind === 'wordorder') {
+          const entry = document.createElement('div');
+          entry.className = 'memory-entry';
+          if (sub.german) {
+            const promptEl = document.createElement('div');
+            promptEl.className = 'memory-de';
+            promptEl.textContent = sub.german;
+            entry.appendChild(promptEl);
+          } else if (sub.english) {
+            const promptEl = document.createElement('div');
+            promptEl.className = 'memory-en';
+            promptEl.textContent = sub.english;
+            entry.appendChild(promptEl);
+          }
+          const answerEl = document.createElement('div');
+          answerEl.className = 'memory-de';
+          answerEl.textContent = reconstructWordOrder(sub);
+          entry.appendChild(answerEl);
+          frag.appendChild(entry);
         } else {
           const { de, en } = subToSummary(sub);
           const entry = document.createElement('div');
@@ -1954,7 +1998,7 @@ progressDots.innerHTML = '';
     font-family: 'IM Fell English', serif;
     font-size: 1.1rem;
     color: #555;
-    padding-top: 0.3rem;
+    padding-top: calc(0.3rem + 6px);
     padding-bottom: 1.4rem;
     margin-left: calc(-0.75rem + 2px);
   }
