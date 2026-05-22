@@ -127,7 +127,7 @@ const progressDots = document.getElementById('progress-dots');
     // ── Score ───────────────────────────────────────────────────────────────────
     let score = (!saved.done || saved.current > 0) ? (saved.score || 0) : 0;
     const maxScore = levelData.subLevels.reduce((sum, s) =>
-      sum + (s.kind === 'match' ? s.pairs.length * (s.points ?? 5) : 10), 0);
+      sum + (s.kind === 'match' ? s.pairs.length * (s.points ?? 5) : (s.points ?? 10)), 0);
 
     function subLevelPoints(mistakes) {
       if (mistakes === 0) return 10;
@@ -213,7 +213,7 @@ progressDots.innerHTML = '';
           ? { current: 0, done: true }
           : { current: 0, done: true, score, maxScore });
         setProgress(p);
-        if (typeof umami !== 'undefined') umami.track(`Level ${levelData.id} complete`);
+        if (typeof umami !== 'undefined') umami.track(`GIE Level ${levelData.id} complete`);
         showLevelComplete();
       } else {
         const alreadyDone = getBucket(p).done;
@@ -424,9 +424,12 @@ progressDots.innerHTML = '';
       const sub = levelData.subLevels[idx];
       const card = el('div', 'sub-level-card');
 
-      // German text
+      // Sentence display: german first, then english
       if (sub.german) {
         card.appendChild(elText('div', 'german-text', sub.german));
+      }
+      if (sub.english) {
+        card.appendChild(elText('div', 'english-text', sub.english));
       }
       if (sub.attribution) {
         const attrEl = el('div', 'attribution');
@@ -441,13 +444,15 @@ progressDots.innerHTML = '';
          sub.kind === 'choice'     ? 'Choose the correct answer' :
          sub.kind === 'reorder'    ? 'Put in the correct order' :
          sub.kind === 'categorize' ? 'Sort into the correct group' :
-         sub.kind === 'match'      ? 'Matching game' : '');
+         sub.kind === 'match'      ? 'Matching game' :
+         sub.kind === 'wordorder'  ? 'Fill in the slots (−1 pt per invalid move)' : '');
+      const maxPts = sub.points ?? 10;
       let potentialPointsEl = null;
       if (instructionText) {
         const instrRow = el('div', sub.kind === 'match' ? 'instruction-row instruction-row-match' : 'instruction-row');
         instrRow.appendChild(elText('span', 'instruction', instructionText));
         if (mode !== 'casual' && sub.kind !== 'match') {
-          potentialPointsEl = elText('span', 'potential-points', '(10 pts)');
+          potentialPointsEl = elText('span', 'potential-points', `(${maxPts} pts)`);
           instrRow.appendChild(potentialPointsEl);
         }
         card.appendChild(instrRow);
@@ -467,13 +472,13 @@ progressDots.innerHTML = '';
       let taskFailed = false;
       let mistakeCount = 0;
       // choice: all-or-nothing; reorder/categorize: −1 pt per wrong placement; translate: no penalty
-      const onMistake = sub.kind === 'choice'                               ? () => { taskFailed = true; }
-                      : (sub.kind === 'reorder' || sub.kind === 'categorize') ? () => { mistakeCount++; }
+      const onMistake = sub.kind === 'choice'                                              ? () => { taskFailed = true; }
+                      : (sub.kind === 'reorder' || sub.kind === 'categorize' || sub.kind === 'wordorder') ? () => { mistakeCount++; }
                       : () => {};
 
       const refreshPotentialPoints = () => {
         if (!potentialPointsEl) return;
-        const pts = taskFailed ? 0 : Math.max(0, 10 - hintDeduction - mistakeCount);
+        const pts = taskFailed ? 0 : Math.max(0, maxPts - hintDeduction - mistakeCount);
         potentialPointsEl.textContent = `(${pts} pts)`;
       };
       const onMistakeTracked = () => { onMistake(); refreshPotentialPoints(); };
@@ -596,7 +601,7 @@ progressDots.innerHTML = '';
           taskArea.querySelector('.word-bank')?.remove();
         }
         if (sub.reveal || sub.revealImage) revealArea.style.display = '';
-        const pts = taskFailed ? 0 : Math.max(0, 10 - hintDeduction - mistakeCount);
+        const pts = taskFailed ? 0 : Math.max(0, maxPts - hintDeduction - mistakeCount);
         score += pts;
         if (mode !== 'casual') {
           updateScoreDisplay();
@@ -617,6 +622,7 @@ progressDots.innerHTML = '';
         case 'choice':     renderChoice(sub, taskArea, showNext, onMistakeTracked);     break;
         case 'reorder':    renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
         case 'categorize': renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
+        case 'wordorder':  renderWordOrder(sub, taskArea, showNext, onMistakeTracked);  break;
         case 'match':
           renderMatch(sub, taskArea,
             (pts) => { score += pts; if (mode !== 'casual') updateScoreDisplay(); },
@@ -631,6 +637,11 @@ progressDots.innerHTML = '';
       }
 
       card.appendChild(taskArea);
+      if (sub.explanation) {
+        const explanationEl = el('div', 'explanation-text');
+        explanationEl.innerHTML = sub.explanation;
+        card.appendChild(explanationEl);
+      }
       if (sub.kind !== 'match') card.appendChild(hintsArea);
       card.appendChild(revealArea);
       card.appendChild(nextBtn);
@@ -1031,6 +1042,192 @@ progressDots.innerHTML = '';
       }
     }
 
+    // ── Word order task ────────────────────────────────────────────────────────
+    function renderWordOrder(sub, container, onComplete, onMistake) {
+      // Support both single-clause {elements, target} and multi-clause {clauses:[...]}
+      const clauses = sub.clauses || [{ elements: sub.elements, target: sub.target, prefix: sub.prefix, separator: sub.separator }];
+
+      // Per-clause slot state
+      const clauseSlots = clauses.map(() => ({ slot1: null, slot2: null }));
+      // Track which clause owns the current selection/drag (elements can't cross clause boundary)
+      let selectedClause = null;
+      let selectedId     = null;
+      let dragClause     = null;
+      let dragElemId     = null;
+
+      function findElem(ci, elemId) {
+        return clauses[ci].elements.find(e => e.id === elemId);
+      }
+
+      function canAccept(ci, slotKey, elemId) {
+        const elem = findElem(ci, elemId);
+        if (!elem) return false;
+        if (slotKey === 'slot1') return !elem.category || elem.category !== 'verb';
+        if (slotKey === 'slot2') return elem.tensed === true;
+        return false;
+      }
+
+      // Capitalize slot1 of clause[0] only when that clause has no prefix occupying position 1
+      function displayText(text, ci, slotKey) {
+        if (ci === 0 && slotKey === 'slot1') {
+          const prefix = clauses[0].prefix;
+          const hasPrefix = prefix && (Array.isArray(prefix) ? prefix.length > 0 : true);
+          if (!hasPrefix) return text.charAt(0).toUpperCase() + text.slice(1);
+        }
+        return text;
+      }
+
+      function checkComplete() {
+        const allCorrect = clauses.every((clause, ci) => {
+          const s = clauseSlots[ci];
+          return s.slot1 === clause.target.slot1 && s.slot2 === clause.target.slot2;
+        });
+        if (allCorrect) setTimeout(onComplete, 400);
+      }
+
+      function tryPlace(ci, slotKey, elemId, dropEl) {
+        const slots = clauseSlots[ci];
+        if (slots[slotKey] !== null) return;
+        if (canAccept(ci, slotKey, elemId)) {
+          slots[slotKey] = elemId;
+          selectedId = null; selectedClause = null;
+          dragElemId = null; dragClause = null;
+          render();
+          checkComplete();
+        } else {
+          dropEl.classList.add('wordorder-reject');
+          dropEl.addEventListener('animationend', () => dropEl.classList.remove('wordorder-reject'), { once: true });
+          onMistake();
+        }
+      }
+
+      const surface               = el('div', 'wordorder-surface');
+      const slotDropsByClause      = [];
+      const rowsByClause           = [];
+      const dynamicSuffixByClause  = [];
+
+      clauses.forEach((clause, ci) => {
+        const row      = el('div', 'wordorder-main-row');
+        const slotDrops = {};
+
+        // Prefix words: static tiles rendered before the slots
+        const prefixWords = clause.prefix
+          ? (Array.isArray(clause.prefix) ? clause.prefix : [clause.prefix])
+          : [];
+        prefixWords.forEach(pw => {
+          row.appendChild(elText('span', 'wordorder-prefix-word', pw.text));
+        });
+
+        ['slot1', 'slot2'].forEach(slotKey => {
+          const wrap = el('div', 'wordorder-slot-wrap');
+          const drop = el('div', 'wordorder-slot-drop');
+          drop.title = slotKey === 'slot1' ? 'Anything except a verb' : 'Only conjugated verbs';
+
+          drop.addEventListener('click', () => {
+            if (selectedId === null || selectedClause !== ci || clauseSlots[ci][slotKey] !== null) return;
+            tryPlace(ci, slotKey, selectedId, drop);
+          });
+          drop.addEventListener('dragover', (e) => {
+            if (clauseSlots[ci][slotKey] !== null || dragClause !== ci) return;
+            e.preventDefault();
+            drop.classList.add('wordorder-drag-over');
+          });
+          drop.addEventListener('dragleave', () => drop.classList.remove('wordorder-drag-over'));
+          drop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            drop.classList.remove('wordorder-drag-over');
+            if (dragElemId === null || dragClause !== ci || clauseSlots[ci][slotKey] !== null) return;
+            tryPlace(ci, slotKey, dragElemId, drop);
+          });
+
+          wrap.appendChild(drop);
+          wrap.appendChild(elText('span', 'wordorder-slot-label', slotKey === 'slot1' ? '−verb' : '+tense'));
+          row.appendChild(wrap);
+          slotDrops[slotKey] = drop;
+        });
+
+        // dynamicSuffix is the insertion anchor: loose tiles go before it
+        const dynamicSuffix = el('span', 'wordorder-dynamic-suffix');
+        row.appendChild(dynamicSuffix);
+
+        if (clause.separator) {
+          row.appendChild(elText('span', 'wordorder-separator', clause.separator));
+        }
+
+        surface.appendChild(row);
+        slotDropsByClause.push(slotDrops);
+        rowsByClause.push(row);
+        dynamicSuffixByClause.push(dynamicSuffix);
+      });
+
+      container.appendChild(surface);
+
+      function render() {
+        clauses.forEach((clause, ci) => {
+          const slots         = clauseSlots[ci];
+          const slotDrops     = slotDropsByClause[ci];
+          const row           = rowsByClause[ci];
+          const dynamicSuffix = dynamicSuffixByClause[ci];
+
+          ['slot1', 'slot2'].forEach(slotKey => {
+            const drop = slotDrops[slotKey];
+            drop.innerHTML = '';
+            if (slots[slotKey] !== null) {
+              const elem = findElem(ci, slots[slotKey]);
+              const tile = el('button', 'wordorder-tile wordorder-tile-placed');
+              tile.appendChild(elText('span', '', displayText(elem.text, ci, slotKey)));
+              tile.appendChild(elText('span', 'wordorder-remove-icon', '×'));
+              tile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                slots[slotKey] = null;
+                render();
+              });
+              drop.appendChild(tile);
+            }
+          });
+
+          // Separable verb prefix: appears after loose tiles when its verb is placed
+          const placedSepElem = Object.values(slots).filter(Boolean)
+            .map(id => findElem(ci, id)).find(e => e?.separablePrefix);
+          dynamicSuffix.textContent = placedSepElem ? placedSepElem.separablePrefix : '';
+
+          // Remove old loose tiles then re-insert before dynamicSuffix
+          row.querySelectorAll('.wordorder-loose-tile').forEach(e => e.remove());
+          const placed = new Set(Object.values(slots).filter(Boolean));
+          clause.elements.forEach(elem => {
+            if (placed.has(elem.id)) return;
+            const isSelected = selectedClause === ci && selectedId === elem.id;
+            const label = elem.separablePrefix ? elem.separablePrefix + elem.text : elem.text;
+            const tile = elText('button',
+              'wordorder-tile wordorder-loose-tile' + (isSelected ? ' selected' : ''), label);
+            tile.draggable = true;
+            tile.addEventListener('click', () => {
+              if (selectedClause === ci && selectedId === elem.id) {
+                selectedId = null; selectedClause = null;
+              } else {
+                selectedId = elem.id; selectedClause = ci;
+              }
+              render();
+            });
+            tile.addEventListener('dragstart', (e) => {
+              dragElemId = elem.id; dragClause = ci;
+              selectedId = null; selectedClause = null;
+              e.dataTransfer.effectAllowed = 'move';
+              setTimeout(() => tile.classList.add('dragging'), 0);
+            });
+            tile.addEventListener('dragend', () => {
+              tile.classList.remove('dragging');
+              dragElemId = null; dragClause = null;
+              render();
+            });
+            row.insertBefore(tile, dynamicSuffix);
+          });
+        });
+      }
+
+      render();
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
     function shuffle(arr) {
       const a = [...arr];
@@ -1417,6 +1614,15 @@ progressDots.innerHTML = '';
     line-height: 1.3;
   }
 
+  .english-text {
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
   .attribution {
     text-align: right;
     font-family: 'IM Fell English', serif;
@@ -1694,6 +1900,133 @@ progressDots.innerHTML = '';
     border-style: solid;
   }
 
+  /* ── Word order task ────────────────────────────────────────────────────── */
+  .wordorder-surface {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .wordorder-main-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .wordorder-slot-wrap {
+    position: relative;
+    padding-bottom: 1.4rem;
+  }
+
+  .wordorder-slot-drop {
+    min-width: 5vw;
+    min-height: 2.4rem;
+    padding: 0;
+    border-bottom: 2px solid #bbb;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    cursor: default;
+    transition: border-color 0.15s;
+  }
+
+.wordorder-slot-drop.wordorder-drag-over {
+    border-color: #15616d;
+    border-style: dashed;
+  }
+
+  .wordorder-slot-label {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #999;
+    letter-spacing: 0.02em;
+    font-family: 'Jost', sans-serif;
+  }
+
+  .wordorder-separator {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #555;
+    padding-top: 0.3rem;
+    padding-bottom: 1.4rem;
+  }
+
+.wordorder-tile {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    padding: 0.3rem 0.8rem;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    color: #1a1a2e;
+    transition: border-color 0.15s, background 0.15s, opacity 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+
+  .wordorder-tile:hover { border-color: #15616d; }
+
+  .wordorder-dynamic-suffix {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #1a1a2e;
+    padding: calc(0.3rem + 3px) 0 0.3rem;
+  }
+
+  .wordorder-prefix-word {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #1a1a2e;
+    padding: calc(0.3rem + 3px) 0 0.3rem;
+  }
+
+  .wordorder-tile.selected {
+    border-color: #15616d;
+    background: #e0f5f7;
+  }
+
+  .wordorder-tile.dragging { opacity: 0.35; }
+
+  .wordorder-tile-placed {
+    border-color: rgba(21,97,109,0.5);
+    background: rgba(21,97,109,0.07);
+    color: #15616d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .wordorder-remove-icon {
+    font-family: sans-serif;
+    font-size: 0.75rem;
+    font-style: normal;
+    color: rgba(21,97,109,0.45);
+    line-height: 1;
+  }
+
+  .wordorder-tile-placed:hover .wordorder-remove-icon {
+    color: rgba(21,97,109,0.85);
+  }
+
+  @keyframes wordorder-reject-anim {
+    0%,100% { border-color: #c0392b; }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .wordorder-reject {
+    animation: wordorder-reject-anim 0.3s ease;
+    border-color: #c0392b !important;
+  }
+
   /* ── Score ───────────────────────────────────────────────────────────────── */
   .score-display {
     display: block;
@@ -1919,6 +2252,14 @@ progressDots.innerHTML = '';
   .review-body {
     border-top: 1px solid #eee;
     padding-top: 0.5rem;
+  }
+
+  .explanation-text {
+    margin-top: 1rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
   }
 
   /* ── Hints & reveal ─────────────────────────────────────────────────────── */

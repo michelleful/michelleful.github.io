@@ -137,7 +137,7 @@
     {
       "kind": "translate",
       "german": "Spanisch spreche ich mit Gott, Italienisch mit Frauen, Französisch mit Männern und Deutsch mit meinem Pferd.",
-      "attribution": "<span class=\"de\">Karl V, Kaiser des Heiligen Römischen Reiches</span>",
+      "attribution": "Karl V, Kaiser des Heiligen Römischen Reiches",
       "target": [
         {"word": "I"},
         {"word": "speak"},
@@ -161,8 +161,8 @@
       ],
       "hints": [
         {
-          "hint": "The word order of the first clause may be a bit confusing, but you know or can easily guess most of the words. Translate into natural English word order.",
-          "points": 0
+          "hint": "If the word order is confusing, recall <span lang=\"de\">Bier trinke ich, Milch trinkst du</span>. Translate into natural English word order.",
+          "points": 1
         },
         {
           "hint": "<span lang=\"de\">Frauen</span> and <span lang=\"de\">Männern</span> are plural and contrast in gender, and the latter is pretty close to its English equivalent!"

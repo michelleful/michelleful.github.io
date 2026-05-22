@@ -18,7 +18,7 @@
         {"word": "Papa", "also": ["Father"]},
         {"word": "Bear", "spaceAfter": false},
         {"word": ",", "given": true},
-        {"word": "Mama", "also": ["Mother"]},
+        {"word": "Mama", "also": ["Mother", "Momma"]},
         {"word": "Bear", "spaceAfter": false},
         {"word": ",", "given": true},
         {"word": "and"},
@@ -40,6 +40,7 @@
     },
     {
       "kind": "translate",
+      "points": 5,
       "german": "Ein Bär ist ein Tier.",
       "target": [
         {"word": "A"},
@@ -97,6 +98,35 @@
         }
       ],
       "reveal": "German used to use <span lang=\"de\">Tiergarten</span> for zoos in general when they grew out of private hunting grounds, but now the word \"Zoo\" is more widely used. Our word \"kindergarten\" was also borrowed from German, with <span lang=\"de\">Kind</span> meaning a child. Not to imply that kindergartens were conceived of as zoos for children!"
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "instruction": "Answer the question by filling in the blanks (-1 pt per invalid move)",
+      "german": "Wo kann man in Wien Bären finden?",
+      "elements": [
+        {"id": "subj", "text": "man"},
+        {"id": "loc", "text": "im Tiergarten Schönbrunn"},
+        {"id": "obj", "text": "Bären"},
+        {"id": "inf", "text": "finden", "category": "verb", "tensed": false},
+        {"id": "modal", "text": "kann", "category": "verb", "tensed": true}
+      ],
+      "separator": ".",
+      "target": {
+        "slot1": "loc",
+        "slot2": "modal"
+      },
+      "hints": [
+        {
+          "hint": "\"Wo\" is a question word meaning \"where\".",
+          "points": 1
+        },
+        {
+          "hint": "\"Wien\" is a major Austrian city.",
+          "points": 1
+        }
+      ],
+      "reveal": "Notice here that an entire prepositional phrase can fit into the topic slot! Even the appositive phrase <span lang=\"de\">the oldest zoo in the world</span> could fit in there with it!"
     },
     {
       "kind": "translate",
@@ -201,7 +231,7 @@
         {"word": "too"},
         {"word": "hot", "spaceAfter": false},
         {"word": ",", "given": true},
-        {"word": "Mama", "also": ["Mother"]},
+        {"word": "Mama", "also": ["Mother", "Momma"]},
         {"word": "Bear", "spaceAfter": false},
         {"word": "'", "given": true, "spaceAfter": false},
         {"word": "s"},
@@ -238,31 +268,17 @@
       "reveal": "We have the more English-like possessive \"Vater Bärs Brei\" here rather than something like <span lang=\"de\">Vaterbärenbrei</span>. German uses <span lang=\"de\">s</span> rather than compounding when indicating specific ownership."
     },
     {
-      "kind": "translate",
-      "german": "Goldlöckchen schläft in Bärchens Bett ein.",
-      "target": [
-        {"word": "Goldilocks"},
-        {"word": "falls"},
-        {"word": "asleep"},
-        {"word": "in"},
-        {"word": "Baby", "also": ["Little"]},
-        {"word": "Bear", "spaceAfter": false},
-        {"word": "'", "given": true, "spaceAfter": false},
-        {"word": "s"},
-        {"word": "bed", "spaceAfter": false},
-        {"word": ".", "given": true}
+      "kind": "wordorder",
+      "english": "Goldilocks falls asleep in Baby Bear's bed.",
+      "elements": [
+        {"id": "subj", "text": "Goldlöckchen"},
+        {"id": "pp",   "text": "in Bärchens Bett"},
+        {"id": "verb", "text": "schläft", "category": "verb", "tensed": true, "separablePrefix": "ein"}
       ],
-      "hints": [
-        {
-          "hint": "<span lang=\"de\">ein</span> here is part of the verb <span lang=\"de\">einschlafen</span> and implies that Goldilocks is <em>entering a state</em> of <span lang=\"de\">Schlaf</span>. The English cognate to this word goes in the third slot, and has an additional vowel before it. Also, we're back to present tense here and for the rest of the level.",
-          "points": 0
-        },
-        {
-          "hint": "If <span lang=\"de\">Gott</span> ~ \"god\", then <span lang=\"de\">Bett</span> ~ ? And what does one do <span lang=\"de\">in Bett</span>?",
-          "points": 3
-        }
-      ],
-      "reveal": "We've encountered our first separable verb! The verb part of <span lang=\"de\">einschlafen</span> (to fall asleep) moves to the second position, stranding its prefix in its original position!"
+      "target": {"slot1": "subj", "slot2": "verb"},
+      "separator": ".",
+      "hints": [],
+      "reveal": "Surprise! The verb <span lang=\"de\">einschlafen</span> \"to fall asleep\" is a separable verb. <span lang=\"de\">ein</span> indicates \"entering a state of\" and <span lang=\"de\">schlafen</span> means \"sleep\" (they're cognates!). When a separable verb moves to V2 position, it leaves its prefix stranded in the final position of the clause. Mark Twain skewered this hilariously in his famous essay on German."
     },
     {
       "kind": "translate",
@@ -302,7 +318,7 @@
           "hint": "Recall that noble names like \"von Clausewitz\" indicate that the person's family is ___ a place called Clausewitz."
         }
       ],
-      "reveal": "<span lang=\"de\">aufessen</span> is another separable verb (\"to eat up/completely\"). In both clauses, the verb stays in the final position because <span lang=\"de\">hat</span> (\"has\") already occupies the verb-second slot. Because <span lang=\"de\">essen</span> doesn't move, the prefix never gets separated from its verb, unlike in the previous sentence. Interestingly, the past participle marker <span lang=\"de\">ge-</span> gets added <em>in between</em> the separable prefix and the verb. And it has an extra \"g-\", purely because <span lang=\"de\">essen</span> is irregular."
+      "reveal": "<span lang=\"de\">aufessen</span> is another separable verb (\"to eat up/completely\"). Notice how its past participle is constructed: <span lang=\"de\">auf-</span> (separable prefix) + <span lang=\"de\">ge-</span> (past participle marker) + <span lang=\"de\">(g)essen</span> (past participle of <span lang=\"de\">essen</span>). The <span lang=\"de\">ge-</span> slips between the prefix and the verb stem, a quirk specific to separable verbs. The extra <span lang=\"de\">g-</span> is just because <span lang=\"de\">essen</span> is irregular."
     },
     {
       "kind": "translate",
@@ -336,7 +352,7 @@
           "points": 2
         }
       ],
-      "reveal": "<span lang=\"de\">Aufwachen</span> and <span lang=\"de\">wegrennen</span> are both separable verbs. Most such verbs correspond to phrasal verbs in English, like \"wake up\" and \"run away\", but sometimes we have \"fall asleep\" rather than \"sleep into\", as with <span lang=\"de\">einschlafen</span> earlier. I hope this level wasn't <span lang=\"de\">zu schwer oder zu leicht, aber genau richtig</span>!"
+      "reveal": "More separable verbs! Most such verbs correspond to phrasal verbs in English, as with <span lang=\"de\">Aufwachen</span> \"wake up\" and <span lang=\"de\">wegrennen</span> \"run away\". But sometimes we have \"fall asleep\" rather than \"sleep into\", as with <span lang=\"de\">einschlafen</span> earlier. I hope this level wasn't <span lang=\"de\">zu schwer oder zu leicht, aber genau richtig</span>!"
     }
   ]
 }

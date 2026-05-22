@@ -35,7 +35,7 @@
         { "german": "zwölf", "english": "twelve", "groupings": ["z ~ t"] },
         { "german": "Wetter", "english": "weather", "groupings": ["t(t) ~ th"] }
       ],
-      "reveal": "A couple of examples of semantic drift here, as with <span lang=\"de\">Tier</span> (\"animal\") and \"deer\". <span lang=\"de\">Vogel</span> is birds generally in German, while \"fowl\" usually refers specifically to poultry and large birds in English. <span lang=\"de\">schmutzig</span> is more general \"dirty\" and \"messy\", while English \"smutty\" has evolved to mean \"obscene\"."
+      "reveal": "A couple of examples of semantic drift here, as with <span lang=\"de\">Tier</span> (\"animal\") and \"deer\". <span lang=\"de\">Vogel</span> is birds generally in German, while \"fowl\" is generally reserved for domesticated and game birds in modern English. <span lang=\"de\">schmutzig</span> is more general \"dirty\" and \"messy\", while English \"smutty\" has evolved to mean \"obscene\"."
     }
   ]
 }

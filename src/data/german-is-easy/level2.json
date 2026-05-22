@@ -49,8 +49,7 @@
           "hint": "\"Hello\" in German is <span lang=\"de\">Guten Tag!</span>"
         },
         {
-          "hint": "Replace the \"o\" with \"u\" to get a hint to what celestial body <span lang=\"de\">Sonn</span> could refer to.",
-          "points": 5
+          "hint": "Replace the \"o\" with \"u\" to get a hint to what celestial body <span lang=\"de\">Sonn</span> could refer to."
         }
       ],
       "reveal": "💐 <span lang=\"de\">Alles Gute zum Muttertag!</span> 💐"
@@ -71,6 +70,7 @@
     },
     {
       "kind": "translate",
+      "points": 5,
       "german": "Mittwoch",
       "instruction": "Translate each piece literally",
       "target": [
@@ -109,6 +109,7 @@
     },
     {
       "kind": "translate",
+      "points": 5,
       "german": "Was ist ein Wochenende?",
       "attribution": "Dowager Countess Violet Crawley, Downton Abbey",
       "target": [
@@ -162,7 +163,7 @@
         {"word": "weekend", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "reveal": "<span lang=\"de\">Sonntage</span>   are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday quiet\")."
+      "reveal": "<span lang=\"de\">Sonntage</span> are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday quiet\")."
     },
     {
       "kind": "translate",
@@ -188,6 +189,41 @@
       "reveal": "<span lang=\"de\">Katze</span> tax!",
       "revealImage": "/images/german-is-easy/katze.jpg",
       "revealImageAlt": "A very cute orange tabby cat sleeping with its paw over its eyes."
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "And my cat works never.",
+      "prefix": {
+        "text": "Und"
+      },
+      "elements": [
+        {"id": "subj", "text": "meine Katze"},
+        {"id": "adv", "text": "nie"},
+        {"id": "verb", "text": "arbeitet", "category": "verb", "tensed": true}
+      ],
+      "separator": ".",
+      "target": {
+        "slot1": "subj",
+        "slot2": "verb"
+      },
+      "reveal": "Coordinating conjunctions like <span lang=\"de\">und</span>, <span lang=\"de\">aber</span>, and <span lang=\"de\">oder</span> sit outside the slots entirely; they don't count as the first element. This word order is more or less neutral, since the subject went into the topic position."
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "Never does my cat work.",
+      "elements": [
+        {"id": "subj", "text": "meine Katze"},
+        {"id": "adv", "text": "nie"},
+        {"id": "verb", "text": "arbeitet", "category": "verb", "tensed": true}
+      ],
+      "separator": ".",
+      "target": {
+        "slot1": "adv",
+        "slot2": "verb"
+      },
+      "reveal": "This could be an answer to the question \"How often does your cat work?\", putting the actual frequency <span lang=\"de\">nie</span> in the spotlighted topic position."
     },
     {
       "kind": "translate",

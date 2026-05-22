@@ -53,6 +53,7 @@
     },
     {
       "kind": "choice",
+      "points": 5,
       "german": "Ist Meerwasser Trinkwasser?",
       "choices": [
         {"label": "Ja", "correct": false},
@@ -93,6 +94,7 @@
     },
     {
       "kind": "translate",
+      "points": 5,
       "german": "Ich trinke Bier, du trinkst Milch.",
       "target": [
         {"word": "I"},
@@ -106,14 +108,69 @@
       ],
       "hints": [
         {
-          "hint": "🍺 + 🥛",
-          "points": 5
+          "hint": "🍺 + 🥛"
         }
       ],
       "reveal": "Fun fact! German <span lang=\"de\">du</span> ~ \"thou\" in English!"
     },
     {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "I drink beer, you drink milk.",
+      "clauses": [
+        {
+          "elements": [
+            {"id": "subj1", "text": "ich"},
+            {"id": "obj1",  "text": "Bier"},
+            {"id": "verb1", "text": "trinke", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "subj1", "slot2": "verb1"},
+          "separator": ","
+        },
+        {
+          "elements": [
+            {"id": "subj2", "text": "du"},
+            {"id": "obj2",  "text": "Milch"},
+            {"id": "verb2", "text": "trinkst", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "subj2", "slot2": "verb2"},
+          "separator": "."
+        }
+      ],
+      "explanation": "German has two slots at the front of basic sentences that must be filled. The first takes a topic: in neutral sentences, this is the subject. Many items can go in this slot, but verbs cannot (we will identify other restrictions later). The second slot must be filled with a conjugated verb (here marked as \"+tense\"). An \"invalid move\" is any move that contravenes these 2 rules.",
+      "hints": [],
+      "reveal": "This may not seem very exciting: it's exactly the same word order as in English. But we'll soon see how these rules add up to produce the logic of the infamous German word order!"
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "It's beer that I drink, it's milk that you drink.",
+      "clauses": [
+        {
+          "elements": [
+            {"id": "subj1", "text": "ich"},
+            {"id": "obj1",  "text": "Bier"},
+            {"id": "verb1", "text": "trinke", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "obj1", "slot2": "verb1"},
+          "separator": ","
+        },
+        {
+          "elements": [
+            {"id": "subj2", "text": "du"},
+            {"id": "obj2",  "text": "Milch"},
+            {"id": "verb2", "text": "trinkst", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "obj2", "slot2": "verb2"},
+          "separator": "."
+        }
+      ],
+      "hints": [],
+      "reveal": "By putting the objects into the initial topic position, we draw attention to their contrast. Note, though: the English translation is clunky and a lot stronger than the German. For example, if I ask \"What are you drinking?\" you could naturally respond with <span lang=\"de\">Bier trinke ich</span>, putting the answer in the topic position. But if you responded in English with \"It's beer that I drink\", that would be really weird!"
+    },
+    {
       "kind": "translate",
+      "points": 5,
       "german": "Ich habe Kaffee, du hast Tee.",
       "target": [
         {"word": "I"},
@@ -130,8 +187,7 @@
           "hint": "Since <span lang=\"de\">du</span> is just old-timey \"thou\", <span lang=\"de\">hast</span> is just old-timey...?"
         },
         {
-          "hint": "☕ + 🍵",
-          "points": 4
+          "hint": "☕ + 🍵"
         }
       ],
       "reveal": "Old English said \"ic hæbbe\" too, but English gradually smooshed together most present tense forms (except \"has\") while German kept alllll its verb distinctions."
@@ -140,8 +196,9 @@
       "kind": "translate",
       "german": "Ich habe Bier getrunken.",
       "target": [
-        {"word": "I"},
-        {"word": "have"},
+        {"word": "I", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "ve"},
         {"word": "drunk"},
         {"word": "beer", "spaceAfter": false},
         {"word": ".", "given": true}
@@ -160,14 +217,32 @@
           "hint": "<span lang=\"de\">getrunken</span> is the past participle of <span lang=\"de\">trinken</span>. For example \"taken\" is the past participle of \"take\"."
         }
       ],
-      "reveal": "This was objectively the hardest puzzle in this level! Well done!"
+      "reveal": "This was objectively the hardest puzzle in this level! Well done! By the way, this German sentence is also the everyday way to say \"I drank beer\". German prefers this <span lang=\"de\">haben</span> + past participle construction in speech. Now let's see why the word order is the way it is!"
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "I've drunk beer.",
+      "elements": [
+        {"id": "subj", "text": "ich"},
+        {"id": "obj", "text": "Bier"},
+        {"id": "pp", "text": "getrunken", "category": "verb", "tensed": false},
+        {"id": "aux", "text": "habe", "category": "verb", "tensed": true}
+      ],
+      "separator": ".",
+      "target": {
+        "slot1": "subj",
+        "slot2": "aux"
+      },
+      "reveal": "Here, it's the auxiliary verb <span lang=\"de\">habe</span> that has the tense and is conjugated to agree with the subject <span lang=\"de\">ich</span>, hence it goes in that verb-second slot, and gets separated from its past participle <span lang=\"de\">getrunken</span>. Whereas in English, \"have drunk\" would have stayed together."
     },
     {
       "kind": "translate",
       "german": "Ich habe zu viel Bier getrunken.",
       "target": [
-        {"word": "I"},
-        {"word": "have"},
+        {"word": "I", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "ve"},
         {"word": "drunk"},
         {"word": "too"},
         {"word": "much", "given": true, "challengingInput": true},
