@@ -36,7 +36,7 @@
             "points": 2
         }
       ],
-      "reveal": "The original story had three male bears: <span lang=\"de\">Der große Bär, der mittlere Bär und der kleine Bär</span>, by size."
+      "reveal": "The original story had three male bears: <span lang=\"de\">der große Bär, der mittlere Bär und der kleine Bär</span>, by size."
     },
     {
       "kind": "translate",
@@ -126,7 +126,7 @@
           "points": 1
         }
       ],
-      "reveal": "Notice here that an entire prepositional phrase can fit into the topic slot! Even the appositive phrase <span lang=\"de\">the oldest zoo in the world</span> could fit in there with it!"
+      "reveal": "Notice here that an entire prepositional phrase can fit into the topic slot! Even the appositive phrase <span lang=\"de\">dem ältesten Zoo der Welt</span> could fit in there with it. So even though we call it \"verb-second\", the conjugated verb may actually sit very far away from the beginning of a sentence."
     },
     {
       "kind": "translate",
@@ -216,7 +216,7 @@
           "hint": "The verb <span lang=\"de\">klopfen</span> is onomatopoeic. Try saying \"klop klop\" to yourself."
         }
       ],
-      "reveal": "It looks very much like the bears own multiple houses, but <span lang=\"de\">Bärenhauses</span> is still singular, it's just in the genitive case just like <span lang=\"de\">der Welt</span> (\"of the world\"), which we saw in level 3."
+      "reveal": "Nice job! It looks very much like the bears own multiple houses, but <span lang=\"de\">Bärenhauses</span> is still singular, it's just in the genitive case just like <span lang=\"de\">der Welt</span> (\"of the world\"), which we saw in level 3."
     },
     {
       "kind": "translate",
@@ -278,7 +278,7 @@
       "target": {"slot1": "subj", "slot2": "verb"},
       "separator": ".",
       "hints": [],
-      "reveal": "Surprise! The verb <span lang=\"de\">einschlafen</span> \"to fall asleep\" is a separable verb. <span lang=\"de\">ein</span> indicates \"entering a state of\" and <span lang=\"de\">schlafen</span> means \"sleep\" (they're cognates!). When a separable verb moves to V2 position, it leaves its prefix stranded in the final position of the clause. Mark Twain skewered this hilariously in his famous essay on German."
+      "reveal": "Surprise! The verb <span lang=\"de\">einschlafen</span> \"to fall asleep\" is our first separable verb. <span lang=\"de\">ein</span> indicates \"entering a state of\" and <span lang=\"de\">schlafen</span> means \"sleep\" (the English and German are cognates!). When a separable verb moves to V2 position, it leaves its prefix stranded in the final position of the clause. Mark Twain skewered this hilariously in his famous essay on German."
     },
     {
       "kind": "translate",
@@ -352,7 +352,7 @@
           "points": 2
         }
       ],
-      "reveal": "More separable verbs! Most such verbs correspond to phrasal verbs in English, as with <span lang=\"de\">Aufwachen</span> \"wake up\" and <span lang=\"de\">wegrennen</span> \"run away\". But sometimes we have \"fall asleep\" rather than \"sleep into\", as with <span lang=\"de\">einschlafen</span> earlier. I hope this level wasn't <span lang=\"de\">zu schwer oder zu leicht, aber genau richtig</span>!"
+      "reveal": "More separable verbs! Most such verbs correspond to phrasal verbs in English, as with <span lang=\"de\">aufwachen</span> \"wake up\" and <span lang=\"de\">wegrennen</span> \"run away\". But sometimes we have \"fall asleep\" rather than \"sleep into\", as with <span lang=\"de\">einschlafen</span> earlier. I hope this level wasn't <span lang=\"de\">zu schwer oder zu leicht, aber genau richtig</span>!"
     }
   ]
 }
