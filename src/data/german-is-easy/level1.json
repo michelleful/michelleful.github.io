@@ -238,7 +238,7 @@
     },
     {
       "kind": "translate",
-      "german": "Ich habe zu viel Bier getrunken.",
+      "german": "Ich habe zu viel Wein getrunken.",
       "target": [
         {"word": "I", "spaceAfter": false},
         {"word": "'", "given": true, "spaceAfter": false},
@@ -246,7 +246,7 @@
         {"word": "drunk"},
         {"word": "too"},
         {"word": "much", "given": true, "challengingInput": true},
-        {"word": "beer", "spaceAfter": false},
+        {"word": "wine", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
       "hints": [
