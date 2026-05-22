@@ -28,7 +28,7 @@
           "hint": "🧂 + 💧"
         }
       ],
-      "reveal": "German likes its compound words, as we're going to find out! English is a bit more variable as to whether it writes compounds as one word or two."
+      "reveal": "German likes its compound words, as we're going to find out! English is a bit more variable as to whether it writes compounds as one word or two, with hyphens or without."
     },
     {
       "kind": "translate",
@@ -139,7 +139,7 @@
       ],
       "explanation": "German has two slots at the front of basic sentences that must be filled. The first takes a topic: in neutral sentences, this is the subject. Many items can go in this slot, but verbs cannot (we will identify other restrictions later). The second slot must be filled with a conjugated verb (here marked as \"+tense\"). An \"invalid move\" is any move that contravenes these 2 rules.",
       "hints": [],
-      "reveal": "This may not seem very exciting: it's exactly the same word order as in English. But we'll soon see how these rules add up to produce the logic of the infamous German word order!"
+      "reveal": "This may not seem very exciting yet: it's exactly the same word order as in English. But we'll soon see how these rules add up to produce the logic of the infamous German word order!"
     },
     {
       "kind": "wordorder",
@@ -217,7 +217,7 @@
           "hint": "<span lang=\"de\">getrunken</span> is the past participle of <span lang=\"de\">trinken</span>. For example \"taken\" is the past participle of \"take\"."
         }
       ],
-      "reveal": "This was objectively the hardest puzzle in this level! Well done! By the way, this German sentence is also the everyday way to say \"I drank beer\". German prefers this <span lang=\"de\">haben</span> + past participle construction in speech. Now let's see why the word order is the way it is!"
+      "reveal": "This was objectively the hardest puzzle in this level! Well done! By the way, this German sentence is also the everyday way to say \"I drank beer\". Now let's see why the word order is the way it is!"
     },
     {
       "kind": "wordorder",
@@ -234,7 +234,7 @@
         "slot1": "subj",
         "slot2": "aux"
       },
-      "reveal": "Here, it's the auxiliary verb <span lang=\"de\">habe</span> that has the tense and is conjugated to agree with the subject <span lang=\"de\">ich</span>, hence it goes in that verb-second slot, and gets separated from its past participle <span lang=\"de\">getrunken</span>. Whereas in English, \"have drunk\" would have stayed together."
+      "reveal": "Here, it's the auxiliary verb <span lang=\"de\">habe</span> that has the tense and is conjugated to agree with the subject <span lang=\"de\">ich</span>, hence it goes in that verb-second (V2) slot, and gets separated from its past participle <span lang=\"de\">getrunken</span>. Whereas in English, \"have drunk\" would have stayed together."
     },
     {
       "kind": "translate",

@@ -261,7 +261,7 @@ const safeJson = JSON.stringify(levels)
   mapSvg.setAttribute('width',  cW);
   mapSvg.setAttribute('height', totalH);
 
-  // Position HTML nodes
+  // Position HTML nodes, then reveal (avoids flash of unpositioned nodes)
   nodes.forEach((node, i) => {
     const c = centers[i];
     node.style.width  = NODE_W + 'px';
@@ -269,6 +269,7 @@ const safeJson = JSON.stringify(levels)
     node.style.left   = (c.x - NODE_W / 2) + 'px';
     node.style.top    = (c.y - NODE_W / 2) + 'px';
   });
+  container.style.opacity = '1';
 
   // ── Progress bucket helpers ─────────────────────────────────────────────────
   // Progress per level is stored as { comp: {...}, cas: {...} }.
@@ -545,6 +546,8 @@ const safeJson = JSON.stringify(levels)
   .map-container {
     position: relative;
     margin: 2rem auto 0;
+    opacity: 0;
+    transition: opacity 0.15s ease;
   }
 
   .map-node {
