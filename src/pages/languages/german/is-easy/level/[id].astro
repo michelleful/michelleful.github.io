@@ -35,7 +35,7 @@ const safeJson = JSON.stringify(levelData)
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:ital,wght@0,200;0,400;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet" />
   <title>Level {levelData.id} — German Is A̶w̶f̶u̶l̶ Easy</title>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="fa1bd294-88ac-4c65-b29d-8c7656bc9bbc"></script>
 </head>
@@ -219,7 +219,7 @@ progressDots.innerHTML = '';
         const alreadyDone = getBucket(p).done;
         setBucket(p, isCasual
           ? { current: currentIdx, done: alreadyDone || false }
-          : { current: currentIdx, done: alreadyDone || false, score });
+          : { current: currentIdx, done: alreadyDone || false, score, maxScore });
         setProgress(p);
         renderSubLevel(currentIdx);
       }
@@ -369,7 +369,7 @@ progressDots.innerHTML = '';
       modal.className = 'memory-modal';
       const header = document.createElement('div');
       header.className = 'memory-header';
-      header.appendChild(Object.assign(document.createElement('h3'), { textContent: 'Review' }));
+      header.appendChild(Object.assign(document.createElement('h3'), { textContent: 'Memory' }));
       const closeBtn = document.createElement('button');
       closeBtn.className = 'memory-close';
       closeBtn.textContent = '×';
@@ -771,6 +771,7 @@ progressDots.innerHTML = '';
 
           // Enter/Tab: explicit submit — reject with feedback if wrong
           input.addEventListener('keydown', (e) => {
+            if (e.key === ' ') { e.preventDefault(); return; }
             if (e.key === 'Enter' || e.key === 'Tab') {
               e.preventDefault();
               if (!input.disabled) rejectExplicit();
@@ -1559,7 +1560,7 @@ progressDots.innerHTML = '';
 
   .back-link {
     font-size: 0.8rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #888;
     text-decoration: none;
     white-space: nowrap;
@@ -1581,7 +1582,7 @@ progressDots.innerHTML = '';
 
   .level-title {
     font-size: 0.75rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #888;
     margin-top: 0.1rem;
   }
@@ -1645,7 +1646,7 @@ progressDots.innerHTML = '';
 
   .complete-msg {
     color: #666;
-    font-weight: 200;
+    font-weight: 300;
     margin-bottom: 2rem;
   }
 
@@ -1687,7 +1688,7 @@ progressDots.innerHTML = '';
 
   .instruction {
     font-size: 0.85rem;
-    font-weight: 200;
+    font-weight: 400;
     color: #888;
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -1695,7 +1696,7 @@ progressDots.innerHTML = '';
 
   .potential-points {
     font-size: 0.8rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #15616d;
   }
 
@@ -2155,7 +2156,7 @@ progressDots.innerHTML = '';
 
   .complete-score {
     font-size: 1.1rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #555;
     margin: 0 0 2rem;
   }
@@ -2164,7 +2165,7 @@ progressDots.innerHTML = '';
   .memory-btn {
     font-family: 'Jost', sans-serif;
     font-size: 0.85rem;
-    font-weight: 200;
+    font-weight: 400;
     color: #999;
     background: transparent;
     border: 1px solid #ddd;
@@ -2177,7 +2178,7 @@ progressDots.innerHTML = '';
   .reveal-letter-btn {
     font-family: 'Jost', sans-serif;
     font-size: 0.85rem;
-    font-weight: 200;
+    font-weight: 400;
     color: #999;
     background: transparent;
     border: 1px solid #ddd;
@@ -2270,7 +2271,7 @@ progressDots.innerHTML = '';
   }
   .memory-en {
     font-size: 0.85rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #555;
     white-space: pre-line;
   }
@@ -2303,7 +2304,8 @@ progressDots.innerHTML = '';
     margin-top: 1rem;
     font-family: 'Jost', sans-serif;
     font-size: 0.95rem;
-    color: #555;
+    font-weight: 400;
+    color: #111;
     line-height: 1.5;
   }
 
@@ -2332,7 +2334,7 @@ progressDots.innerHTML = '';
   .hint-btn {
     font-family: 'Jost', sans-serif;
     font-size: 0.85rem;
-    font-weight: 200;
+    font-weight: 400;
     color: #999;
     background: transparent;
     border: 1px solid #ddd;
@@ -2353,7 +2355,7 @@ progressDots.innerHTML = '';
 
   .hint-text {
     font-size: 0.9rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #666;
     margin: 0 0 0.4rem;
     padding-left: 0.8rem;
@@ -2380,7 +2382,7 @@ progressDots.innerHTML = '';
 
   .reveal-text {
     font-size: 0.95rem;
-    font-weight: 200;
+    font-weight: 400;
     color: #444;
     margin: 0;
     font-style: italic;
@@ -2424,7 +2426,7 @@ progressDots.innerHTML = '';
   }
   .match-intro p {
     font-size: 0.95rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #444;
     margin: 0;
     line-height: 1.5;
@@ -2451,7 +2453,7 @@ progressDots.innerHTML = '';
   .match-timer {
     font-family: 'Jost', sans-serif;
     font-size: 2rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #15616d;
     text-align: center;
     margin-bottom: 0.75rem;
@@ -2555,8 +2557,7 @@ progressDots.innerHTML = '';
     .hints-btn-row { align-items: flex-start; }
 
     .back-link, .level-title, .instruction, .potential-points,
-    .complete-msg, .complete-score,
-    .hint-btn, .reveal-letter-btn, .memory-btn, .hint-text { font-weight: 400; }
+    .complete-msg, .complete-score { font-weight: 400; }
 
     .hint-img { max-width: 100%; max-height: none; }
     .reveal-img { width: 100%; }

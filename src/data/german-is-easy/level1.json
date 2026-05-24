@@ -79,7 +79,7 @@
         {"word": ",", "given": true},
         {"word": "and"},
         {"word": "not"},
-        {"word": "one"},
+        {"word": "one", "also": ["a"]},
         {"word": "drop"},
         {"word": "to"},
         {"word": "drink", "spaceAfter": false},

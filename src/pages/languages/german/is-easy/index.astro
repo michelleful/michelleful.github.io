@@ -363,7 +363,11 @@ const safeJson = JSON.stringify(levels)
     }
 
     if (p?.done) {
-      if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
+      if (p?.current > 0) {
+        if (statusEl) { statusEl.textContent = '…'; statusEl.classList.add('in-progress'); statusEl.title = 'Resume level'; }
+      } else {
+        if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
+      }
     } else if (p?.current) {
       if (statusEl) { statusEl.textContent = '▶'; statusEl.classList.add('in-progress'); statusEl.title = 'Resume level'; }
     }
@@ -678,7 +682,7 @@ const safeJson = JSON.stringify(levels)
   .mode-descriptions dd {
     margin: 0.2rem 0 0 0;
     font-size: 0.9rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #555;
     line-height: 1.5;
   }
@@ -686,7 +690,7 @@ const safeJson = JSON.stringify(levels)
   .mode-note {
     margin: 1rem 0 0;
     font-size: 0.85rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #777;
     line-height: 1.5;
     font-style: italic;
@@ -733,6 +737,7 @@ const safeJson = JSON.stringify(levels)
     align-items: center;
     gap: 0.4rem;
     font-size: 1.2rem;
+    color: #555;
   }
 
   .subtitle-row a {
@@ -802,7 +807,7 @@ const safeJson = JSON.stringify(levels)
   }
   .info-modal p {
     font-size: 0.9rem;
-    font-weight: 200;
+    font-weight: 300;
     color: #444;
     line-height: 1.6;
     margin: 0.5rem 0;

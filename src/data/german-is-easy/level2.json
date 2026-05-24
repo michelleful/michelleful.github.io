@@ -72,14 +72,14 @@
       "kind": "translate",
       "points": 5,
       "german": "Mittwoch",
-      "instruction": "Translate each piece literally",
+      "instruction": "Translate piece by piece",
       "target": [
         {"word": "mid"},
         {"word": "week"}
       ],
       "hints": [
         {
-          "hint": "The two parts you have to translate are <span lang=\"de\">mitt</span> and <span lang=\"de\">woch</span>.",
+          "hint": "The two pieces you have to translate are <span lang=\"de\">mitt</span> and <span lang=\"de\">woch</span>.",
           "points": 1
         },
         {
