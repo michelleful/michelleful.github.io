@@ -137,7 +137,7 @@
           "separator": "."
         }
       ],
-      "explanation": "German has two slots at the front of basic sentences that must be filled. The first takes a topic: in neutral sentences, this is the subject. Many items can go in this slot, but verbs cannot (we will identify other restrictions later). The second slot must be filled with a conjugated verb (here marked as \"+tense\"). An \"invalid move\" is any move that contravenes these 2 rules.",
+      "explanation": "German has two slots at the front of basic sentences that must be filled. By default, the first slot holds the subject, but other elements can be spotlighted by placing them here instead. The conjugated verb is the one thing that can't go here; it must always go in the second slot. Since the conjugated verb carries tense information, I've marked the slots as \"−tense\" and \"+tense\". An \"invalid move\" is any move that violates these rules.",
       "hints": [],
       "reveal": "This may not seem very exciting yet: it's exactly the same word order as in English. But we'll soon see how these rules add up to produce the logic of the infamous German word order!"
     },
@@ -166,7 +166,7 @@
         }
       ],
       "hints": [],
-      "reveal": "By putting the objects into the initial topic position, we draw attention to their contrast. Note, though: the English translation is clunky and a lot stronger than the German. For example, if I ask \"What are you drinking?\" you could naturally respond with <span lang=\"de\">Bier trinke ich</span>, putting the answer in the topic position. But if you responded in English with \"It's beer that I drink\", that would be really weird!"
+      "reveal": "By putting the objects into the first slot, we draw attention to their contrast. Note, though: the English translation is clunky and a lot stronger than the German. For example, if I ask \"What are you drinking?\" you could naturally respond with <span lang=\"de\">Bier trinke ich</span>, putting the answer in the first slot. But if you responded in English with \"It's beer that I drink\", that would be really weird!"
     },
     {
       "kind": "translate",

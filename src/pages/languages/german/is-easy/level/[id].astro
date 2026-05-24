@@ -1106,7 +1106,7 @@ progressDots.innerHTML = '';
       function canAccept(ci, slotKey, elemId) {
         const elem = findElem(ci, elemId);
         if (!elem) return false;
-        if (slotKey === 'slot1') return !elem.category || elem.category !== 'verb';
+        if (slotKey === 'slot1') return elem.tensed !== true;
         if (slotKey === 'slot2') return elem.tensed === true;
         return false;
       }
@@ -1165,7 +1165,7 @@ progressDots.innerHTML = '';
         ['slot1', 'slot2'].forEach(slotKey => {
           const wrap = el('div', 'wordorder-slot-wrap');
           const drop = el('div', 'wordorder-slot-drop');
-          drop.title = slotKey === 'slot1' ? 'Anything except a verb' : 'Only conjugated verbs';
+          drop.title = slotKey === 'slot1' ? 'Anything except a conjugated verb' : 'Only conjugated verbs';
 
           drop.addEventListener('click', () => {
             if (selectedId === null || selectedClause !== ci || clauseSlots[ci][slotKey] !== null) return;
@@ -1185,7 +1185,7 @@ progressDots.innerHTML = '';
           });
 
           wrap.appendChild(drop);
-          wrap.appendChild(elText('span', 'wordorder-slot-label', slotKey === 'slot1' ? '−verb' : '+tense'));
+          wrap.appendChild(elText('span', 'wordorder-slot-label', slotKey === 'slot1' ? '−tense' : '+tense'));
           row.appendChild(wrap);
           slotDrops[slotKey] = drop;
         });

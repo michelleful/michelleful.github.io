@@ -207,7 +207,7 @@
         "slot1": "subj",
         "slot2": "verb"
       },
-      "reveal": "Coordinating conjunctions like <span lang=\"de\">und</span>, <span lang=\"de\">aber</span>, and <span lang=\"de\">oder</span> sit outside the slots entirely; they don't count as the first element. This word order is more or less neutral, since the subject went into the topic position."
+      "reveal": "Coordinating conjunctions like <span lang=\"de\">und</span>, <span lang=\"de\">aber</span>, and <span lang=\"de\">oder</span> sit outside the slots entirely; they don't count as the first element. This word order is more or less neutral, since the subject went into the first slot."
     },
     {
       "kind": "wordorder",
@@ -223,7 +223,7 @@
         "slot1": "adv",
         "slot2": "verb"
       },
-      "reveal": "This could be an answer to the question \"How often does your cat work?\", putting the actual frequency <span lang=\"de\">nie</span> in the spotlighted topic position."
+      "reveal": "This could be an answer to the question \"How often does your cat work?\", putting the actual frequency <span lang=\"de\">nie</span> in the spotlighted first slot."
     },
     {
       "kind": "translate",

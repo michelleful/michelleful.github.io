@@ -126,7 +126,7 @@
           "points": 1
         }
       ],
-      "reveal": "Notice here that an entire prepositional phrase can fit into the topic slot! Even the appositive phrase <span lang=\"de\">dem ältesten Zoo der Welt</span> could fit in there with it. So even though we call it \"verb-second\", the conjugated verb may actually sit very far away from the beginning of a sentence."
+      "reveal": "Notice here that an entire prepositional phrase can fit into the first slot! Even the appositive phrase <span lang=\"de\">dem ältesten Zoo der Welt</span> could fit in there with it. So even though we call it \"verb-second\", the conjugated verb may actually sit very far away from the beginning of a sentence."
     },
     {
       "kind": "translate",
