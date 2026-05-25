@@ -531,6 +531,7 @@ progressDots.innerHTML = '';
 
       // focusNextInput is set after the task is rendered (translate only)
       let focusNextInput = null;
+      let puzzleSolve = null;
 
       // Hints area (visible before completion)
       const hints = sub.hints || [];
@@ -586,6 +587,30 @@ progressDots.innerHTML = '';
         });
         btnRow.appendChild(hintBtn);
       }
+      if (['wordorder', 'reorder', 'categorize'].includes(sub.kind) && mode !== 'challenging') {
+        const skipBtn = el('button', 'reveal-letter-btn');
+        const skipNormalHTML = mode === 'casual' ? 'Skip' : `Skip <span class="btn-pts">(−${maxPts} pts)</span>`;
+        const skipConfirmHTML = 'Confirm skip';
+        skipBtn.innerHTML = skipNormalHTML;
+        let skipPrimed = false;
+        skipBtn.addEventListener('click', () => {
+          if (!skipPrimed) {
+            skipPrimed = true;
+            skipBtn.innerHTML = skipConfirmHTML;
+          } else {
+            hintDeduction += maxPts;
+            refreshPotentialPoints();
+            if (puzzleSolve) puzzleSolve();
+          }
+        });
+        document.addEventListener('click', (e) => {
+          if (skipPrimed && e.target !== skipBtn) {
+            skipPrimed = false;
+            skipBtn.innerHTML = skipNormalHTML;
+          }
+        }, { capture: true });
+        btnRow.appendChild(skipBtn);
+      }
       if (sub.kind === 'translate') {
         const revealBtn = el('button', 'reveal-letter-btn');
         revealBtn.innerHTML = mode === 'casual' ? 'Reveal letter' : 'Reveal letter <span class="btn-pts">(−3 pts)</span>';
@@ -624,7 +649,6 @@ progressDots.innerHTML = '';
         memBtn.addEventListener('click', () => showMemoryModal(idx));
         btnRow.appendChild(memBtn);
       }
-
       // Reveal area (hidden until completion)
       const revealArea = el('div', 'reveal-area');
       revealArea.style.display = 'none';
@@ -666,9 +690,9 @@ progressDots.innerHTML = '';
       switch (sub.kind) {
         case 'translate':  focusNextInput = renderTranslate(sub, taskArea, showNext, onMistakeTracked); break;
         case 'choice':     renderChoice(sub, taskArea, showNext, onMistakeTracked);     break;
-        case 'reorder':    renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
-        case 'categorize': renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
-        case 'wordorder':  renderWordOrder(sub, taskArea, showNext, onMistakeTracked);  break;
+        case 'reorder':    puzzleSolve = renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
+        case 'categorize': puzzleSolve = renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
+        case 'wordorder':  puzzleSolve = renderWordOrder(sub, taskArea, showNext, onMistakeTracked);  break;
         case 'match':
           renderMatch(sub, taskArea,
             (pts) => { score += pts; if (mode !== 'casual') updateScoreDisplay(); },
@@ -969,6 +993,14 @@ progressDots.innerHTML = '';
           if (dragWord) placeWord(slotEl, dragWord);
         });
       }
+
+      return function solve() {
+        for (const slotEl of slotEls) {
+          if (slotEl.classList.contains('locked')) continue;
+          const wordEl = wordEls.find(w => w.textContent === slotEl.dataset.answer && w.style.display !== 'none');
+          if (wordEl) placeWord(slotEl, wordEl);
+        }
+      };
     }
 
     // ── Categorize task ────────────────────────────────────────────────────────
@@ -1087,6 +1119,17 @@ progressDots.innerHTML = '';
           if (dragWord) placeWord(slotEl, dragWord);
         });
       }
+
+      return function solve() {
+        sub.groups.forEach((group, groupIdx) => {
+          const emptySlots = allSlotEls.filter(s => parseInt(s.dataset.groupIdx) === groupIdx && !s.classList.contains('locked'));
+          const remaining = group.answers.filter(a => wordEls.find(w => w.textContent === a && w.style.display !== 'none'));
+          remaining.forEach((word, i) => {
+            const wordEl = wordEls.find(w => w.textContent === word && w.style.display !== 'none');
+            if (wordEl && emptySlots[i]) placeWord(emptySlots[i], wordEl);
+          });
+        });
+      };
     }
 
     // ── Word order task ────────────────────────────────────────────────────────
@@ -1279,6 +1322,15 @@ progressDots.innerHTML = '';
       }
 
       render();
+
+      return function solve() {
+        clauses.forEach((clause, ci) => {
+          clauseSlots[ci].slot1 = { id: clause.target.slot1, locked: true };
+          clauseSlots[ci].slot2 = { id: clause.target.slot2, locked: true };
+        });
+        render();
+        setTimeout(onComplete, 400);
+      };
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
