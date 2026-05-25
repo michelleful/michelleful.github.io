@@ -36,8 +36,7 @@
       "target": [
         {"word": "Seawater"},
         {"word": "is"},
-        {"word": "salt"},
-        {"word": "water"},
+        {"word": "saltwater"},
         {"word": ".", "given": true}
       ],
       "hints": [

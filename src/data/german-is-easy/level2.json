@@ -163,7 +163,7 @@
         {"word": "weekend", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "reveal": "<span lang=\"de\">Sonntage</span> are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday quiet\")."
+      "reveal": "<span lang=\"de\">Sonntage</span> are sacred in Germany, with most stores including supermarkets and even some restaurants closing for the day, a tradition called <span lang=\"de\">Sonntagsruhe</span> (\"Sunday rest\")."
     },
     {
       "kind": "translate",

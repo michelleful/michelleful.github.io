@@ -52,7 +52,7 @@
       "german": "Das Nilpferd lebt im Nil, aber es ist kein Pferd.",
       "target": [
         {"word": "The"},
-        {"word": "hippopotamus"},
+        {"word": "hippo"},
         {"word": "lives"},
         {"word": "in"},
         {"word": "the"},
