@@ -102,7 +102,7 @@
     {
       "kind": "wordorder",
       "points": 5,
-      "instruction": "Answer the question by filling in the blanks (-1 pt per invalid move)",
+      "instruction": "Answer the question by moving words into the slots (−1 pt per invalid move)",
       "german": "Wo kann man in Wien Bären finden?",
       "elements": [
         {"id": "subj", "text": "man"},
@@ -118,11 +118,11 @@
       },
       "hints": [
         {
-          "hint": "\"Wo\" is a question word meaning \"where\".",
+          "hint": "\"Wo\" is a question word meaning \"where\". \"Wien\" is a major Austrian city.",
           "points": 1
         },
         {
-          "hint": "\"Wien\" is a major Austrian city.",
+          "hint": "Reminder: the second slot takes the conjugated verb, and the conjugated verb can't go in the first slot. The main answer to the question should go into the first slot.",
           "points": 1
         }
       ],
@@ -277,7 +277,6 @@
       ],
       "target": {"slot1": "subj", "slot2": "verb"},
       "separator": ".",
-      "hints": [],
       "reveal": "Surprise! The verb <span lang=\"de\">einschlafen</span> \"to fall asleep\" is our first separable verb. <span lang=\"de\">ein</span> indicates \"entering a state of\" and <span lang=\"de\">schlafen</span> means \"sleep\" (the English and German are cognates!). When a separable verb moves to V2 position, it leaves its prefix stranded in the final position of the clause. Mark Twain skewered this hilariously in his famous essay on German."
     },
     {

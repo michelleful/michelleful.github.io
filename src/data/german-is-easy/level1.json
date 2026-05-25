@@ -137,8 +137,13 @@
           "separator": "."
         }
       ],
-      "explanation": "German has two slots at the front of basic sentences that must be filled. By default, the first slot holds the subject, but other elements can be spotlighted by placing them here instead. The conjugated verb is the one thing that can't go here; it must always go in the second slot. Since the conjugated verb carries tense information, I've marked the slots as \"−tense\" and \"+tense\". An \"invalid move\" is any move that violates these rules.",
-      "hints": [],
+      "explanation": "German has two slots at the front of basic sentences that must be filled. By default, the first slot holds the subject, but other elements can be spotlighted by placing them here instead. The conjugated verb is the one thing that can't go here; it must always go in the second slot. An \"invalid move\" is any move that violates these rules.",
+      "hints": [
+        {
+          "hint": "To move a word, tap on it and then its destination, or drag (only on desktop). To return a yellow word (meaning it meets the rules, but isn't the word order we're looking for), tap on it again.",
+          "points": 0
+        }
+      ],
       "reveal": "This may not seem very exciting yet: it's exactly the same word order as in English. But we'll soon see how these rules add up to produce the logic of the infamous German word order!"
     },
     {
@@ -165,7 +170,12 @@
           "separator": "."
         }
       ],
-      "hints": [],
+      "hints": [
+        {
+          "hint": "We're looking for a different word order from the last puzzle. Tap on a yellow word to return it to its original position.",
+          "points": 0
+        }
+      ],
       "reveal": "By putting the objects into the first slot, we draw attention to their contrast. Note, though: the English translation is clunky and a lot stronger than the German. For example, if I ask \"What are you drinking?\" you could naturally respond with <span lang=\"de\">Bier trinke ich</span>, putting the answer in the first slot. But if you responded in English with \"It's beer that I drink\", that would be really weird!"
     },
     {

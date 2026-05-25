@@ -207,6 +207,12 @@
         "slot1": "subj",
         "slot2": "verb"
       },
+      "hints": [
+        {
+          "hint": "Reminder: the second slot takes the conjugated verb, and the conjugated verb can't go in the first slot. We're looking for the same word order as the English sentence.",
+          "points": 1
+        }
+      ],
       "reveal": "Coordinating conjunctions like <span lang=\"de\">und</span>, <span lang=\"de\">aber</span>, and <span lang=\"de\">oder</span> sit outside the slots entirely; they don't count as the first element. This word order is more or less neutral, since the subject went into the first slot."
     },
     {
@@ -223,6 +229,12 @@
         "slot1": "adv",
         "slot2": "verb"
       },
+      "hints": [
+        {
+          "hint": "We're looking for a different word order from the previous puzzle, more similar to the English",
+          "points": 1
+        }
+      ],
       "reveal": "This could be an answer to the question \"How often does your cat work?\", putting the actual frequency <span lang=\"de\">nie</span> in the spotlighted first slot."
     },
     {

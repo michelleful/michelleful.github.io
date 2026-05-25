@@ -489,7 +489,7 @@ progressDots.innerHTML = '';
          sub.kind === 'reorder'    ? 'Put in the correct order' :
          sub.kind === 'categorize' ? 'Sort into the correct group' :
          sub.kind === 'match'      ? 'Matching game' :
-         sub.kind === 'wordorder'  ? 'Fill in the slots (−1 pt per invalid move)' : '');
+         sub.kind === 'wordorder'  ? 'Move words into the slots (−1 pt per invalid move)' : '');
       const maxPts = sub.points ?? 10;
       let potentialPointsEl = null;
       if (instructionText) {
@@ -507,7 +507,9 @@ progressDots.innerHTML = '';
 
       // Next button (shared)
       const nextBtn = el('button', 'next-btn');
-      nextBtn.textContent = idx < totalSubs - 1 ? 'Next ↵' : 'Finish ↵';
+      const isLast = idx < totalSubs - 1;
+      nextBtn.textContent = isLast ? 'Next ⏎' : 'Finish ⏎';
+      nextBtn.title = isLast ? 'Next puzzle (press Enter)' : 'Finish level (press Enter)';
       // Use style.display rather than the hidden attribute — some browsers' UA
       // stylesheet lacks !important on [hidden], so author CSS can override it.
       nextBtn.style.display = 'none';
@@ -1099,6 +1101,7 @@ progressDots.innerHTML = '';
       let selectedId     = null;
       let dragClause     = null;
       let dragElemId     = null;
+      let rejectElemId   = null;
 
       function findElem(ci, elemId) {
         return clauses[ci].elements.find(e => e.id === elemId);
@@ -1125,25 +1128,22 @@ progressDots.innerHTML = '';
       function checkComplete() {
         const allCorrect = clauses.every((clause, ci) => {
           const s = clauseSlots[ci];
-          return s.slot1 === clause.target.slot1 && s.slot2 === clause.target.slot2;
+          return s.slot1?.locked && s.slot2?.locked;
         });
         if (allCorrect) setTimeout(onComplete, 400);
       }
 
-      function tryPlace(ci, slotKey, elemId, dropEl) {
+      function tryPlace(ci, slotKey, elemId) {
         const slots = clauseSlots[ci];
         if (slots[slotKey] !== null) return;
-        if (canAccept(ci, slotKey, elemId)) {
-          slots[slotKey] = elemId;
-          selectedId = null; selectedClause = null;
-          dragElemId = null; dragClause = null;
-          render();
-          checkComplete();
-        } else {
-          dropEl.classList.add('wordorder-reject');
-          dropEl.addEventListener('animationend', () => dropEl.classList.remove('wordorder-reject'), { once: true });
-          onMistake();
-        }
+        selectedId = null; selectedClause = null;
+        dragElemId = null; dragClause = null;
+        if (!canAccept(ci, slotKey, elemId)) { rejectElemId = elemId; onMistake(); render(); return; }
+        const correct = clauses[ci].target[slotKey] === elemId;
+        slots[slotKey] = { id: elemId, locked: correct };
+        if (!correct) onMistake();
+        render();
+        if (correct) checkComplete();
       }
 
       const surface               = el('div', 'wordorder-surface');
@@ -1170,7 +1170,7 @@ progressDots.innerHTML = '';
 
           drop.addEventListener('click', () => {
             if (selectedId === null || selectedClause !== ci || clauseSlots[ci][slotKey] !== null) return;
-            tryPlace(ci, slotKey, selectedId, drop);
+            tryPlace(ci, slotKey, selectedId);
           });
           drop.addEventListener('dragover', (e) => {
             if (clauseSlots[ci][slotKey] !== null || dragClause !== ci) return;
@@ -1182,11 +1182,11 @@ progressDots.innerHTML = '';
             e.preventDefault();
             drop.classList.remove('wordorder-drag-over');
             if (dragElemId === null || dragClause !== ci || clauseSlots[ci][slotKey] !== null) return;
-            tryPlace(ci, slotKey, dragElemId, drop);
+            tryPlace(ci, slotKey, dragElemId);
           });
 
           wrap.appendChild(drop);
-          wrap.appendChild(elText('span', 'wordorder-slot-label', slotKey === 'slot1' ? '−tense' : '+tense'));
+
           row.appendChild(wrap);
           slotDrops[slotKey] = drop;
         });
@@ -1217,34 +1217,42 @@ progressDots.innerHTML = '';
           ['slot1', 'slot2'].forEach(slotKey => {
             const drop = slotDrops[slotKey];
             drop.innerHTML = '';
-            if (slots[slotKey] !== null) {
-              const elem = findElem(ci, slots[slotKey]);
-              const tile = el('button', 'wordorder-tile wordorder-tile-placed');
+            const slotState = slots[slotKey];
+            if (slotState !== null) {
+              const elem = findElem(ci, slotState.id);
+              const tile = el('button', 'wordorder-tile wordorder-tile-placed' +
+                (slotState.locked ? ' wordorder-tile-locked' : ' wordorder-tile-wrong'));
               tile.appendChild(elText('span', '', displayText(elem.text, ci, slotKey)));
-              tile.appendChild(elText('span', 'wordorder-remove-icon', '×'));
-              tile.addEventListener('click', (e) => {
-                e.stopPropagation();
-                slots[slotKey] = null;
-                render();
-              });
+              if (slotState.locked) {
+                tile.disabled = true;
+              } else {
+                tile.appendChild(elText('span', 'wordorder-remove-icon', '×'));
+                tile.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  slots[slotKey] = null;
+                  render();
+                });
+              }
               drop.appendChild(tile);
             }
           });
 
           // Separable verb prefix: appears after loose tiles when its verb is placed
           const placedSepElem = Object.values(slots).filter(Boolean)
-            .map(id => findElem(ci, id)).find(e => e?.separablePrefix);
+            .map(s => findElem(ci, s.id)).find(e => e?.separablePrefix);
           dynamicSuffix.textContent = placedSepElem ? placedSepElem.separablePrefix : '';
 
           // Remove old loose tiles then re-insert before dynamicSuffix
           row.querySelectorAll('.wordorder-loose-tile').forEach(e => e.remove());
-          const placed = new Set(Object.values(slots).filter(Boolean));
+          const placed = new Set(Object.values(slots).filter(Boolean).map(s => s.id));
           clause.elements.forEach(elem => {
             if (placed.has(elem.id)) return;
             const isSelected = selectedClause === ci && selectedId === elem.id;
             const label = elem.separablePrefix ? elem.separablePrefix + elem.text : elem.text;
+            const isRejecting = rejectElemId === elem.id;
             const tile = elText('button',
-              'wordorder-tile wordorder-loose-tile' + (isSelected ? ' selected' : ''), label);
+              'wordorder-tile wordorder-loose-tile' + (isSelected ? ' selected' : '') + (isRejecting ? ' wordorder-tile-reject' : ''), label);
+            if (isRejecting) tile.addEventListener('animationend', () => { rejectElemId = null; }, { once: true });
             tile.draggable = true;
             tile.addEventListener('click', () => {
               if (selectedClause === ci && selectedId === elem.id) {
@@ -1469,7 +1477,7 @@ progressDots.innerHTML = '';
           : `You have ${timeLimit} seconds to match all ${sub.pairs.length} pairs.`
       ];
       introLines.forEach(line => intro.appendChild(elText('p', '', line)));
-      const startBtn = elText('button', 'match-start-btn', 'Start ↵');
+      const startBtn = elText('button', 'match-start-btn', 'Start ⏎');
       intro.appendChild(startBtn);
       container.appendChild(intro);
 
@@ -1679,10 +1687,6 @@ progressDots.innerHTML = '';
   }
 
   .instruction-row {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.25rem 0.5rem;
     margin-bottom: 1.5rem;
   }
 
@@ -1698,6 +1702,7 @@ progressDots.innerHTML = '';
     font-size: 0.8rem;
     font-weight: 300;
     color: #15616d;
+    margin-left: 0.4rem;
   }
 
   /* ── Task area ───────────────────────────────────────────────────────────── */
@@ -1955,14 +1960,13 @@ progressDots.innerHTML = '';
 
   .wordorder-main-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
   }
 
   .wordorder-slot-wrap {
     position: relative;
-    padding-bottom: 1.4rem;
   }
 
   .wordorder-slot-drop {
@@ -1971,7 +1975,7 @@ progressDots.innerHTML = '';
     padding: 0;
     border-bottom: 2px solid #bbb;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     cursor: default;
     transition: border-color 0.15s;
@@ -1982,26 +1986,11 @@ progressDots.innerHTML = '';
     border-style: dashed;
   }
 
-  .wordorder-slot-label {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    text-align: center;
-    font-size: 0.72rem;
-    color: #999;
-    letter-spacing: 0.02em;
-    font-family: 'Jost', sans-serif;
-  }
-
   .wordorder-separator {
     font-family: 'IM Fell English', serif;
     font-size: 1.1rem;
     color: #555;
-    padding-top: calc(0.3rem + 6px);
-    padding-bottom: 1.4rem;
-    margin-left: calc(-0.75rem + 2px);
+    margin-left: calc(-0.75rem - 0.4rem);
   }
 
 .wordorder-tile {
@@ -2041,36 +2030,47 @@ progressDots.innerHTML = '';
   .wordorder-tile.dragging { opacity: 0.35; }
 
   .wordorder-tile-placed {
-    border-color: rgba(21,97,109,0.5);
-    background: rgba(21,97,109,0.07);
-    color: #15616d;
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.35rem;
+  }
+
+  .wordorder-tile-locked {
+    border-color: rgba(21,97,109,0.5);
+    background: rgba(21,97,109,0.07);
+    color: #15616d;
+    cursor: default;
+  }
+
+  .wordorder-tile-wrong {
+    border-color: #d97706;
+    background: #fef3c7;
+    color: #92400e;
+    cursor: pointer;
   }
 
   .wordorder-remove-icon {
     font-family: sans-serif;
     font-size: 0.75rem;
     font-style: normal;
-    color: rgba(21,97,109,0.45);
+    color: rgba(180,100,0,0.5);
     line-height: 1;
   }
 
-  .wordorder-tile-placed:hover .wordorder-remove-icon {
-    color: rgba(21,97,109,0.85);
+  .wordorder-tile-wrong:hover .wordorder-remove-icon {
+    color: rgba(180,100,0,0.9);
   }
 
-  @keyframes wordorder-reject-anim {
-    0%,100% { border-color: #c0392b; }
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
+  @keyframes wordorder-tile-reject-anim {
+    0%   { border-color: #c0392b; background: #fee2e2; color: #991b1b; transform: translateX(0); }
+    20%  { transform: translateX(-5px); }
+    50%  { transform: translateX( 5px); }
+    80%  { transform: translateX(-3px); }
+    100% { border-color: #ccc;     background: #fff;    color: #1a1a2e; transform: translateX(0); }
   }
 
-  .wordorder-reject {
-    animation: wordorder-reject-anim 0.3s ease;
-    border-color: #c0392b !important;
+  .wordorder-tile-reject {
+    animation: wordorder-tile-reject-anim 0.35s ease;
   }
 
   /* ── Score ───────────────────────────────────────────────────────────────── */
