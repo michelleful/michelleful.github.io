@@ -154,6 +154,11 @@ const safeJson = JSON.stringify(levels)
   ))}
 </div>
 
+<div id="level-popup" class="level-popup" style="display:none">
+  <a id="popup-replay" class="popup-btn">Replay</a>
+  <a id="popup-review" class="popup-btn popup-btn-review">Review</a>
+</div>
+
 <div class="signup-section">
   <p class="signup-prompt" id="signup-prompt">🚧 This game is in alpha, with 5 levels currently available. 🚧<br/>Would you like to be notified when new levels are added?</p>
   <form class="signup-form" id="signup-form" novalidate>
@@ -174,8 +179,14 @@ const safeJson = JSON.stringify(levels)
   // @ts-nocheck
   import rough from 'roughjs';
 
-  const STORAGE_KEY = 'gie-progress';
-  const MODE_KEY    = 'gie-mode';
+  const STORAGE_KEY  = 'gie-progress';
+  const MODE_KEY     = 'gie-mode';
+  const UNLOCK_KEY   = 'gie-unlocked';
+
+  if (new URLSearchParams(window.location.search).has('unlock')) {
+    localStorage.setItem(UNLOCK_KEY, '1');
+  }
+  const manualUnlock = !!localStorage.getItem(UNLOCK_KEY);
   const levelsData  = JSON.parse(document.getElementById('levels-meta').textContent);
 
   // ── Mode selector ───────────────────────────────────────────────────────────
@@ -288,7 +299,7 @@ const safeJson = JSON.stringify(levels)
 
   // ── Locked state ───────────────────────────────────────────────────────────
   const locked = levelsData.map(level =>
-    level.requires ? !isAnyDone(progress[String(level.requires)]) : false
+    !level.available ? true : (manualUnlock ? false : (level.requires ? !isAnyDone(progress[String(level.requires)]) : false))
   );
 
   // ── Rough drawing ──────────────────────────────────────────────────────────
@@ -362,12 +373,14 @@ const safeJson = JSON.stringify(levels)
       return;
     }
 
-    if (p?.done) {
-      if (p?.current > 0) {
-        if (statusEl) { statusEl.textContent = '…'; statusEl.classList.add('in-progress'); statusEl.title = 'Resume level'; }
-      } else {
-        if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
-      }
+    if (p?.done && p?.current > 0) {
+      if (statusEl) { statusEl.textContent = '…'; statusEl.classList.add('in-progress'); statusEl.title = 'Resume level'; }
+    } else if (isAnyDone(entry)) {
+      if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
+      node.addEventListener('click', (e) => {
+        e.preventDefault();
+        showLevelPopup(node, level.id);
+      });
     } else if (p?.current) {
       if (statusEl) { statusEl.textContent = '▶'; statusEl.classList.add('in-progress'); statusEl.title = 'Resume level'; }
     }
@@ -389,6 +402,38 @@ const safeJson = JSON.stringify(levels)
       if (!isCasual) totalRow.style.display = '';
     }
   }
+
+  // ── Level popup (replay / review) ─────────────────────────────────────────
+  const popup      = document.getElementById('level-popup');
+  const popupReplay = document.getElementById('popup-replay');
+  const popupReview = document.getElementById('popup-review');
+
+  function showLevelPopup(node, levelId) {
+    const url = `/languages/german/is-easy/level/${levelId}/`;
+    popupReplay.href = url;
+    popupReview.href = url + '?review';
+    popup.style.display = 'flex';
+    requestAnimationFrame(() => {
+      const rect = node.getBoundingClientRect();
+      let top  = rect.bottom + 8;
+      let left = rect.left + rect.width / 2 - popup.offsetWidth / 2;
+      if (left < 8) left = 8;
+      if (left + popup.offsetWidth > window.innerWidth - 8) left = window.innerWidth - 8 - popup.offsetWidth;
+      if (top + popup.offsetHeight > window.innerHeight - 8) top = rect.top - popup.offsetHeight - 8;
+      popup.style.top  = top + 'px';
+      popup.style.left = left + 'px';
+      popupReplay.focus();
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (popup.style.display !== 'none' && !popup.contains(e.target) && !e.target.closest('.map-node')) {
+      popup.style.display = 'none';
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') popup.style.display = 'none';
+  });
 
   // Enter: jump to the next playable level (first unlocked + incomplete, or first unlocked)
   const nextLevel = levelsData.find((l, i) => !locked[i] && !getBucket(progress[String(l.id)], isCasual)?.done);
@@ -695,6 +740,40 @@ const safeJson = JSON.stringify(levels)
     line-height: 1.5;
     font-style: italic;
   }
+
+  /* ── Level popup ─────────────────────────────────────────────────────────── */
+  .level-popup {
+    position: fixed;
+    background: #fff;
+    border: 1px solid #c8d8da;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 21, 36, 0.15);
+    padding: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    z-index: 100;
+  }
+  .popup-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    padding: 0.4rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    color: #fff;
+    background: #15616d;
+    transition: background 0.15s;
+  }
+  .popup-btn:hover { background: #0e4a54; }
+  .popup-btn-review {
+    background: transparent;
+    color: #15616d;
+    border: 1px solid #15616d;
+  }
+  .popup-btn-review:hover { background: #f0f8f9; color: #15616d; }
 
   /* ── Reset ────────────────────────────────────────────────────────────────── */
   .reset-row {

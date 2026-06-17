@@ -16,7 +16,8 @@
       ],
       "hints": [
         {
-          "hint": "<span lang=\"de\">Fluss</span> is distantly related to \"flood\" in English. Think something that might flood occasionally. <span lang=\"de\">Der Nil</span> did once a year until the construction of the <span lang=\"de\">Assuan-Staudamm</span>!"
+          "hint": "<span lang=\"de\">Fluss</span> is distantly related to \"flood\" in English. Think something that might flood occasionally. <span lang=\"de\">Der Nil</span> did once a year until the construction of the <span lang=\"de\">Assuan-Staudamm</span>!",
+          "hintFor": ["river"]
         }
       ],
       "reveal": "\"Denial\" is <span lang=\"de\">Verweigerung</span> in German, so the pun doesn't work like in English."
@@ -42,7 +43,8 @@
       ],
       "hints": [
         {
-          "hint": "The English translation of <span lang=\"de\">längste</span> has the same consonants, in order."
+          "hint": "The English translation of <span lang=\"de\">längste</span> has the same consonants, in order.",
+          "hintFor": ["longest"]
         }
       ],
       "reveal": "Why does the English sentence have \"in\" while the German doesn't? <span lang=\"de\">der Welt</span> is in genitive case, so it already means \"of the world\"!"
@@ -70,14 +72,17 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">Pferd</span> = 🐴",
-          "points": 0
+          "points": 0,
+          "hintFor": ["horse"]
         },
         {
           "hint": "Think of a large and dangerous <span lang=\"de\">Fluss</span> mammal that was worshipped <span lang=\"de\">im alten Ägypten</span>.",
-          "points": 1
+          "points": 1,
+          "hintFor": ["hippo"]
         },
         {
-          "hint": "<span lang=\"de\">Nilpferd</span> = 🦛"
+          "hint": "<span lang=\"de\">Nilpferd</span> = 🦛",
+          "hintFor": ["hippo"]
         }
       ],
       "reveal": "<span lang=\"de\">Flusspferd</span> (the more scientific term) and <span lang=\"de\">Nilpferd</span> (the everyday German term) are calques — word-for-word translations of the Greek \"hippopotamos\" (river horse). English just borrowed the Greek directly. But hippos aren't horses! Their closest living relatives are whales and dolphins."
@@ -165,7 +170,8 @@
           "points": 1
         },
         {
-          "hint": "<span lang=\"de\">Frauen</span> and <span lang=\"de\">Männern</span> are plural and contrast in gender, and the latter is pretty close to its English equivalent!"
+          "hint": "<span lang=\"de\">Frauen</span> and <span lang=\"de\">Männern</span> are plural and contrast in gender, and the latter is pretty close to its English equivalent!",
+          "hintFor": ["women", "men"]
         }
       ],
       "reveal": "Were you able to decode Karl V's title? <span lang=\"de\">Kaiser</span> was borrowed from Latin \"Caesar\", as was Russian \"Tsar/Czar\". And <span lang=\"de\">Reich</span> (\"empire\", \"realm\") still appears in English as the \"-ric\" in \"bishopric\"."
@@ -211,7 +217,8 @@
       ],
       "hints": [
         {
-          "hint": "This is notorious as a very <span lang=\"de\">langes Buch</span>."
+          "hint": "This is notorious as a very <span lang=\"de\">langes Buch</span>.",
+          "hintFor": ["War", "Peace"]
         }
       ],
       "reveal": "The English word I was thinking of with \"erst\" is \"erstwhile\"."
@@ -234,7 +241,8 @@
       ],
       "hints": [
         {
-          "hint": "<span lang=\"de\">Hütten</span> and <span lang=\"de\">Palästen</span> are two contrasting types of abodes, both close to their English equivalents."
+          "hint": "<span lang=\"de\">Hütten</span> and <span lang=\"de\">Palästen</span> are two contrasting types of abodes, both close to their English equivalents.",
+          "hintFor": ["huts", "palaces"]
         }
       ],
       "reveal": "And on that stirring call to action, congratulations on finishing Level 3!"

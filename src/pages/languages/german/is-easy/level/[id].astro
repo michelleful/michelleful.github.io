@@ -5,6 +5,8 @@ import level2 from '../../../../../data/german-is-easy/level2.json';
 import level3 from '../../../../../data/german-is-easy/level3.json';
 import level4 from '../../../../../data/german-is-easy/level4.json';
 import level5 from '../../../../../data/german-is-easy/level5.json';
+import level6 from '../../../../../data/german-is-easy/level6.json';
+import level7 from '../../../../../data/german-is-easy/level7.json';
 
 export function getStaticPaths() {
   return [
@@ -13,6 +15,8 @@ export function getStaticPaths() {
     { params: { id: '3' }, props: { levelData: level3 } },
     { params: { id: '4' }, props: { levelData: level4 } },
     { params: { id: '5' }, props: { levelData: level5 } },
+    { params: { id: '6' }, props: { levelData: level6 } },
+    { params: { id: '7' }, props: { levelData: level7 } },
   ];
 }
 
@@ -84,7 +88,8 @@ const safeJson = JSON.stringify(levelData)
     // Redirect to map if this level is locked
     const levelMeta = JSON.parse(document.getElementById('level-meta').textContent);
     const requires = levelMeta.requires;
-    if (requires != null) {
+    const manualUnlock = !!localStorage.getItem('gie-unlocked');
+    if (!manualUnlock && requires != null) {
       const reqEntry = prog[String(requires)];
       const reqDone = reqEntry && (
         reqEntry.done ||
@@ -103,6 +108,21 @@ const safeJson = JSON.stringify(levelData)
       if (!entry) return { current: 0, done: false };
       if ('comp' in entry || 'cas' in entry) return entry[isCasual ? 'cas' : 'comp'] || { current: 0, done: false };
       return isCasual ? { current: 0, done: false } : entry;
+    }
+
+    function isAnyDone() {
+      const entry = prog[levelId];
+      if (!entry) return false;
+      if ('comp' in entry || 'cas' in entry) return !!(entry.comp?.done || entry.cas?.done);
+      return !!entry.done;
+    }
+
+    function anyDoneScore() {
+      const entry = prog[levelId];
+      if (!entry) return 0;
+      if (saved.done) return saved.score || 0;
+      if ('comp' in entry || 'cas' in entry) return entry.comp?.score || entry.cas?.score || 0;
+      return entry.score || 0;
     }
 
     function setBucket(p, data) {
@@ -269,7 +289,8 @@ progressDots.innerHTML = '';
           const correct = sub.choices.find(c => c.correct);
           return { de: sub.german, en: correct ? correct.label : '—' };
         }
-        case 'reorder': {
+        case 'reorder':
+        case 'compass': {
           const ordered = sub.slots.map(s => `${s.label} – ${s.answer}`).join(', ');
           return { de: ordered, en: null };
         }
@@ -419,10 +440,10 @@ progressDots.innerHTML = '';
       setTimeout(() => container.remove(), 3500);
     }
 
-    function showLevelComplete() {
+    function showLevelComplete(autoOpenReview = false) {
       renderProgressDots();
       gameMain.innerHTML = '';
-      launchConfetti();
+      if (!autoOpenReview) launchConfetti();
       const card = el('div', 'complete-card');
       card.appendChild(elText('div', 'complete-icon', '✓'));
       card.appendChild(elText('h2', '', 'Level complete!'));
@@ -431,10 +452,15 @@ progressDots.innerHTML = '';
       }
       const reviewSection = el('div', 'complete-review');
       const reviewToggle = el('button', 'review-toggle');
-      reviewToggle.textContent = 'Review ▾';
       const reviewBody = el('div', 'review-body');
-      reviewBody.style.display = 'none';
       reviewBody.appendChild(buildMemoryContent(totalSubs));
+      if (autoOpenReview) {
+        reviewBody.style.display = '';
+        reviewToggle.textContent = 'Hide review ▴';
+      } else {
+        reviewBody.style.display = 'none';
+        reviewToggle.textContent = 'Review ▾';
+      }
       reviewToggle.addEventListener('click', () => {
         const open = reviewBody.style.display !== 'none';
         reviewBody.style.display = open ? 'none' : '';
@@ -450,7 +476,7 @@ progressDots.innerHTML = '';
       card.appendChild(btn);
       gameMain.appendChild(card);
       setTimeout(() => {
-        btn.focus();
+        if (!autoOpenReview) btn.focus();
         document.addEventListener('keydown', function onKey(e) {
           if (e.key === 'Enter') {
             document.removeEventListener('keydown', onKey);
@@ -487,6 +513,7 @@ progressDots.innerHTML = '';
         (sub.kind === 'translate'  ? 'Translate' :
          sub.kind === 'choice'     ? 'Choose the correct answer' :
          sub.kind === 'reorder'    ? 'Put in the correct order' :
+         sub.kind === 'compass'    ? 'Match the positions' :
          sub.kind === 'categorize' ? 'Sort into the correct group' :
          sub.kind === 'match'      ? 'Matching game' :
          sub.kind === 'wordorder'  ? 'Move words into the slots (−1 pt per invalid move)' : '');
@@ -519,7 +546,7 @@ progressDots.innerHTML = '';
       let mistakeCount = 0;
       // choice: all-or-nothing; reorder/categorize: −1 pt per wrong placement; translate: no penalty
       const onMistake = sub.kind === 'choice'                                              ? () => { taskFailed = true; }
-                      : (sub.kind === 'reorder' || sub.kind === 'categorize' || sub.kind === 'wordorder') ? () => { mistakeCount++; }
+                      : (sub.kind === 'reorder' || sub.kind === 'compass' || sub.kind === 'categorize' || sub.kind === 'wordorder') ? () => { mistakeCount++; }
                       : () => {};
 
       const refreshPotentialPoints = () => {
@@ -532,6 +559,7 @@ progressDots.innerHTML = '';
       // focusNextInput is set after the task is rendered (translate only)
       let focusNextInput = null;
       let puzzleSolve = null;
+      let refreshHintBtn = () => {};
 
       // Hints area (visible before completion)
       const hints = sub.hints || [];
@@ -543,19 +571,27 @@ progressDots.innerHTML = '';
         hintsArea.insertBefore(revealedHints, btnRow);
         let hintIdx = 0;
         const hintBtn = el('button', 'hint-btn');
-        const refreshHintBtn = () => {
+        const isHintRedundant = (h) => {
+          if (!h.hintFor || !h.hintFor.length) return false;
+          return h.hintFor.every(word => {
+            const inp = taskArea.querySelector(`.word-input[data-answer="${CSS.escape(word)}"]`);
+            return inp && inp.classList.contains('correct');
+          });
+        };
+        refreshHintBtn = () => {
+          while (hintIdx < hints.length && isHintRedundant(hints[hintIdx])) hintIdx++;
           if (hintIdx < hints.length) {
             const cost = hints[hintIdx].points ?? 3;
-            const isMobile = window.innerWidth <= 600;
-            const num = hints.length > 1 ? `Hint ${hintIdx + 1}${isMobile ? '' : ` of ${hints.length}`}` : 'Hint';
             const costStr = mode === 'casual' ? 'free' : (cost === 0 ? 'free' : `−${cost} pts`);
-            hintBtn.innerHTML = `${num} <span class="btn-pts">(${costStr})</span>`;
+            hintBtn.innerHTML = `Hint <span class="btn-pts">(${costStr})</span>`;
           } else {
             hintBtn.style.display = 'none';
           }
         };
         refreshHintBtn();
         hintBtn.addEventListener('click', () => {
+          while (hintIdx < hints.length && isHintRedundant(hints[hintIdx])) hintIdx++;
+          if (hintIdx >= hints.length) { hintBtn.style.display = 'none'; return; }
           const h = hints[hintIdx];
           if (mode !== 'casual') hintDeduction += h.points ?? 3;
           refreshPotentialPoints();
@@ -587,7 +623,7 @@ progressDots.innerHTML = '';
         });
         btnRow.appendChild(hintBtn);
       }
-      if (['wordorder', 'reorder', 'categorize'].includes(sub.kind) && mode !== 'challenging') {
+      if (['wordorder', 'reorder', 'compass', 'categorize'].includes(sub.kind) && mode !== 'challenging') {
         const skipBtn = el('button', 'reveal-letter-btn');
         const skipNormalHTML = mode === 'casual' ? 'Skip' : `Skip <span class="btn-pts">(−${maxPts} pts)</span>`;
         const skipConfirmHTML = 'Confirm skip';
@@ -655,6 +691,7 @@ progressDots.innerHTML = '';
       if (sub.reveal) {
         const revealP = el('p', 'reveal-text');
         revealP.innerHTML = sub.reveal;
+        wrapEmojis(revealP);
         revealArea.appendChild(revealP);
       }
       if (sub.revealImage) {
@@ -667,7 +704,7 @@ progressDots.innerHTML = '';
 
       const showNext = () => {
         hintsArea.style.display = 'none';
-        if (sub.kind === 'categorize' || sub.kind === 'reorder') {
+        if (sub.kind === 'categorize' || sub.kind === 'reorder' || sub.kind === 'compass') {
           taskArea.querySelector('.word-bank')?.remove();
         }
         if (sub.reveal || sub.revealImage) revealArea.style.display = '';
@@ -688,9 +725,10 @@ progressDots.innerHTML = '';
       };
 
       switch (sub.kind) {
-        case 'translate':  focusNextInput = renderTranslate(sub, taskArea, showNext, onMistakeTracked); break;
+        case 'translate':  focusNextInput = renderTranslate(sub, taskArea, showNext, onMistakeTracked, refreshHintBtn); break;
         case 'choice':     renderChoice(sub, taskArea, showNext, onMistakeTracked);     break;
         case 'reorder':    puzzleSolve = renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
+        case 'compass':    puzzleSolve = renderCompass(sub, taskArea, showNext, onMistakeTracked);    break;
         case 'categorize': puzzleSolve = renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
         case 'wordorder':  puzzleSolve = renderWordOrder(sub, taskArea, showNext, onMistakeTracked);  break;
         case 'match':
@@ -733,7 +771,7 @@ progressDots.innerHTML = '';
     }
 
     // ── Translate task ─────────────────────────────────────────────────────────
-    function renderTranslate(sub, container, onComplete, onMistake) {
+    function renderTranslate(sub, container, onComplete, onMistake, onWordAccepted = () => {}) {
       const answerRow = el('div', 'answer-row');
       const inputs = [];
 
@@ -765,6 +803,7 @@ progressDots.innerHTML = '';
             input.classList.remove('wrong');
             input.classList.add('correct');
             input.disabled = true;
+            onWordAccepted();
             if (inputs.every(i => i.disabled)) {
               onComplete();
             } else {
@@ -872,6 +911,7 @@ progressDots.innerHTML = '';
 
       // Slots grid
       const slotsEl = el('div', 'reorder-slots');
+      const labelEls = [];
       const slotEls = sub.slots.map(slot => {
         const row = el('div', 'slot-row');
         const label = elText('span', 'slot-label', slot.label);
@@ -880,6 +920,7 @@ progressDots.innerHTML = '';
         row.appendChild(label);
         row.appendChild(drop);
         slotsEl.appendChild(row);
+        labelEls.push(label);
         return drop;
       });
 
@@ -895,6 +936,8 @@ progressDots.innerHTML = '';
       container.appendChild(bankEl);
 
       requestAnimationFrame(() => {
+        const maxLabelW = Math.max(...labelEls.map(l => l.offsetWidth));
+        labelEls.forEach(l => { l.style.width = maxLabelW + 'px'; });
         const maxW = Math.max(...wordEls.map(w => w.offsetWidth));
         slotEls.forEach(s => { s.style.minWidth = maxW + 'px'; });
       });
@@ -981,6 +1024,133 @@ progressDots.innerHTML = '';
           }
         });
 
+        slotEl.addEventListener('dragover', (e) => {
+          if (slotEl.classList.contains('locked')) return;
+          e.preventDefault();
+          slotEl.classList.add('drag-over');
+        });
+        slotEl.addEventListener('dragleave', () => slotEl.classList.remove('drag-over'));
+        slotEl.addEventListener('drop', (e) => {
+          e.preventDefault();
+          slotEl.classList.remove('drag-over');
+          if (dragWord) placeWord(slotEl, dragWord);
+        });
+      }
+
+      return function solve() {
+        for (const slotEl of slotEls) {
+          if (slotEl.classList.contains('locked')) continue;
+          const wordEl = wordEls.find(w => w.textContent === slotEl.dataset.answer && w.style.display !== 'none');
+          if (wordEl) placeWord(slotEl, wordEl);
+        }
+      };
+    }
+
+    // ── Compass task ───────────────────────────────────────────────────────────
+    function renderCompass(sub, container, onComplete, onMistake) {
+      const shuffled = shuffle(sub.slots.map(s => s.answer));
+
+      const posMap = { NW: [1,1], NE: [1,2], SW: [2,1], SE: [2,2] };
+
+      const wrapEl = el('div', 'compass-wrap');
+      wrapEl.appendChild(elText('span', 'compass-north', 'N'));
+      const gridEl = el('div', 'compass-grid');
+      const slotEls = sub.slots.map(slot => {
+        const drop = el('div', 'slot-drop');
+        drop.dataset.answer = slot.answer;
+        const [row, col] = posMap[slot.label] || [1,1];
+        drop.style.gridRow = row;
+        drop.style.gridColumn = col;
+        gridEl.appendChild(drop);
+        return drop;
+      });
+
+      const bankEl = el('div', 'word-bank');
+      const wordEls = shuffled.map(word => {
+        const w = elText('button', 'bank-word', word);
+        bankEl.appendChild(w);
+        return w;
+      });
+
+      wrapEl.appendChild(gridEl);
+      container.appendChild(wrapEl);
+      container.appendChild(bankEl);
+
+      requestAnimationFrame(() => {
+        const maxW = Math.max(...wordEls.map(w => w.offsetWidth));
+        slotEls.forEach(s => { s.style.minWidth = maxW + 'px'; });
+      });
+
+      let selected = null;
+      let dragWord = null;
+
+      function selectWord(wordEl) {
+        if (selected) selected.classList.remove('selected');
+        selected = wordEl;
+        selected.classList.add('selected');
+      }
+
+      function returnToBank(slotEl) {
+        const prevWord = slotEl.dataset.placed;
+        const prevEl = wordEls.find(w => w.textContent === prevWord && w.style.display === 'none');
+        if (prevEl) prevEl.style.display = '';
+        delete slotEl.dataset.placed;
+        slotEl.textContent = '';
+        slotEl.classList.remove('filled', 'correct', 'wrong');
+      }
+
+      function placeWord(slotEl, wordEl) {
+        if (slotEl.classList.contains('locked')) return;
+        if (slotEl.dataset.placed) returnToBank(slotEl);
+
+        slotEl.textContent = wordEl.textContent;
+        slotEl.dataset.placed = wordEl.textContent;
+        slotEl.classList.add('filled');
+        wordEl.style.display = 'none';
+        wordEl.classList.remove('selected');
+        selected = null;
+
+        if (wordEl.textContent === slotEl.dataset.answer) {
+          slotEl.classList.add('correct', 'locked');
+          if (slotEls.every(s => s.classList.contains('locked'))) {
+            setTimeout(onComplete, 400);
+          }
+        } else {
+          onMistake();
+          slotEl.classList.add('wrong');
+          setTimeout(() => {
+            wordEl.style.display = '';
+            delete slotEl.dataset.placed;
+            slotEl.textContent = '';
+            slotEl.classList.remove('filled', 'wrong');
+          }, 600);
+        }
+      }
+
+      for (const wordEl of wordEls) {
+        wordEl.draggable = true;
+        wordEl.addEventListener('click', () => {
+          if (wordEl.style.display === 'none') return;
+          if (selected === wordEl) { wordEl.classList.remove('selected'); selected = null; }
+          else selectWord(wordEl);
+        });
+        wordEl.addEventListener('dragstart', (e) => {
+          dragWord = wordEl;
+          wordEl.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        wordEl.addEventListener('dragend', () => {
+          wordEl.classList.remove('dragging');
+          dragWord = null;
+        });
+      }
+
+      for (const slotEl of slotEls) {
+        slotEl.addEventListener('click', () => {
+          if (slotEl.classList.contains('locked')) return;
+          if (selected) { placeWord(slotEl, selected); }
+          else if (slotEl.dataset.placed) { returnToBank(slotEl); }
+        });
         slotEl.addEventListener('dragover', (e) => {
           if (slotEl.classList.contains('locked')) return;
           e.preventDefault();
@@ -1334,6 +1504,31 @@ progressDots.innerHTML = '';
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
+    function wrapEmojis(el) {
+      const emojiRe = /\p{Extended_Pictographic}️?/gu;
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      let node;
+      while ((node = walker.nextNode())) textNodes.push(node);
+      for (const textNode of textNodes) {
+        const text = textNode.textContent;
+        if (!emojiRe.test(text)) { emojiRe.lastIndex = 0; continue; }
+        emojiRe.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0;
+        for (const m of text.matchAll(emojiRe)) {
+          if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+          const span = document.createElement('span');
+          span.className = 'emoji';
+          span.textContent = m[0];
+          frag.appendChild(span);
+          last = m.index + m[0].length;
+        }
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        textNode.parentNode.replaceChild(frag, textNode);
+      }
+    }
+
     function shuffle(arr) {
       const a = [...arr];
       for (let i = a.length - 1; i > 0; i--) {
@@ -1557,7 +1752,12 @@ progressDots.innerHTML = '';
     }
 
     // ── Boot ───────────────────────────────────────────────────────────────────
-    renderSubLevel(currentIdx);
+    if (new URLSearchParams(window.location.search).has('review') && isAnyDone()) {
+      score = anyDoneScore();
+      showLevelComplete(true);
+    } else {
+      renderSubLevel(currentIdx);
+    }
   </script>
 
   <script>
@@ -1869,6 +2069,74 @@ progressDots.innerHTML = '';
     margin-bottom: 1.5rem;
   }
 
+  /* Compass */
+  .compass-wrap {
+    position: relative;
+    max-width: 420px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .compass-wrap::before,
+  .compass-wrap::after {
+    content: '';
+    position: absolute;
+    background: #c8d8da;
+    z-index: 0;
+  }
+  .compass-wrap::before {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    transform: translateY(-50%);
+  }
+  .compass-wrap::after {
+    left: 50%;
+    top: -1.5rem;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+  }
+  .compass-north {
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #15616d;
+    letter-spacing: 0.08em;
+    background: #fff;
+    padding: 0 0.25rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+  }
+  .compass-north::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #15616d;
+  }
+  .compass-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    column-gap: 0.75rem;
+    row-gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+  .compass-grid .slot-drop {
+    background: #fff;
+  }
+
   /* Categorize */
   .categorize-columns {
     display: flex;
@@ -1910,9 +2178,9 @@ progressDots.innerHTML = '';
   .slot-label {
     font-weight: 400;
     color: #888;
-    width: 2rem;
     text-align: right;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .slot-drop {
@@ -2043,6 +2311,10 @@ progressDots.innerHTML = '';
     font-size: 1.1rem;
     color: #555;
     margin-left: calc(-0.75rem - 0.4rem);
+  }
+
+  .wordorder-dynamic-suffix:not(:empty) + .wordorder-separator {
+    margin-left: -0.4rem;
   }
 
 .wordorder-tile {
@@ -2443,6 +2715,7 @@ progressDots.innerHTML = '';
     font-style: normal;
     font-weight: 400;
   }
+  .emoji { font-style: normal; }
   span[lang="de"] {
     font-family: 'IM Fell English', serif;
     font-style: normal;

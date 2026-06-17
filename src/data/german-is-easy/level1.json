@@ -42,10 +42,12 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">Meer</span> and French \"mer\" have the same meaning.",
-          "points": 1
+          "points": 1,
+          "hintFor": ["Seawater"]
         },
         {
-          "hint": "<span lang=\"de\">Meer</span> = 🌊"
+          "hint": "<span lang=\"de\">Meer</span> = 🌊",
+          "hintFor": ["Seawater"]
         }
       ],
       "reveal": "English still retains \"mere\" in some place names like \"Windermere\", the largest lake in England."
@@ -107,7 +109,8 @@
       ],
       "hints": [
         {
-          "hint": "🍺 + 🥛"
+          "hint": "🍺 + 🥛",
+          "hintFor": ["beer", "milk"]
         }
       ],
       "reveal": "Fun fact! German <span lang=\"de\">du</span> ~ \"thou\" in English!"
@@ -193,10 +196,12 @@
       ],
       "hints": [
         {
-          "hint": "Since <span lang=\"de\">du</span> is just old-timey \"thou\", <span lang=\"de\">hast</span> is just old-timey...?"
+          "hint": "Since <span lang=\"de\">du</span> is just old-timey \"thou\", <span lang=\"de\">hast</span> is just old-timey...?",
+          "hintFor": ["have"]
         },
         {
-          "hint": "☕ + 🍵"
+          "hint": "☕ + 🍵",
+          "hintFor": ["coffee", "tea"]
         }
       ],
       "reveal": "Old English said \"ic hæbbe\" too, but English gradually smooshed together most present tense forms (except \"has\") while German kept alllll its verb distinctions."
@@ -219,11 +224,13 @@
         },
         {
           "hint": "Change the <span lang=\"de\">u</span> of <span lang=\"de\">getrunken</span> to an <span lang=\"de\">i</span> to find a more familiar verb we've seen a few times already.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["drunk"]
         },
 
         {
-          "hint": "<span lang=\"de\">getrunken</span> is the past participle of <span lang=\"de\">trinken</span>. For example \"taken\" is the past participle of \"take\"."
+          "hint": "<span lang=\"de\">getrunken</span> is the past participle of <span lang=\"de\">trinken</span>. For example \"taken\" is the past participle of \"take\".",
+          "hintFor": ["drunk"]
         }
       ],
       "reveal": "This was objectively the hardest puzzle in this level! Well done! By the way, this German sentence is also the everyday way to say \"I drank beer\". Now let's see why the word order is the way it is!"
@@ -261,7 +268,8 @@
       "hints": [
         {
           "hint": "If <span lang=\"de\">Salz</span> ~ \"salt\", then <span lang=\"de\">zu</span> ~ ?",
-          "points": 2
+          "points": 2,
+          "hintFor": ["too"]
         }
       ],
       "reveal": "We saw <span lang=\"de\">zu</span> meaning \"to\" earlier, and as you can see here, it also means \"too\", whereas English spells them differently."

@@ -2,70 +2,55 @@
   {
     "id": 1,
     "title": "🧂🍷",
-    "unlocked": true,
-    "total": 10
+    "available": true
   },
   {
     "id": 2,
     "title": "👨‍👩‍👧🐈",
-    "unlocked": false,
-    "total": 10,
-    "requires": 1
+    "requires": 1,
+    "available": true
   },
   {
     "id": 3,
     "title": "🦛⚔️",
-    "unlocked": false,
-    "total": 10,
-    "requires": 2
+    "requires": 2,
+    "available": true
   },
   {
     "id": 4,
     "title": "🐻🏃‍♀️",
-    "unlocked": false,
-    "total": 10,
-    "requires": 3
+    "requires": 3,
+    "available": true
   },
   {
     "id": 5,
     "title": "⏱️",
-    "unlocked": false,
-    "total": 1,
-    "requires": 4
+    "requires": 4,
+    "available": true
   },
   {
     "id": 6,
-    "title": "🚧",
-    "unlocked": false,
-    "total": 10,
+    "title": "🧭🐔",
     "requires": 6
   },
   {
     "id": 7,
     "title": "🚧",
-    "unlocked": false,
-    "total": 10,
-    "requires": 7
+    "requires": 6
   },
   {
     "id": 8,
     "title": "🚧",
-    "unlocked": false,
-    "total": 10,
     "requires": 8
   },
   {
     "id": 9,
     "title": "🚧",
-    "unlocked": false,
-    "total": 10,
     "requires": 9
   },
   {
     "id": 10,
     "title": "🚧",
-    "unlocked": false,
-    "total": 10,
     "requires": 10
   }
 ]

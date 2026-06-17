@@ -33,7 +33,8 @@
         },
         {
             "hint": "\"-chen\" is a diminutive, making a <span lang=\"de\">Bär</span> a little <span lang=\"de\">Bär</span>.",
-            "points": 2
+            "points": 2,
+            "hintFor": ["Baby"]
         }
       ],
       "reveal": "The original story had three male bears: <span lang=\"de\">der große Bär, der mittlere Bär und der kleine Bär</span>, by size."
@@ -53,10 +54,12 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">Ein Nilpferd ist auch ein Tier.</span>",
-          "points": 1
+          "points": 1,
+          "hintFor": ["animal"]
         },
         {
-          "hint": "Think of how you would answer the traditional first question in Twenty Questions if the target was a <span lang=\"de\">Bär</span>."
+          "hint": "Think of how you would answer the traditional first question in Twenty Questions if the target was a <span lang=\"de\">Bär</span>.",
+          "hintFor": ["animal"]
         }
       ],
       "reveal": "The English word \"deer\" used to mean all animals, just like <span lang=\"de\">Tier</span> in German, but its scope shrank to just one type of animal."
@@ -86,15 +89,18 @@
       "hints": [
         {
           "hint": "English uses a slightly different preposition for the first word.",
-          "points": 1
+          "points": 1,
+          "hintFor": ["At"]
         },
         {
           "hint": "If <span lang=\"de\">Tier</span> ~ \"deer\", then <span lang=\"de\">ält</span> ~ what English adjective?",
-          "points": 2
+          "points": 2,
+          "hintFor": ["oldest"]
         },
         {
           "hint": "German <span lang=\"de\">Mann</span> means \"man\" but German <span lang=\"de\">man</span>, which derives from it, is an impersonal pronoun.",
-          "points": 3
+          "points": 3,
+          "hintFor": ["you"]
         }
       ],
       "reveal": "German used to use <span lang=\"de\">Tiergarten</span> for zoos in general when they grew out of private hunting grounds, but now the word \"Zoo\" is more widely used. Our word \"kindergarten\" was also borrowed from German, with <span lang=\"de\">Kind</span> meaning a child. Not to imply that kindergartens were conceived of as zoos for children!"
@@ -149,7 +155,8 @@
       "hints": [
         {
             "hint": "It may be tempting to think that <span lang=\"de\">Wald</span> ~ \"wild\", but they are unrelated. Think 🌲🌲 instead.",
-            "points": 2
+            "points": 2,
+            "hintFor": ["forest"]
         }
       ],
       "reveal": "<span lang=\"de\">Wald</span> only persists in English in the archaic word \"weald\" and place names like the Cotswolds."
@@ -183,10 +190,12 @@
       "hints": [
         {
           "hint": "If <span lang=\"de\">Donner</span> ~ \"thunder\", then <span lang=\"de\">denk(t)</span> ~ ?",
-          "points": 2
+          "points": 2,
+          "hintFor": ["thinks"]
         },
         {
-          "hint": "We've seen <span lang=\"de\">möchte</span> before in the lament <span lang=\"de\">Ich möchte nicht arbeiten!</span>"
+          "hint": "We've seen <span lang=\"de\">möchte</span> before in the lament <span lang=\"de\">Ich möchte nicht arbeiten!</span>",
+          "hintFor": ["want"]
         }
       ],
       "reveal": "Notice how \"bears\" and \"porridge\" fused together to form a single word <span lang=\"de\">Bärenbrei</span>? German compounds productively, but we'll see its limits in a bit..."
@@ -210,10 +219,12 @@
       "hints": [
         {
           "hint": "If <span lang=\"de\">Tier</span> ~ \"deer\", then <span lang=\"de\">Tür</span> ~ ? The vowel does change a bit!",
-          "points": 2
+          "points": 2,
+          "hintFor": ["door"]
         },
         {
-          "hint": "The verb <span lang=\"de\">klopfen</span> is onomatopoeic. Try saying \"klop klop\" to yourself."
+          "hint": "The verb <span lang=\"de\">klopfen</span> is onomatopoeic. Try saying \"klop klop\" to yourself.",
+          "hintFor": ["knocks"]
         }
       ],
       "reveal": "Nice job! It looks very much like the bears own multiple houses, but in this economy?! <span lang=\"de\">Bärenhauses</span> is still singular, it's just in the genitive case just like <span lang=\"de\">der Welt</span> (\"of the world\"), which we saw in level 3."
@@ -258,11 +269,13 @@
         },
         {
           "hint": "<span lang=\"de\">war</span> is the past tense of <span lang=\"de\">ist</span>.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["was"]
         },
         {
           "hint": "You'll hear <span lang=\"de\">genau</span> (\"exactly\" is its more usual translation) a lot in conversational German to express agreement.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["right"]
         }
       ],
       "reveal": "We have the more English-like possessive \"Vater Bärs Brei\" here rather than something like <span lang=\"de\">Vaterbärenbrei</span>. German uses <span lang=\"de\">s</span> rather than compounding when indicating specific ownership."
@@ -303,18 +316,22 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">ihn</span> is a pronoun replacing a noun seen earlier in the sentence.",
-          "points": 1
+          "points": 1,
+          "hintFor": ["it"]
         },
         {
           "hint": "<span lang=\"de\">getrunken</span> : <span lang=\"de\">trinken</span> :: <span lang=\"de\">ge(g)essen</span> : ?. (We've already seen this verb in this level!)",
-          "points": 2
+          "points": 2,
+          "hintFor": ["eaten"]
         },
        {
           "hint": "<span lang=\"de\">auf-</span> is another separable prefix. It often intensifies a verb to mean something has happened <em>completely</em>.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["up"]
         },
         {
-          "hint": "Recall that noble names like \"von Clausewitz\" indicate that the person's family is ___ a place called Clausewitz."
+          "hint": "Recall that noble names like \"von Clausewitz\" indicate that the person's family is ___ a place called Clausewitz.",
+          "hintFor": ["from"]
         }
       ],
       "reveal": "<span lang=\"de\">aufessen</span> is another separable verb (\"to eat up/completely\"). Notice how its past participle is constructed: <span lang=\"de\">auf-</span> (separable prefix) + <span lang=\"de\">ge-</span> (past participle marker) + <span lang=\"de\">(g)essen</span> (past participle of <span lang=\"de\">essen</span>). The <span lang=\"de\">ge-</span> slips between the prefix and the verb stem, a quirk specific to separable verbs. The extra <span lang=\"de\">g-</span> is just because <span lang=\"de\">essen</span> is irregular."
@@ -340,15 +357,18 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">sag</span> ~ \"say\" so <span lang=\"de\">weg</span> ~ ? Add an \"a\" to the beginning to get the English equivalent.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["away"]
         },
         {
           "hint": "If <span lang=\"de\">Buch</span> ~ \"book\" then <span lang=\"de\">wach(t)</span> ~ ?",
-          "points": 2
+          "points": 2,
+          "hintFor": ["wakes"]
         },
         {
           "hint": "<span lang=\"de\">schnell</span> is commonly heard in <span lang=\"de\">Zweiter Weltkrieg</span> movies being shouted at POWs or underlings to hurry up.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["fast"]
         }
       ],
       "reveal": "More separable verbs! Most such verbs correspond to phrasal verbs in English, as with <span lang=\"de\">aufwachen</span> \"wake up\" and <span lang=\"de\">wegrennen</span> \"run away\". But sometimes we have \"fall asleep\" rather than \"sleep into\", as with <span lang=\"de\">einschlafen</span> earlier. I hope this level wasn't <span lang=\"de\">zu schwer oder zu leicht, aber genau richtig</span>!"

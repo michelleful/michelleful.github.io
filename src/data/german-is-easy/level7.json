@@ -1,0 +1,276 @@
+{
+  "id": 7,
+  "subLevels": [
+    {
+      "kind": "compass",
+      "instruction": "Fill in the directions (−1 pt per wrong placement)",
+      "slots": [
+        {
+          "label": "NW",
+          "answer": "Nordwest"
+        },
+        {
+          "label": "NE",
+          "answer": "Nordost"
+        },
+        {
+          "label": "SW",
+          "answer": "Südwest"
+        },
+        {
+          "label": "SE",
+          "answer": "Südost"
+        }
+      ],
+      "reveal": "German <span lang=\"de\">Ost</span> and <span lang=\"de\">West</span> carry particular historical weight &mdash; decades after the reunification of the two Germanies in 1990, people from each side are still sometimes called <span lang=\"de\">Ossis</span> and <span lang=\"de\">Wessis</span>. The yearning some <span lang=\"de\">Ossis</span> feel for their old way of life even has its own word: <span lang=\"de\">Ostalgie</span>."
+    },
+    {
+      "kind": "translate",
+      "german": "„Im Westen nichts Neues“ ist ein Buch über den Ersten Weltkrieg.",
+      "target": [
+        {"word": "“", "given": true, "spaceAfter": false},
+        {"word": "All"},
+        {"word": "Quiet"},
+        {"word": "on"},
+        {"word": "the"},
+        {"word": "Western"},
+        {"word": "Front"},
+        {"word": "”", "given": true},
+        {"word": "is"},
+        {"word": "a"},
+        {"word": "book"},
+        {"word": "about"},
+        {"word": "the"},
+        {"word": "First"},
+        {"word": "World"},
+        {"word": "War", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "The English title has the same gist but is a more poetic translation of the original German.",
+          "points": 0
+        },
+        {
+          "hint": "The book is by Erich Maria Remarque.",
+          "points": 2
+        }
+      ],
+      "reveal": "Erich Maria Remarque's quietly devastating anti-war novel was banned and burned by the Nazis."
+    },
+    {
+      "kind": "translate",
+      "german": "Wien und Salzburg sind Städte in Österreich.",
+      "target": [
+        {"word": "Vienna"},
+        {"word": "and"},
+        {"word": "Salzburg"},
+        {"word": "are"},
+        {"word": "cities"},
+        {"word": "in"},
+        {"word": "Austria", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "<span lang=\"de\">Österreich</span> literally means \"eastern realm\", so named because for a time it formed the eastern boundary of the Holy Roman Empire. Which is ironic because Austria's often confused with Australia, which means \"southern land\"! Austrian tourist shops have leaned into this with merch like this:",
+      "revealImage": "/images/german-is-easy/no_kangaroos.png",
+      "revealImageAlt": "A yellow diamond-shaped road warning sign in the style of an Australian wildlife crossing sign with the classic kangaroo silhouette, but with the added words \"No kangaroos in Austria\"."
+    },
+    {
+      "kind": "translate",
+      "german": "Der Weihnachtsmann bringt Kindern Geschenke wie Santa Claus, aber er lebt nicht am Nordpol und er hat keine Rentiere.",
+      "target": [
+        {"word": "The"},
+        {"word": "Weihnachtsmann", "given": true},
+        {"word": "brings"},
+        {"word": "children"},
+        {"word": "gifts", "also": ["presents"]},
+        {"word": "like"},
+        {"word": "Santa"},
+        {"word": "Claus", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "but"},
+        {"word": "he"},
+        {"word": "doesn", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "t"},
+        {"word": "live"},
+        {"word": "at"},
+        {"word": "the"},
+        {"word": "North"},
+        {"word": "Pole"},
+        {"word": "and"},
+        {"word": "he"},
+        {"word": "doesn", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "t"},
+        {"word": "have"},
+        {"word": "reindeer", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Geschenk</span> = 🎁",
+          "points": 2,
+          "hintFor": ["gifts"]
+        },
+        {
+          "hint": "We previously discussed how <span lang=\"de\">Tier</span> is cognate with \"deer\" in English. What's a kind of deer associated with 🎅?",
+          "points": 3,
+          "hintFor": ["reindeer"]
+        }
+      ],
+      "reveal": "The <span lang=\"de\">Weihnachtsmann</span>, literally \"Christmas man\", is the main Christmastime gift-bringer <span lang=\"de\">im Norden</span> (more Protestant), but <span lang=\"de\">im Süden</span> (more Catholic) it's the <span lang=\"de\">Christkind</span> (\"Christ child\"). As if this wasn't enough, there's also <span lang=\"de\">Sankt Nikolaus</span>, who visits earlier on December 6, and also brings small gifts!"
+    },
+    {
+      "kind": "translate",
+      "german": "Frohe Weihnachten und ein frohes neues Jahr!",
+      "target": [
+        {"word": "Merry"},
+        {"word": "Christmas"},
+        {"word": "and"},
+        {"word": "a"},
+        {"word": "Happy"},
+        {"word": "New"},
+        {"word": "Year", "spaceAfter": false},
+        {"word": "!", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "This is a greeting used during the <span lang=\"de\">Weihnachtszeit</span>.",
+          "points": 3
+        }
+      ],
+      "reveal": "🎄🎊 <span lang=\"de\">Frohe</span> means \"joyful\" or \"glad\" and is distantly related to the English word \"frolic\"."
+    },
+    {
+      "kind": "translate",
+      "german": "Frohe Ostern!",
+      "target": [
+        {"word": "Happy"},
+        {"word": "Easter", "spaceAfter": false},
+        {"word": "!", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "Same wish, different holiday &mdash; also about Jesus.",
+          "points": 2,
+          "hintFor": ["Easter"]
+        }
+      ],
+      "reveal": "German and English are unique in their use of a word derived from \"east\" for Easter, from the pagan name for the month of April, which possibly celebrated a dawn goddess named \"Ēostre\". Romance, Celtic, and other Germanic languages use a word derived from Greek/Latin \"Pascha\" (as in Passover) instead."
+    },
+    {
+      "kind": "translate",
+      "german": "An Ostern suchen Kinder Ostereier.",
+      "target": [
+        {"word": "At"},
+        {"word": "Easter", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "children"},
+        {"word": "search"},
+        {"word": "for"},
+        {"word": "Easter"},
+        {"word": "eggs", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Ei</span> = 🥚",
+          "points": 3,
+          "hintFor": ["eggs"]
+        }
+      ],
+      "reveal": "English once used <em>ey</em> for 🥚, at the same time that it dropped the \"g\" from <em>ēage</em> to derive the word \"eye\" 👁️. At some point English speakers switched to the Viking word <em>egg</em> instead (where the \"y\" had hardened to a \"g\"), possibly to remove any possible confusion. Meanwhile, German trucked along with <span lang=\"de\">Ei</span> 🥚 and <span lang=\"de\">Auge</span> 👁️ &mdash; so now <span lang=\"de\">Ei</span> 🥚 looks like \"eye\" 👁️ and <span lang=\"de\">Auge</span> 👁️ looks like \"egg\" 🥚, as if they'd swapped places!"
+    },
+    {
+      "kind": "translate",
+      "german": "Karfreitag ist zwei Tage vor Ostern.",
+      "target": [
+        {"word": "Good"},
+        {"word": "Friday"},
+        {"word": "is"},
+        {"word": "two"},
+        {"word": "days"},
+        {"word": "before"},
+        {"word": "Easter", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "If <span lang=\"de\">zwölf</span> ~ \"twelve\", then <span lang=\"de\">zwei</span> ~ ?",
+          "points": 1,
+          "hintFor": ["two"]
+        },
+        {
+          "hint": "If <span lang=\"de\">Vater</span> ~ \"father\", then <span lang=\"de\">vor</span> ~ ? Add a two-letter prefix to get the correct translation.",
+          "points": 2,
+          "hintFor": ["before"]
+        }
+      ],
+      "reveal": "<span lang=\"de\">Karfreitag</span> literally means \"Sorrowful Friday\". <span lang=\"de\">Kar</span> has the same root as \"care\" &mdash; to <em>care</em> for someone is to experience sorrow and anxiety for them. Heavy stuff!"
+    },
+    {
+      "kind": "translate",
+      "german": "Am Karfreitag ist Fleisch verboten — kein Huhn, kein Schwein. Aber Fisch ist erlaubt.",
+      "target": [
+        {"word": "On"},
+        {"word": "Good"},
+        {"word": "Friday", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "meat"},
+        {"word": "is"},
+        {"word": "forbidden"},
+        {"word": "—", "given": true},
+        {"word": "no"},
+        {"word": "chicken", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "no"},
+        {"word": "pork", "spaceAfter": false},
+        {"word": ".", "given": true},
+        {"word": "But"},
+        {"word": "fish"},
+        {"word": "is"},
+        {"word": "allowed", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "We call the <span lang=\"de\">Huhn</span> something else, but we still use a cognate of this word for a specific subset of this animal.",
+          "points": 2,
+          "hintFor": ["chicken"]
+        },
+        {
+          "hint": "<span lang=\"de\">erlaubt</span> is the opposite of <span lang=\"de\">verboten</span>. Both have direct cognates in English!",
+          "points": 2,
+          "hintFor": ["forbidden", "allowed"]
+        }
+      ],
+      "reveal": "Aside from \"Easter\" and \"Pascha\", most other European languages went with \"Resurrection\" or \"Great Day(s)\" as their name for Easter, but Hungarian and Estonian took it in a different direction, calling it \"Meat-Taking Day\" (\"húsvét\" / \"lihavõtted\") marking the end of the Lenten fast. Forget the resurrection &mdash; meat's back on the menu, boys!"
+    },
+    {
+      "kind": "translate",
+      "german": "Was war zuerst da, das Huhn oder das Ei?",
+      "target": [
+        {"word": "Which"},
+        {"word": "came"},
+        {"word": "first", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "the"},
+        {"word": "chicken"},
+        {"word": "or"},
+        {"word": "the"},
+        {"word": "egg", "spaceAfter": false},
+        {"word": "?", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">zuerst</span> is a prefix + <span lang=\"de\">erst</span>, which we saw earlier this level in <span lang=\"de\">Ersten Weltkrieg</span>.",
+          "points": 2,
+          "hintFor": ["first"]
+        }
+      ],
+      "reveal": "Let's settle this right here, right now - the first shelled egg evolved around the time reptiles emerged from the water 312 million years ago, while the ancestor to our modern chicken only evolved 4-6 million years ago. The chicken loses by roughly 300 million years. <span lang=\"de\">Das Ei kam zuerst!</span>"
+    }
+  ]
+}
