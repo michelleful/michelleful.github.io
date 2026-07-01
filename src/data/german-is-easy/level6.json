@@ -20,31 +20,32 @@
         {"word": ".", "given": true}
       ],
       "hints": [],
-      "reveal": "<span lang=\"de\">Zeit</span> = \"time\" (as in \"zeitgeist\"), so <span lang=\"de\">Jahreszeit</span> = \"time of year\". <span lang=\"de\">Herbst</span> ~ \"harvest\", as you may have guessed. <span lang=\"de\">Frühling</span> has no cognate in English but it roughly means \"the early one\"."
+      "reveal": "<span lang=\"de\">Zeit</span> = \"time\" (as in our borrowed word \"zeitgeist\"), so <span lang=\"de\">Jahreszeit</span> = \"time of year\". <span lang=\"de\">Herbst</span> ~ \"harvest\", as you may have guessed! <span lang=\"de\">Frühling</span> has no cognate in English; it roughly means \"the early one\", and it's the same \"-ling\" as in \"duckling\"."
     },
     {
       "kind": "translate",
-      "german": "Im Frühling gibt es viele Blumen.",
+      "german": "Ich habe eine Frühlingsrolle zum Frühstück gegessen.",
       "target": [
-        {"word": "In"},
+        {"word": "I"},
+        {"word": "ate"},
+        {"word": "a"},
         {"word": "spring"},
-        {"word": "there"},
-        {"word": "are"},
-        {"word": "many"},
-        {"word": "flowers", "spaceAfter": false},
+        {"word": "roll"},
+        {"word": "for"},
+        {"word": "breakfast", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
       "hints": [
         {
-          "hint": "We've seen <span lang=\"de\">viel(e)</span> before in <span lang=\"de\">Ich habe zu viel Wein getrunken.</span> 🥂🥴",
-          "points": 2
+          "hint": "We saw <span lang=\"de\">gegessen</span> in <span lang=\"de\">Jemand hat von meinem Brei gegessen</span>, a complaint all of the <span lang=\"de\">Bären</span> could have made. The auxiliary + verb here can be translated as \"I have verb-ed\", or \"I verb-ed\".",
+          "hintFor": ["ate"]
         },
         {
-          "hint": "The singular is <span lang=\"de\">Blume</span>. Does it sound like an English word you know?",
-          "points": 2
+          "hint": "<span lang=\"de\">Frühling</span> means \"the early one\", so <span lang=\"de\">Frühstück</span> is an early meal.",
+          "hintFor": ["breakfast"]
         }
       ],
-      "reveal": "Out of the words for 🌸 the oldest English word is \"blossom\". English then got \"bloom\" as a borrowing from Old Norse in the Viking invasions of Britain. So English has two cognates of <span lang=\"de\">Blume</span> at its disposal. Another conquest - the Normans - brought \"flower\" from French \"fleur\" into the language."
+      "reveal": "Nice one! This is not, admittedly, a typical German <span lang=\"de\">Frühstück</span> — bread and cheese, cold cuts and eggs are more agreeable to the German palate."
     },
     {
       "kind": "reorder",
@@ -61,24 +62,22 @@
     },
     {
       "kind": "translate",
-      "german": "Im Winter schneit es.",
+      "german": "Es schneit im Winter.",
       "target": [
         {"word": "It"},
         {"word": "snows"},
         {"word": "in"},
-        {"word": "(", "given": true, "spaceAfter": false},
-        {"word": "the", "spaceAfter": false},
-        {"word": ")", "given": true},
         {"word": "winter", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
       "hints": [
         {
           "hint": "Think a common form of precipitation seen <span lang=\"de\">im Winter</span>.",
-          "points": 2
+          "points": 2,
+          "hintFor": ["snows"]
         }
       ],
-      "reveal": "<span lang=\"de\">Es</span> in <span lang=\"de\">Es gibt</span> \"there is/are\" and in <span lang=\"de\">Es schneit</span> are the same \"it\". It doesn't refer to anything specific, it's just a grammatical placeholder that needs to be filled to keep the grammar happy. Whereas English goes with \"there\" for existence and \"it\" elsewhere, German very economically uses \"es\" whenever it needs a dummy subject."
+      "reveal": "<span lang=\"de\">Es</span> in <span lang=\"de\">Es gibt</span> (\"there is/are\") and <span lang=\"de\">Es</span> in <span lang=\"de\">Es schneit</span> (\"it snows\") are the same dummy \"it\" — doesn't refer to anything specific, just filling in as a placeholder to keep the grammar happy. English uses \"there\" for existence and \"it\" elsewhere, but German economically uses <span lang=\"de\">es</span> for both."
     },
     {
       "kind": "translate",
@@ -93,83 +92,83 @@
       ],
       "hints": [
         {
-          "hint": "<span lang=\"de\">Schnee</span> is the noun form of the verb we just saw."
+          "hint": "<span lang=\"de\">Schnee</span> is the noun form of the verb we just saw.",
+          "hintFor": ["snowflakes"]
         },
         {
-          "hint": "<span lang=\"de\">gleich</span> ~ \"alike, equal\"."
+          "hint": "<span lang=\"de\">gleich</span> ~ \"alike, equal\".",
+          "hintFor": ["alike"]
         }
       ],
-      "reveal": "<span lang=\"de\">gleich</span> and \"(a)like\" are direct cognates! They descended from Proto-Germanic <em>*ga-līkaz</em>. English usually dropped the prefix, but sometimes retained it as a fossilised \"a-\" as in \"alike\" (\"among\" is another example!). Meanwhile, German fused the prefix and stem together so the prefix is no longer visible."
+      "reveal": "<span lang=\"de\">gleich</span> and \"(a)like\" are direct cognates! The g- came from a prefix that English dropped (but retained in some words as a fossilized a-, as in \"alike\")."
     },
     {
       "kind": "translate",
-      "german": "Im Winter trägt man warme Kleidung.",
+      "german": "Meine Katze mag sonniges Wetter — sie schläft den ganzen Tag in der Sonne.",
       "target": [
-        {"word": "In"},
-        {"word": "(", "given": true, "spaceAfter": false},
-        {"word": "the", "spaceAfter": false},
-        {"word": ")", "given": true},
-        {"word": "winter"},
-        {"word": "one"},
-        {"word": "wears", "given": true, "challengingInput": true},
-        {"word": "warm"},
-        {"word": "clothing", "spaceAfter": false},
-        {"word": ".", "given": true}
-      ],
-      "hints": [
-        {
-          "hint": "<span lang=\"de\">Kleid</span> ~ \"clad\".",
-          "points": 2
-        }
-      ],
-      "reveal": "<span lang=\"de\">Kleidung</span> has not one but two cognates in English — \"clothing\" and \"cladding\" (clothing for buildings!). We also retain the verb form \"clad\" as in \"clad in shining armour\", but it sounds a little medieval."
-    },
-    {
-      "kind": "translate",
-      "german": "Magst du sonniges Wetter oder kaltes Wetter?",
-      "target": [
-        {"word": "Do"},
-        {"word": "you"},
-        {"word": "like"},
+        {"word": "My"},
+        {"word": "cat"},
+        {"word": "likes"},
         {"word": "sunny"},
         {"word": "weather"},
-        {"word": "or"},
-        {"word": "cold"},
-        {"word": "weather", "spaceAfter": false},
-        {"word": "?", "given": true}
-      ],
-      "hints": [
-        {
-          "hint": "We saw a different version of this verb before in <span lang=\"de\">Ich möchte nicht arbeiten!</span>.",
-          "points": 1
-        }
-      ],
-      "reveal": "Personally I'm for <span lang=\"de\">sonniges UND kaltes Wetter</span>."
-    },
-    {
-      "kind": "translate",
-      "german": "Ein Regenmantel ist eine Art Kleidung.",
-      "target": [
-        {"word": "A"},
-        {"word": "raincoat"},
-        {"word": "is"},
-        {"word": "a"},
-        {"word": "type"},
-        {"word": "of"},
-        {"word": "clothing", "spaceAfter": false},
+        {"word": "—", "given": true},
+        {"word": "it", "also": ["he", "she"]},
+        {"word": "sleeps"},
+        {"word": "the"},
+        {"word": "whole", "also": ["entire"]},
+        {"word": "day"},
+        {"word": "in"},
+        {"word": "the"},
+        {"word": "sun", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
       "hints": [
         {
-          "hint": "<span lang=\"de\">Regenmantel</span> = <span lang=\"de\">Regen</span> + <span lang=\"de\">Mantel</span>. You know <span lang=\"de\">Regen</span>. <span lang=\"de\">Mantel</span> ~ \"mantle\" — a large covering garment.",
-          "points": 1
+          "hint": "🐱 + ☀️ = 😻",
+          "hintFor": ["cat", "likes", "sunny"],
+          "points": 2
         },
         {
-          "hint": "<span lang=\"de\">Art</span> ~ \"sort/kind\" — as in the archaic English \"after this art\" meaning \"of this kind\".",
+          "hint": "We last saw the verb <span lang=\"de\">schläft</span> with a separable prefix with <span lang=\"de\">Goldlöckchen schläft in Bärchens Bett ein.</span>",
+          "hintFor": ["sleeps"],
           "points": 2
+        },
+        {
+          "hint": "<span lang=\"de\">ganz</span> = \"all\", \"whole\"",
+          "hintFor": ["whole"]
         }
       ],
-      "reveal": "<span lang=\"de\">Mantel</span> ~ \"mantle\" — as in the mantle of leadership, or the earth's mantle — all from the same root of a large covering garment. And <span lang=\"de\">Kleid</span> ~ \"clad\" ~ \"cloak\" — there's a whole cluster of covering and clothing words that go back to the same idea of wrapping yourself up against the elements."
+      "reveal": "<span lang=\"de\">sie</span> is actually the feminine pronoun \"she\", but this particular <span lang=\"de\">Katze</span> happens to be a boy, and that's okay! It's purely because <span lang=\"de\">Katze</span> is a feminine noun, so the pronoun follows suit. Grammatical gender doesn't have to match the sex of the referent. The most famous example: <span lang=\"de\">das Mädchen</span> (\"the girl, maiden\") is actually a third category called neuter, not feminine!",
+      "revealImage": "/images/german-is-easy/morris_sleeping_sunny.jpg",
+      "revealImageAlt": "A very cute orange tabby cat with a blue leash sleeping on a step in the sun."
+    },
+    {
+      "kind": "translate",
+      "german": "Sommerkleidung ist leicht, Winterkleidung ist warm.",
+      "target": [
+        {"word": "Summer"},
+        {"word": "clothing"},
+        {"word": "is"},
+        {"word": "light", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "winter"},
+        {"word": "clothing"},
+        {"word": "is"},
+        {"word": "warm", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Kleid</span> ~ \"clad\". What can you be clad in?",
+          "hintFor": ["clothing"],
+          "points": 2
+        },
+        {
+          "hint": "If <span lang=\"de\">Nacht</span> ~ \"night\", then <span lang=\"de\">leicht</span> ~ ?",
+          "hintFor": ["light"]
+        }
+      ],
+      "reveal": "<span lang=\"de\">Kleidung</span> has not one but two cognates in English — \"clothing\" and \"cladding\" (clothing for buildings!). We also retain the verb form \"clad\" as in \"clad in shining armour\", but it does sound a little medieval."
     },
     {
       "kind": "translate",
@@ -201,7 +200,7 @@
           "points": 2
         }
       ],
-      "reveal": "This sentence is likely to be applicable between 1/3 and 1/2 of the time in Germany. But of course Germans won't take that lying down..."
+      "reveal": "This sentence is likely to be applicable between 1/3 and 1/2 of the time in Germany. But of course Germans don't take that lying down!"
     },
     {
       "kind": "translate",
@@ -220,15 +219,39 @@
       ],
       "hints": [
         {
-          "hint": "<span lang=\"de\">kein</span> ~ \"no/none\" — we saw it in the <span lang=\"de\">Karfreitag</span> sentence.",
-          "points": 1
+          "hint": "<span lang=\"de\">nur</span> = \"only\"",
+          "hintFor": ["only"]
+        }
+      ],
+      "reveal": "This is probably not German in origin, but it's a sentiment that Germans have definitely embraced."
+    },
+    {
+      "kind": "translate",
+      "german": "Du bist doch nicht aus Zucker!",
+      "target": [
+        {"word": "C'mon", "given": true, "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "you"},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "re"},
+        {"word": "not"},
+        {"word": "made"},
+        {"word": "of"},
+        {"word": "sugar", "spaceAfter": false},
+        {"word": "!", "given": true}
+      ],
+      "explanation": "<span lang=\"de\">doch</span> is a famously untranslatable emphatic particle, and can be rendered in many ways — here its emphasis is represented by \"C'mon\".",
+      "hints": [
+        {
+          "hint": "This exhortation follows naturally from <span lang=\"de\">Es gibt kein schlechtes Wetter, nur schlechte Kleidung.</span>"
         },
         {
-          "hint": "<span lang=\"de\">nur</span> ~ \"only\" — it narrows things down to one option.",
+          "hint": "<span lang=\"de\">Zucker</span> has a direct cognate in English, and both words were borrowed ultimately from Arabic \"sukkar\".",
           "points": 1
         }
       ],
-      "reveal": "This is probably not German in origin, but it's a sentiment that Germans have definitely embraced. It might be paired with the admonition <span lang=\"de\">Du bist doch nicht aus Zucker!</span> \"C'mon, you're not made of...?\""
+      "reveal": "And that's the whole German philosophy of weather: stop complaining, grab your <span lang=\"de\">Regenmantel</span>, and get outside. Take a break and I'll see you in the next level!"
     }
+
   ]
 }

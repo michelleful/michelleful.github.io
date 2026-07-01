@@ -250,7 +250,7 @@
         "slot1": "subj",
         "slot2": "aux"
       },
-      "reveal": "Here, it's the auxiliary verb <span lang=\"de\">habe</span> that has the tense and is conjugated to agree with the subject <span lang=\"de\">ich</span>, hence it goes in that verb-second (V2) slot, and gets separated from its past participle <span lang=\"de\">getrunken</span>. Whereas in English, \"have drunk\" would have stayed together."
+      "reveal": "We're starting to see the word order differences from English! Here, it's the auxiliary verb <span lang=\"de\">habe</span> that has the tense and is conjugated to agree with the subject <span lang=\"de\">ich</span>, hence it goes in that verb-second (V2) slot, leaving its past participle <span lang=\"de\">getrunken</span> alone at the end of the sentence. Whereas in English, \"have\" and \"drunk\" would have stayed together."
     },
     {
       "kind": "translate",

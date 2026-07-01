@@ -2,6 +2,19 @@
   "id": 5,
   "subLevels": [
     {
+      "kind": "info",
+      "paragraphs": [
+        "Drag each word onto its cognate to dismiss the pair.",
+        "Each pair is worth 4 points.",
+        "We'll start with word pairs you've already seen, then expand to unseen pairs that display the same letter correspondences.",
+        {
+          "casual": "Take your time — there's no timer in Casual mode.",
+          "default": "You have 90 seconds to match all 25 pairs."
+        }
+      ],
+      "buttonText": "Start ⏎"
+    },
+    {
       "kind": "match",
       "timeLimit": 90,
       "points": 4,

@@ -22,7 +22,7 @@
           "answer": "Südost"
         }
       ],
-      "reveal": "German <span lang=\"de\">Ost</span> and <span lang=\"de\">West</span> carry particular historical weight &mdash; decades after the reunification of the two Germanies in 1990, people from each side are still sometimes called <span lang=\"de\">Ossis</span> and <span lang=\"de\">Wessis</span>. The yearning some <span lang=\"de\">Ossis</span> feel for their old way of life even has its own word: <span lang=\"de\">Ostalgie</span>."
+      "reveal": "German <span lang=\"de\">Ost</span> and <span lang=\"de\">West</span> carry particular historical weight — decades after the reunification of the two Germanies in 1990, people from each side are still sometimes called <span lang=\"de\">Ossis</span> and <span lang=\"de\">Wessis</span>. The yearning some <span lang=\"de\">Ossis</span> feel for their old way of life even has its own word: <span lang=\"de\">Ostalgie</span>."
     },
     {
       "kind": "translate",
@@ -48,15 +48,20 @@
       ],
       "hints": [
         {
-          "hint": "The English title has the same gist but is a more poetic translation of the original German.",
+          "hint": "The English title has the same gist as, but is a more poetic translation of, the original German title.",
           "points": 0
+        },
+        {
+          "hint": "Japan was one of <span lang=\"de\">die Alliierten</span> during the <span lang=\"de\">Ersten Weltkrieg</span> but was one of <span lang=\"de\">die Achsenmächte</span> during the <span lang=\"de\">Zweiten Weltkrieg</span>.",
+          "hintFor": ["First", "World", "War"],
+          "points": 2
         },
         {
           "hint": "The book is by Erich Maria Remarque.",
           "points": 2
         }
       ],
-      "reveal": "Erich Maria Remarque's quietly devastating anti-war novel was banned and burned by the Nazis."
+      "reveal": "Well done — this was a genuine toughie. Erich Maria Remarque's quietly devastating anti-war novel was banned and burned by the Nazis."
     },
     {
       "kind": "translate",
@@ -126,7 +131,7 @@
       "kind": "translate",
       "german": "Frohe Weihnachten und ein frohes neues Jahr!",
       "target": [
-        {"word": "Merry"},
+        {"word": "Merry", "also": ["Happy"]},
         {"word": "Christmas"},
         {"word": "and"},
         {"word": "a"},
@@ -141,7 +146,7 @@
           "points": 3
         }
       ],
-      "reveal": "🎄🎊 <span lang=\"de\">Frohe</span> means \"joyful\" or \"glad\" and is distantly related to the English word \"frolic\"."
+      "reveal": "🎄🎊 <span lang=\"de\">Frohe</span> means \"joyful\" or \"glad\" and is distantly related to the English word \"frolic\". Though not everyone is jumping for joy when the family comes round!"
     },
     {
       "kind": "translate",
@@ -153,7 +158,7 @@
       ],
       "hints": [
         {
-          "hint": "Same wish, different holiday &mdash; also about Jesus.",
+          "hint": "Same wish, different holiday — also about Jesus.",
           "points": 2,
           "hintFor": ["Easter"]
         }
@@ -176,12 +181,17 @@
       ],
       "hints": [
         {
+          "hint": "<span lang=\"de\">suchen</span> ~ the English word \"seek\", but <span lang=\"de\">wir suchen</span> for a similar English verb here.",
+          "points": 2,
+          "hintFor": ["search"]
+        },
+        {
           "hint": "<span lang=\"de\">Ei</span> = 🥚",
           "points": 3,
           "hintFor": ["eggs"]
         }
       ],
-      "reveal": "English once used <em>ey</em> for 🥚, at the same time that it dropped the \"g\" from <em>ēage</em> to derive the word \"eye\" 👁️. At some point English speakers switched to the Viking word <em>egg</em> instead (where the \"y\" had hardened to a \"g\"), possibly to remove any possible confusion. Meanwhile, German trucked along with <span lang=\"de\">Ei</span> 🥚 and <span lang=\"de\">Auge</span> 👁️ &mdash; so now <span lang=\"de\">Ei</span> 🥚 looks like \"eye\" 👁️ and <span lang=\"de\">Auge</span> 👁️ looks like \"egg\" 🥚, as if they'd swapped places!"
+      "reveal": "English once used <em>ey</em> for 🥚, at the same time that it dropped the \"g\" from <em>ēage</em> to derive the word \"eye\" 👁️, so both words sounded really similar. At some point English speakers switched to the Viking word \"egg\" instead (where the \"y\" had hardened to a \"g\"), possibly to avoid confusion. Meanwhile, German trucked along with <span lang=\"de\">Ei</span> 🥚 and <span lang=\"de\">Auge</span> 👁️ — so now <span lang=\"de\">Ei</span> 🥚 looks like \"eye\" 👁️ and <span lang=\"de\">Auge</span> 👁️ looks like \"egg\" 🥚, as if they'd swapped places!"
     },
     {
       "kind": "translate",
@@ -208,7 +218,7 @@
           "hintFor": ["before"]
         }
       ],
-      "reveal": "<span lang=\"de\">Karfreitag</span> literally means \"Sorrowful Friday\". <span lang=\"de\">Kar</span> has the same root as \"care\" &mdash; to <em>care</em> for someone is to experience sorrow and anxiety for them. Heavy stuff!"
+      "reveal": "<span lang=\"de\">Karfreitag</span> literally means \"Sorrowful Friday\". <span lang=\"de\">Kar</span> has the same root as \"care\" — to <em>care</em> for someone is to experience sorrow and anxiety for them. Heavy stuff!"
     },
     {
       "kind": "translate",
@@ -236,7 +246,7 @@
       ],
       "hints": [
         {
-          "hint": "We call the <span lang=\"de\">Huhn</span> something else, but we still use a cognate of this word for a specific subset of this animal.",
+          "hint": "We call the <span lang=\"de\">Huhn</span> something else, but we still use a cognate of this word for the female of this animal.",
           "points": 2,
           "hintFor": ["chicken"]
         },
@@ -246,7 +256,7 @@
           "hintFor": ["forbidden", "allowed"]
         }
       ],
-      "reveal": "Aside from \"Easter\" and \"Pascha\", most other European languages went with \"Resurrection\" or \"Great Day(s)\" as their name for Easter, but Hungarian and Estonian took it in a different direction, calling it \"Meat-Taking Day\" (\"húsvét\" / \"lihavõtted\") marking the end of the Lenten fast. Forget the resurrection &mdash; meat's back on the menu, boys!"
+      "reveal": "Aside from \"Easter\" and \"Pascha\", most other European languages went with \"Resurrection\" or \"Great Day(s)\" as their name for Easter, but Hungarian and Estonian took it in a different direction, calling it \"Meat-Taking Day\" (\"húsvét\" / \"lihavõtted\") marking the end of the Lenten fast. Forget the resurrection — meat's back on the menu, boys!"
     },
     {
       "kind": "translate",
@@ -270,7 +280,7 @@
           "hintFor": ["first"]
         }
       ],
-      "reveal": "Let's settle this right here, right now - the first shelled egg evolved around the time reptiles emerged from the water 312 million years ago, while the ancestor to our modern chicken only evolved 4-6 million years ago. The chicken loses by roughly 300 million years. <span lang=\"de\">Das Ei kam zuerst!</span>"
+      "reveal": "Let's settle this right here, right now — the first shelled egg evolved around the time reptiles emerged from the water 312 million years ago, while the ancestor to our modern chicken only evolved 4-6 million years ago. The chicken loses by roughly 300 million years. <span lang=\"de\">Das Ei kam zuerst!</span>"
     }
   ]
 }

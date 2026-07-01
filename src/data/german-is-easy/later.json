@@ -20,3 +20,101 @@
       ],
       "reveal": "November was once called <span lang=\"de\">Nebelmond</span> in German, or the \"month of fog\". As you may have guessed, <span lang=\"de\">Nebel</span> ~ \"nebula\", both originally meaning \"mist\" or \"cloud\". But beware the \"false friend\" <span lang=\"de\">Mist</span>, which means \"manure\" &mdash; quite a semantic drift!"
     }
+
+        {
+      "kind": "translate",
+      "german": "Im Frühling gibt es viele Blumen.",
+      "target": [
+        {"word": "In"},
+        {"word": "spring"},
+        {"word": "there"},
+        {"word": "are"},
+        {"word": "many"},
+        {"word": "flowers", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "We've seen <span lang=\"de\">viel(e)</span> before in <span lang=\"de\">Ich habe zu viel Wein getrunken.</span> 🥂🥴",
+          "points": 2
+        },
+        {
+          "hint": "The singular is <span lang=\"de\">Blume</span>. Does it sound like an English word you know?",
+          "points": 2
+        }
+      ],
+      "reveal": "Out of the words for 🌸 the oldest English word is \"blossom\". English then got \"bloom\" as a borrowing from Old Norse in the Viking invasions of Britain. So English has two cognates of <span lang=\"de\">Blume</span> at its disposal. Another conquest - the Normans - brought \"flower\" from French \"fleur\" into the language."
+    },
+    {
+      "kind": "translate",
+      "german": "Im Winter trägt man warme Kleidung.",
+      "target": [
+        {"word": "In"},
+        {"word": "(", "given": true, "spaceAfter": false},
+        {"word": "the", "spaceAfter": false},
+        {"word": ")", "given": true},
+        {"word": "winter"},
+        {"word": "one"},
+        {"word": "wears", "given": true, "challengingInput": true},
+        {"word": "warm"},
+        {"word": "clothing", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Kleid</span> ~ \"clad\".",
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">Kleidung</span> has not one but two cognates in English — \"clothing\" and \"cladding\" (clothing for buildings!). We also retain the verb form \"clad\" as in \"clad in shining armour\", but it does sound a little medieval."
+    },
+
+        {
+      "kind": "translate",
+      "german": "Magst du sonniges Wetter oder kaltes Wetter?",
+      "target": [
+        {"word": "Do"},
+        {"word": "you"},
+        {"word": "like"},
+        {"word": "sunny"},
+        {"word": "weather"},
+        {"word": "or"},
+        {"word": "cold"},
+        {"word": "weather", "spaceAfter": false},
+        {"word": "?", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "We saw a different version of this verb before in <span lang=\"de\">Ich möchte nicht arbeiten!</span>.",
+          "points": 1
+        }
+      ],
+      "reveal": "Personally I'm for <span lang=\"de\">sonniges UND kaltes Wetter</span>."
+    },
+    {
+      "kind": "translate",
+      "german": "Ein Regenmantel ist eine Art Kleidung.",
+      "target": [
+        {"word": "A"},
+        {"word": "raincoat"},
+        {"word": "is"},
+        {"word": "a"},
+        {"word": "type"},
+        {"word": "of"},
+        {"word": "clothing", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Regenmantel</span> = <span lang=\"de\">Regen</span> + <span lang=\"de\">Mantel</span>. You know <span lang=\"de\">Regen</span>. <span lang=\"de\">Mantel</span> ~ \"mantle\" — a large covering garment.",
+          "points": 1
+        },
+        {
+          "hint": "<span lang=\"de\">Art</span> ~ \"sort/kind\" — as in the archaic English \"after this art\" meaning \"of this kind\".",
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">Mantel</span> ~ \"mantle\" — as in the mantle of leadership, or the earth's mantle — all from the same root of a large covering garment. And <span lang=\"de\">Kleid</span> ~ \"clad\" ~ \"cloak\" — there's a whole cluster of covering and clothing words that go back to the same idea of wrapping yourself up against the elements."
+    },
+
+     It might be paired with the admonition <span lang=\"de\">Du bist doch nicht aus Zucker!</span> \"C'mon, you're not made of...?\"

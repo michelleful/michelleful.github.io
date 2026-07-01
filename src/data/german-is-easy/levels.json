@@ -30,27 +30,27 @@
   },
   {
     "id": 6,
+    "title": "☀️❄️",
+    "requires": 5
+  },
+  {
+    "id": 7,
     "title": "🧭🐔",
     "requires": 6
   },
   {
-    "id": 7,
-    "title": "🚧",
-    "requires": 6
-  },
-  {
     "id": 8,
-    "title": "🚧",
-    "requires": 8
+    "title": "2️⃣0️⃣",
+    "requires": 7
   },
   {
     "id": 9,
-    "title": "🚧",
+    "title": "👸🏻🪞",
     "requires": 9
   },
   {
     "id": 10,
-    "title": "🚧",
+    "title": "🧱",
     "requires": 10
   }
 ]
