@@ -7,6 +7,9 @@ import level4 from '../../../../../data/german-is-easy/level4.json';
 import level5 from '../../../../../data/german-is-easy/level5.json';
 import level6 from '../../../../../data/german-is-easy/level6.json';
 import level7 from '../../../../../data/german-is-easy/level7.json';
+import level8 from '../../../../../data/german-is-easy/level8.json';
+import level9 from '../../../../../data/german-is-easy/level9.json';
+import level10 from '../../../../../data/german-is-easy/level10.json';
 
 export function getStaticPaths() {
   return [
@@ -17,6 +20,9 @@ export function getStaticPaths() {
     { params: { id: '5' }, props: { levelData: level5 } },
     { params: { id: '6' }, props: { levelData: level6 } },
     { params: { id: '7' }, props: { levelData: level7 } },
+    { params: { id: '8' }, props: { levelData: level8 } },
+    { params: { id: '9' }, props: { levelData: level9 } },
+    { params: { id: '10' }, props: { levelData: level10 } },
   ];
 }
 
@@ -147,7 +153,7 @@ const progressDots = document.getElementById('progress-dots');
     // ── Score ───────────────────────────────────────────────────────────────────
     let score = (!saved.done || saved.current > 0) ? (saved.score || 0) : 0;
     const maxScore = levelData.subLevels.reduce((sum, s) =>
-      sum + (s.kind === 'match' ? s.pairs.length * (s.points ?? 5) : (s.points ?? 10)), 0);
+      sum + (s.kind === 'info' ? 0 : s.kind === 'match' ? s.pairs.length * (s.points ?? 5) : (s.points ?? 10)), 0);
 
     function subLevelPoints(mistakes) {
       if (mistakes === 0) return 10;
@@ -285,6 +291,8 @@ progressDots.innerHTML = '';
       switch (sub.kind) {
         case 'translate':
           return { de: sub.german, en: targetToEnglish(sub.target) };
+        case 'produce':
+          return { de: targetToEnglish(sub.target), en: sub.english || sub.german };
         case 'choice': {
           const correct = sub.choices.find(c => c.correct);
           return { de: sub.german, en: correct ? correct.label : '—' };
@@ -302,6 +310,10 @@ progressDots.innerHTML = '';
           return { de: 'Word pairs', en: sub.pairs.map(p => `${p.german} – ${p.english}`).join('\n') };
         case 'wordorder':
           return { de: reconstructWordOrder(sub), en: sub.english || null };
+        case 'arrange':
+          return { de: sub.answer.join(' '), en: sub.english || null };
+        case 'buildaword':
+          return { de: sub.words.map(w => w.parts.map(p => p.blank || p.text).join('')).join(' / '), en: null };
         default:
           return { de: sub.german || '', en: null };
       }
@@ -311,6 +323,7 @@ progressDots.innerHTML = '';
       const frag = document.createDocumentFragment();
       for (let i = 0; i < upToIdx; i++) {
         const sub = levelData.subLevels[i];
+        if (sub.kind === 'info') continue;
 
         if (sub.kind === 'match' && sub.useGroupingsToDisplay) {
           // Build grouped display: collect groups in order of first appearance
@@ -363,6 +376,33 @@ progressDots.innerHTML = '';
           answerEl.textContent = reconstructWordOrder(sub);
           entry.appendChild(answerEl);
           frag.appendChild(entry);
+        } else if (sub.kind === 'buildaword') {
+          const group = document.createElement('div');
+          group.className = 'memory-baw-group';
+          for (const word of sub.words) {
+            const entry = document.createElement('div');
+            entry.className = 'memory-entry-compact';
+            let german = '';
+            for (const part of word.parts) {
+              if (part.sep) {
+                if (german && !german.endsWith(' ')) german += ' ';
+                german += part.text.trim() + ' ';
+              } else {
+                german += part.blank ?? part.text ?? '';
+              }
+            }
+            const enSpan = document.createElement('span');
+            enSpan.className = 'memory-en';
+            enSpan.textContent = word.definition;
+            const deSpan = document.createElement('span');
+            deSpan.className = 'memory-de';
+            deSpan.textContent = german.trim();
+            entry.appendChild(enSpan);
+            entry.append(' – ');
+            entry.appendChild(deSpan);
+            group.appendChild(entry);
+          }
+          frag.appendChild(group);
         } else {
           const { de, en } = subToSummary(sub);
           const entry = document.createElement('div');
@@ -492,13 +532,37 @@ progressDots.innerHTML = '';
       gameMain.innerHTML = '';
 
       const sub = levelData.subLevels[idx];
+
+      // ── Info screen ────────────────────────────────────────────────────────────
+      if (sub.kind === 'info') {
+        const card = el('div', 'sub-level-card');
+        for (const p of (sub.paragraphs || [])) {
+          const text = typeof p === 'string' ? p : (p[mode] ?? p['default'] ?? '');
+          if (text) {
+            const pEl = el('p', 'info-paragraph');
+            pEl.innerHTML = text;
+            card.appendChild(pEl);
+          }
+        }
+        const btn = elText('button', 'next-btn', sub.buttonText || 'Continue →');
+        const onEnterInfo = (e) => {
+          if (e.key === 'Enter') { document.removeEventListener('keydown', onEnterInfo); advanceSubLevel(); }
+        };
+        btn.addEventListener('click', () => { document.removeEventListener('keydown', onEnterInfo); advanceSubLevel(); });
+        document.addEventListener('keydown', onEnterInfo);
+        card.appendChild(btn);
+        gameMain.appendChild(card);
+        setTimeout(() => btn.focus(), 50);
+        return;
+      }
+
       const card = el('div', 'sub-level-card');
 
       // Sentence display: german first, then english
       if (sub.german) {
         card.appendChild(elText('div', 'german-text', sub.german));
       }
-      if (sub.english) {
+      if (sub.english && sub.showEnglishAtStart !== false) {
         card.appendChild(elText('div', 'english-text', sub.english));
       }
       if (sub.attribution) {
@@ -511,12 +575,15 @@ progressDots.innerHTML = '';
       const instructionText =
         sub.instruction ||
         (sub.kind === 'translate'  ? 'Translate' :
+         sub.kind === 'produce'   ? 'Answer in German' :
          sub.kind === 'choice'     ? 'Choose the correct answer' :
          sub.kind === 'reorder'    ? 'Put in the correct order' :
          sub.kind === 'compass'    ? 'Match the positions' :
          sub.kind === 'categorize' ? 'Sort into the correct group' :
          sub.kind === 'match'      ? 'Matching game' :
-         sub.kind === 'wordorder'  ? 'Move words into the slots (−1 pt per invalid move)' : '');
+         sub.kind === 'wordorder'  ? 'Move words into the slots (−1 pt per invalid move)' :
+         sub.kind === 'arrange'    ? 'Build the German sentence' :
+         sub.kind === 'buildaword' ? 'Build the German words (−1 pt per incorrect placement)' : '');
       const maxPts = sub.points ?? 10;
       let potentialPointsEl = null;
       if (instructionText) {
@@ -546,20 +613,21 @@ progressDots.innerHTML = '';
       let mistakeCount = 0;
       // choice: all-or-nothing; reorder/categorize: −1 pt per wrong placement; translate: no penalty
       const onMistake = sub.kind === 'choice'                                              ? () => { taskFailed = true; }
-                      : (sub.kind === 'reorder' || sub.kind === 'compass' || sub.kind === 'categorize' || sub.kind === 'wordorder') ? () => { mistakeCount++; }
+                      : (sub.kind === 'reorder' || sub.kind === 'compass' || sub.kind === 'categorize' || sub.kind === 'wordorder' || sub.kind === 'arrange' || sub.kind === 'buildaword') ? () => { mistakeCount++; }
                       : () => {};
 
       const refreshPotentialPoints = () => {
         if (!potentialPointsEl) return;
         const pts = taskFailed ? 0 : Math.max(0, maxPts - hintDeduction - mistakeCount);
-        potentialPointsEl.textContent = `(${pts} pts)`;
+        potentialPointsEl.textContent = `(${pts} ${pts === 1 ? 'pt' : 'pts'})`;
       };
-      const onMistakeTracked = () => { onMistake(); refreshPotentialPoints(); };
+      const onMistakeTracked = () => { onMistake(); refreshPotentialPoints(); refreshSkipLabel(); };
 
       // focusNextInput is set after the task is rendered (translate only)
       let focusNextInput = null;
       let puzzleSolve = null;
       let refreshHintBtn = () => {};
+      let refreshSkipLabel = () => {};
 
       // Hints area (visible before completion)
       const hints = sub.hints || [];
@@ -575,14 +643,16 @@ progressDots.innerHTML = '';
           if (!h.hintFor || !h.hintFor.length) return false;
           return h.hintFor.every(word => {
             const inp = taskArea.querySelector(`.word-input[data-answer="${CSS.escape(word)}"]`);
-            return inp && inp.classList.contains('correct');
+            if (inp) return inp.classList.contains('correct');
+            const slot = taskArea.querySelector(`.baw-slot[data-answer="${CSS.escape(word.toLowerCase())}"]`);
+            return slot && slot.classList.contains('baw-slot-correct');
           });
         };
         refreshHintBtn = () => {
           while (hintIdx < hints.length && isHintRedundant(hints[hintIdx])) hintIdx++;
           if (hintIdx < hints.length) {
             const cost = hints[hintIdx].points ?? 3;
-            const costStr = mode === 'casual' ? 'free' : (cost === 0 ? 'free' : `−${cost} pts`);
+            const costStr = mode === 'casual' ? 'free' : (cost === 0 ? 'free' : `−${cost} ${cost === 1 ? 'pt' : 'pts'}`);
             hintBtn.innerHTML = `Hint <span class="btn-pts">(${costStr})</span>`;
           } else {
             hintBtn.style.display = 'none';
@@ -623,18 +693,20 @@ progressDots.innerHTML = '';
         });
         btnRow.appendChild(hintBtn);
       }
-      if (['wordorder', 'reorder', 'compass', 'categorize'].includes(sub.kind) && mode !== 'challenging') {
+      if (['wordorder', 'reorder', 'compass', 'categorize', 'arrange', 'buildaword'].includes(sub.kind)) {
         const skipBtn = el('button', 'reveal-letter-btn');
-        const skipNormalHTML = mode === 'casual' ? 'Skip' : `Skip <span class="btn-pts">(−${maxPts} pts)</span>`;
+        const getSkipPts = () => Math.max(0, maxPts - hintDeduction - mistakeCount);
+        const skipNormalHTML = () => { const p = getSkipPts(); return mode === 'casual' ? 'Skip' : `Skip <span class="btn-pts">(−${p} ${p === 1 ? 'pt' : 'pts'})</span>`; };
         const skipConfirmHTML = 'Confirm skip';
-        skipBtn.innerHTML = skipNormalHTML;
+        skipBtn.innerHTML = skipNormalHTML();
+        if (sub.kind === 'arrange' || sub.kind === 'buildaword') refreshSkipLabel = () => { skipBtn.innerHTML = skipNormalHTML(); };
         let skipPrimed = false;
         skipBtn.addEventListener('click', () => {
           if (!skipPrimed) {
             skipPrimed = true;
             skipBtn.innerHTML = skipConfirmHTML;
           } else {
-            hintDeduction += maxPts;
+            hintDeduction += getSkipPts();
             refreshPotentialPoints();
             if (puzzleSolve) puzzleSolve();
           }
@@ -642,12 +714,12 @@ progressDots.innerHTML = '';
         document.addEventListener('click', (e) => {
           if (skipPrimed && e.target !== skipBtn) {
             skipPrimed = false;
-            skipBtn.innerHTML = skipNormalHTML;
+            skipBtn.innerHTML = skipNormalHTML();
           }
         }, { capture: true });
         btnRow.appendChild(skipBtn);
       }
-      if (sub.kind === 'translate') {
+      if (sub.kind === 'translate' || sub.kind === 'produce') {
         const revealBtn = el('button', 'reveal-letter-btn');
         revealBtn.innerHTML = mode === 'casual' ? 'Reveal letter' : 'Reveal letter <span class="btn-pts">(−3 pts)</span>';
         revealBtn.addEventListener('click', () => {
@@ -689,10 +761,12 @@ progressDots.innerHTML = '';
       const revealArea = el('div', 'reveal-area');
       revealArea.style.display = 'none';
       if (sub.reveal) {
-        const revealP = el('p', 'reveal-text');
-        revealP.innerHTML = sub.reveal;
-        wrapEmojis(revealP);
-        revealArea.appendChild(revealP);
+        sub.reveal.split(/\n\n+/).forEach(para => {
+          const revealP = el('p', 'reveal-text');
+          revealP.innerHTML = para;
+          wrapEmojis(revealP);
+          revealArea.appendChild(revealP);
+        });
       }
       if (sub.revealImage) {
         const img = document.createElement('img');
@@ -704,7 +778,7 @@ progressDots.innerHTML = '';
 
       const showNext = () => {
         hintsArea.style.display = 'none';
-        if (sub.kind === 'categorize' || sub.kind === 'reorder' || sub.kind === 'compass') {
+        if (sub.kind === 'categorize' || sub.kind === 'reorder' || sub.kind === 'compass' || sub.kind === 'arrange') {
           taskArea.querySelector('.word-bank')?.remove();
         }
         if (sub.reveal || sub.revealImage) revealArea.style.display = '';
@@ -725,12 +799,15 @@ progressDots.innerHTML = '';
       };
 
       switch (sub.kind) {
-        case 'translate':  focusNextInput = renderTranslate(sub, taskArea, showNext, onMistakeTracked, refreshHintBtn); break;
+        case 'translate':
+        case 'produce':    focusNextInput = renderTranslate(sub, taskArea, showNext, onMistakeTracked, refreshHintBtn); break;
         case 'choice':     renderChoice(sub, taskArea, showNext, onMistakeTracked);     break;
         case 'reorder':    puzzleSolve = renderReorder(sub, taskArea, showNext, onMistakeTracked);    break;
         case 'compass':    puzzleSolve = renderCompass(sub, taskArea, showNext, onMistakeTracked);    break;
+        case 'arrange':    puzzleSolve = renderArrange(sub, taskArea, showNext, onMistakeTracked, () => Math.max(0, maxPts - hintDeduction - mistakeCount), refreshSkipLabel);    break;
         case 'categorize': puzzleSolve = renderCategorize(sub, taskArea, showNext, onMistakeTracked); break;
         case 'wordorder':  puzzleSolve = renderWordOrder(sub, taskArea, showNext, onMistakeTracked);  break;
+        case 'buildaword': puzzleSolve = renderBuildAWord(sub, taskArea, showNext, onMistakeTracked, refreshHintBtn); break;
         case 'match':
           renderMatch(sub, taskArea,
             (pts) => { score += pts; if (mode !== 'casual') updateScoreDisplay(); },
@@ -745,6 +822,7 @@ progressDots.innerHTML = '';
       }
 
       card.appendChild(taskArea);
+      if (sub.kind === 'buildaword') card.classList.add('buildaword-card');
       if (sub.explanation) {
         const explanationEl = el('div', 'explanation-text');
         explanationEl.innerHTML = sub.explanation;
@@ -829,6 +907,12 @@ progressDots.innerHTML = '';
           // Accept as soon as the typed value matches any accepted word
           input.addEventListener('input', () => {
             if (input.disabled) return;
+            // Strip spaces — mobile keyboards bypass keydown so the space key handler doesn't fire
+            if (input.value.includes(' ')) {
+              const sel = input.selectionStart;
+              input.value = input.value.replace(/ /g, '');
+              input.setSelectionRange(sel - 1, sel - 1);
+            }
             const typed = input.value.trim().toLowerCase();
             const match = acceptedWords.find(w => w.toLowerCase() === typed);
             if (match) accept(match);
@@ -915,6 +999,7 @@ progressDots.innerHTML = '';
       const slotEls = sub.slots.map(slot => {
         const row = el('div', 'slot-row');
         const label = elText('span', 'slot-label', slot.label);
+        if (/^\p{Extended_Pictographic}[️⃣]?$/u.test(slot.label.trim())) label.classList.add('slot-label-emoji');
         const drop = el('div', 'slot-drop');
         drop.dataset.answer = slot.answer;
         row.appendChild(label);
@@ -1302,14 +1387,241 @@ progressDots.innerHTML = '';
       };
     }
 
+    // ── Arrange task ───────────────────────────────────────────────────────────
+    function renderArrange(sub, container, onComplete, onMistake, getPotential, refreshSkipLabel = () => {}) {
+      const answerSet = new Set(sub.answer);
+
+      function levenshteinAlign(user, answer) {
+        const n = user.length, m = answer.length;
+        const dp = Array.from({length: n + 1}, (_, i) =>
+          Array.from({length: m + 1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+        for (let i = 1; i <= n; i++)
+          for (let j = 1; j <= m; j++)
+            dp[i][j] = user[i-1] === answer[j-1]
+              ? dp[i-1][j-1]
+              : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+        // Backtrack to label each user token
+        const userOps = new Array(n).fill('wrong');
+        let i = n, j = m;
+        while (i > 0 || j > 0) {
+          if (i > 0 && j > 0 && user[i-1] === answer[j-1]) {
+            userOps[i-1] = 'match'; i--; j--;
+          } else if (j > 0 && (i === 0 || dp[i][j-1] <= dp[i-1][j] && dp[i][j-1] <= dp[i-1][j-1])) {
+            j--; // insert (missing from user) — no user token to label
+          } else if (i > 0 && j > 0 && dp[i-1][j-1] <= dp[i-1][j]) {
+            i--; j--; // substitute
+          } else {
+            i--; // delete (extra in user)
+          }
+        }
+        // Classify non-matches: misplaced (word is in answer) vs wrong (distractor)
+        const ops = userOps.map((op, k) =>
+          op === 'match' ? 'match' : answerSet.has(user[k]) ? 'misplaced' : 'wrong'
+        );
+        // Truly missing: answer words not placed anywhere by the user
+        const placedCount = {};
+        for (const w of user) placedCount[w] = (placedCount[w] || 0) + 1;
+        const trulyMissing = [];
+        const answerCount = {};
+        for (const w of answer) answerCount[w] = (answerCount[w] || 0) + 1;
+        for (const [w, cnt] of Object.entries(answerCount)) {
+          const placed = placedCount[w] || 0;
+          for (let k = 0; k < Math.max(0, cnt - placed); k++) trulyMissing.push(w);
+        }
+        return { ops, distance: dp[n][m], trulyMissing };
+      }
+
+      const trayEl  = el('div', 'arrange-tray');
+      const englishFeedbackEl = sub.showEnglishAtEnd && sub.english
+        ? elText('div', 'english-text arrange-english-feedback', sub.english)
+        : null;
+      if (englishFeedbackEl) englishFeedbackEl.style.display = 'none';
+      const bankEl  = el('div', 'word-bank arrange-bank');
+      const checkBtn = el('button', 'arrange-check-btn');
+      checkBtn.textContent = 'Check';
+      const actionRow = el('div', 'arrange-action-row'); // holds retry + next after check
+
+      const shuffledBank = shuffle([...sub.bank]);
+      let trayWords = [];
+      const bankBtns = shuffledBank.map(word => {
+        const btn = elText('button', 'bank-word', word);
+        bankEl.appendChild(btn);
+        return btn;
+      });
+      const trayBtns = [];
+
+      function refreshCheckBtn() {
+        checkBtn.disabled = trayWords.length === 0;
+      }
+
+      function refreshTrayCapitalization() {
+        trayBtns.forEach((tile, i) => {
+          if (tile.classList.contains('revealed')) return;
+          const original = tile.dataset.word || tile.textContent;
+          const display = i === 0 ? original.charAt(0).toUpperCase() + original.slice(1) : original;
+          tile.textContent = display;
+          trayWords[i] = display;
+        });
+      }
+
+      function addToTray(bankBtn) {
+        const word = bankBtn.textContent;
+        bankBtn.style.display = 'none';
+        trayWords.push(word);
+        const tileBtn = elText('button', 'bank-word arrange-tile', word);
+        tileBtn.dataset.word = word;
+        tileBtn.addEventListener('click', () => removeFromTray(tileBtn));
+        trayEl.appendChild(tileBtn);
+        trayBtns.push(tileBtn);
+        refreshCheckBtn();
+        refreshTrayCapitalization();
+      }
+
+      function removeFromTray(tileBtn) {
+        if (tileBtn.classList.contains('correct')) return;
+        const word = tileBtn.dataset.word || tileBtn.textContent;
+        const idx = trayBtns.indexOf(tileBtn);
+        trayBtns.splice(idx, 1);
+        trayWords.splice(idx, 1);
+        tileBtn.remove();
+        const bankBtn = bankBtns.find(b => b.textContent === word && b.style.display === 'none');
+        if (bankBtn) bankBtn.style.display = '';
+        refreshCheckBtn();
+        refreshTrayCapitalization();
+      }
+
+      function resetTray() {
+        for (const tile of [...trayBtns]) tile.remove();
+        trayBtns.length = 0;
+        trayWords.length = 0;
+        for (const btn of bankBtns) {
+          btn.style.display = '';
+          btn.classList.remove('arrange-should-use');
+        }
+        refreshCheckBtn();
+      }
+
+      for (const btn of bankBtns) {
+        btn.addEventListener('click', () => { if (btn.style.display !== 'none') addToTray(btn); });
+        btn.draggable = true;
+        btn.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', btn.textContent); btn.classList.add('dragging'); });
+        btn.addEventListener('dragend', () => btn.classList.remove('dragging'));
+      }
+      trayEl.addEventListener('dragover',  (e) => { e.preventDefault(); trayEl.classList.add('drag-over'); });
+      trayEl.addEventListener('dragleave', () => trayEl.classList.remove('drag-over'));
+      trayEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        trayEl.classList.remove('drag-over');
+        const word = e.dataTransfer.getData('text/plain');
+        const bankBtn = bankBtns.find(b => b.textContent === word && b.style.display !== 'none');
+        if (bankBtn) addToTray(bankBtn);
+      });
+
+      function doCheck() {
+        const { ops, distance, trulyMissing } = levenshteinAlign(trayWords, sub.answer);
+
+        if (englishFeedbackEl) englishFeedbackEl.style.display = '';
+        for (let k = 0; k < distance; k++) onMistake();
+        refreshSkipLabel();
+
+        trayBtns.forEach((tile, k) => {
+          tile.classList.add('locked');
+          tile.classList.add(ops[k] === 'match' ? 'correct' : ops[k] === 'misplaced' ? 'misplaced' : 'wrong');
+        });
+
+        // Highlight bank words that should have been used but weren't
+        for (const btn of bankBtns) btn.classList.remove('arrange-should-use');
+        const highlightQueue = [...trulyMissing];
+        for (const btn of bankBtns) {
+          const idx = highlightQueue.indexOf(btn.textContent);
+          if (idx !== -1 && btn.style.display !== 'none') {
+            btn.classList.add('arrange-should-use');
+            highlightQueue.splice(idx, 1);
+          }
+        }
+
+        checkBtn.style.display = 'none';
+        actionRow.innerHTML = '';
+
+        if (distance === 0) {
+          setTimeout(onComplete, 400);
+        } else {
+          const potential = getPotential();
+          if (mode === 'challenging' || potential === 0) {
+            const revealBtn = elText('button', 'arrange-check-btn arrange-retry-btn', 'Reveal');
+            revealBtn.addEventListener('click', doReveal);
+            actionRow.appendChild(revealBtn);
+          } else {
+            const retryBtn = elText('button', 'arrange-check-btn arrange-retry-btn', 'Try again');
+            retryBtn.addEventListener('click', () => {
+              resetTray();
+              actionRow.innerHTML = '';
+              checkBtn.style.display = '';
+            });
+            actionRow.appendChild(retryBtn);
+          }
+        }
+      }
+
+      function doReveal() {
+        // Clear tray and fill with correct answer as revealed tiles
+        for (const tile of [...trayBtns]) removeFromTray(tile);
+        for (const word of sub.answer) {
+          const bankBtn = bankBtns.find(b => b.textContent === word && b.style.display !== 'none');
+          if (bankBtn) {
+            bankBtn.style.display = 'none';
+            trayWords.push(word);
+            const tileBtn = elText('button', 'bank-word arrange-tile revealed locked', word);
+            trayEl.appendChild(tileBtn);
+            trayBtns.push(tileBtn);
+          }
+        }
+        actionRow.innerHTML = '';
+        const nextBtn2 = elText('button', 'arrange-check-btn arrange-next-btn', 'Next →');
+        nextBtn2.addEventListener('click', () => { actionRow.innerHTML = ''; onComplete(); });
+        actionRow.appendChild(nextBtn2);
+      }
+
+      checkBtn.addEventListener('click', doCheck);
+
+      refreshCheckBtn();
+      container.appendChild(trayEl);
+      if (englishFeedbackEl) container.appendChild(englishFeedbackEl);
+      container.appendChild(bankEl);
+      container.appendChild(checkBtn);
+      container.appendChild(actionRow);
+
+      return function solve() {
+        doReveal();
+        onComplete();
+      };
+    }
+
     // ── Word order task ────────────────────────────────────────────────────────
     function renderWordOrder(sub, container, onComplete, onMistake) {
       // Support both single-clause {elements, target} and multi-clause {clauses:[...]}
       const clauses = sub.clauses || [{ elements: sub.elements, target: sub.target, prefix: sub.prefix, separator: sub.separator }];
 
-      // Per-clause slot state
-      const clauseSlots = clauses.map(() => ({ slot1: null, slot2: null }));
-      // Track which clause owns the current selection/drag (elements can't cross clause boundary)
+      // Per-clause slot state — keys come from each clause's target object.
+      // silentSlots: pre-filled with the target word, greyed stripe, locked.
+      // blockedSlots: empty greyed stripe placeholder, won't accept anything.
+      // givenSlots: pre-filled with the target word, shown as plain inline text, no tile.
+      const clauseSlots = clauses.map(clause => {
+        const slots = Object.fromEntries(Object.keys(clause.target).map(k => [k, null]));
+        for (const key of (clause.silentSlots || [])) {
+          const targetId = clause.target[key];
+          if (targetId) slots[key] = { id: targetId, locked: true, silent: true };
+        }
+        for (const key of (clause.blockedSlots || [])) {
+          slots[key] = { locked: true, silent: true, blocked: true };
+        }
+        for (const key of (clause.givenSlots || [])) {
+          const targetId = clause.target[key];
+          if (targetId) slots[key] = { id: targetId, locked: true, given: true };
+        }
+        return slots;
+      });
+
       let selectedClause = null;
       let selectedId     = null;
       let dragClause     = null;
@@ -1323,14 +1635,32 @@ progressDots.innerHTML = '';
       function canAccept(ci, slotKey, elemId) {
         const elem = findElem(ci, elemId);
         if (!elem) return false;
+        const clause = clauses[ci];
+        const rule = clause.slotConfig?.[slotKey];
+        if (rule === 'tensed')       return elem.tensed === true;
+        if (rule === '!tensed')      return elem.tensed !== true;
+        if (rule === 'wh')           return elem.category === 'wh';
+        if (rule === 'subordinator') return elem.category === 'subordinator' || elem.category === 'wh';
+        // Default V2: slot1 = topic (non-verb), slot2 = tensed verb
         if (slotKey === 'slot1') return elem.tensed !== true;
         if (slotKey === 'slot2') return elem.tensed === true;
         return false;
       }
 
-      // Capitalize slot1 of clause[0] only when that clause has no prefix occupying position 1
+      function slotTitle(clause, slotKey) {
+        const rule = clause.slotConfig?.[slotKey];
+        if (rule === 'tensed' || (rule === undefined && slotKey === 'slot2'))
+          return 'Only conjugated verbs';
+        if (rule === 'wh')           return 'Only wh-words';
+        if (rule === 'subordinator') return 'Subordinator (wh-word or dass)';
+        return 'Anything except a conjugated verb';
+      }
+
+      // Capitalize the first leading slot of clause[0] when there's no prefix
       function displayText(text, ci, slotKey) {
-        if (ci === 0 && slotKey === 'slot1') {
+        const clause = clauses[ci];
+        const slotKeys = Object.keys(clause.target);
+        if (ci === 0 && slotKey === slotKeys[0]) {
           const prefix = clauses[0].prefix;
           const hasPrefix = prefix && (Array.isArray(prefix) ? prefix.length > 0 : true);
           if (!hasPrefix) return text.charAt(0).toUpperCase() + text.slice(1);
@@ -1341,7 +1671,7 @@ progressDots.innerHTML = '';
       function checkComplete() {
         const allCorrect = clauses.every((clause, ci) => {
           const s = clauseSlots[ci];
-          return s.slot1?.locked && s.slot2?.locked;
+          return Object.keys(clause.target).every(k => s[k]?.locked);
         });
         if (allCorrect) setTimeout(onComplete, 400);
       }
@@ -1359,28 +1689,20 @@ progressDots.innerHTML = '';
         if (correct) checkComplete();
       }
 
-      const surface               = el('div', 'wordorder-surface');
-      const slotDropsByClause      = [];
-      const rowsByClause           = [];
-      const dynamicSuffixByClause  = [];
+      const surface              = el('div', 'wordorder-surface');
+      const slotDropsByClause    = [];
+      const rowsByClause         = [];
+      const dynamicSuffixByClause = [];
 
       clauses.forEach((clause, ci) => {
-        const row      = el('div', 'wordorder-main-row');
+        const row       = el('div', 'wordorder-main-row');
         const slotDrops = {};
+        const slotKeys  = Object.keys(clause.target);
 
-        // Prefix words: static tiles rendered before the slots
-        const prefixWords = clause.prefix
-          ? (Array.isArray(clause.prefix) ? clause.prefix : [clause.prefix])
-          : [];
-        prefixWords.forEach(pw => {
-          row.appendChild(elText('span', 'wordorder-prefix-word', pw.text));
-        });
-
-        ['slot1', 'slot2'].forEach(slotKey => {
+        function makeSlotDrop(slotKey) {
           const wrap = el('div', 'wordorder-slot-wrap');
           const drop = el('div', 'wordorder-slot-drop');
-          drop.title = slotKey === 'slot1' ? 'Anything except a conjugated verb' : 'Only conjugated verbs';
-
+          drop.title = slotTitle(clause, slotKey);
           drop.addEventListener('click', () => {
             if (selectedId === null || selectedClause !== ci || clauseSlots[ci][slotKey] !== null) return;
             tryPlace(ci, slotKey, selectedId);
@@ -1397,12 +1719,20 @@ progressDots.innerHTML = '';
             if (dragElemId === null || dragClause !== ci || clauseSlots[ci][slotKey] !== null) return;
             tryPlace(ci, slotKey, dragElemId);
           });
-
           wrap.appendChild(drop);
-
-          row.appendChild(wrap);
           slotDrops[slotKey] = drop;
+          return wrap;
+        }
+
+        // Prefix words: static tiles rendered before the slots
+        const prefixWords = clause.prefix
+          ? (Array.isArray(clause.prefix) ? clause.prefix : [clause.prefix])
+          : [];
+        prefixWords.forEach(pw => {
+          row.appendChild(elText('span', 'wordorder-prefix-word', pw.text));
         });
+
+        slotKeys.forEach(key => row.appendChild(makeSlotDrop(key)));
 
         // dynamicSuffix is the insertion anchor: loose tiles go before it
         const dynamicSuffix = el('span', 'wordorder-dynamic-suffix');
@@ -1427,26 +1757,38 @@ progressDots.innerHTML = '';
           const row           = rowsByClause[ci];
           const dynamicSuffix = dynamicSuffixByClause[ci];
 
-          ['slot1', 'slot2'].forEach(slotKey => {
+          Object.keys(clause.target).forEach(slotKey => {
             const drop = slotDrops[slotKey];
             drop.innerHTML = '';
+            drop.classList.remove('wordorder-slot-given');
             const slotState = slots[slotKey];
             if (slotState !== null) {
-              const elem = findElem(ci, slotState.id);
-              const tile = el('button', 'wordorder-tile wordorder-tile-placed' +
-                (slotState.locked ? ' wordorder-tile-locked' : ' wordorder-tile-wrong'));
-              tile.appendChild(elText('span', '', displayText(elem.text, ci, slotKey)));
-              if (slotState.locked) {
-                tile.disabled = true;
+              if (slotState.given) {
+                drop.classList.add('wordorder-slot-given');
+                const elem = findElem(ci, slotState.id);
+                drop.appendChild(elText('span', 'wordorder-prefix-word', displayText(elem.text, ci, slotKey)));
               } else {
-                tile.appendChild(elText('span', 'wordorder-remove-icon', '×'));
-                tile.addEventListener('click', (e) => {
-                  e.stopPropagation();
-                  slots[slotKey] = null;
-                  render();
-                });
+                const tile = el('button', 'wordorder-tile wordorder-tile-placed wordorder-tile-locked' +
+                  (slotState.silent ? ' wordorder-tile-silent' : ''));
+                tile.disabled = true;
+                if (slotState.blocked) {
+                  tile.appendChild(elText('span', '', ' '));
+                } else {
+                  const elem = findElem(ci, slotState.id);
+                  tile.appendChild(elText('span', '', displayText(elem.text, ci, slotKey)));
+                  if (!slotState.locked) {
+                    tile.classList.replace('wordorder-tile-locked', 'wordorder-tile-wrong');
+                    tile.disabled = false;
+                    tile.appendChild(elText('span', 'wordorder-remove-icon', '×'));
+                    tile.addEventListener('click', (e) => {
+                      e.stopPropagation();
+                      slots[slotKey] = null;
+                      render();
+                    });
+                  }
+                }
+                drop.appendChild(tile);
               }
-              drop.appendChild(tile);
             }
           });
 
@@ -1495,8 +1837,9 @@ progressDots.innerHTML = '';
 
       return function solve() {
         clauses.forEach((clause, ci) => {
-          clauseSlots[ci].slot1 = { id: clause.target.slot1, locked: true };
-          clauseSlots[ci].slot2 = { id: clause.target.slot2, locked: true };
+          Object.keys(clause.target).forEach(slotKey => {
+            clauseSlots[ci][slotKey] = { id: clause.target[slotKey], locked: true };
+          });
         });
         render();
         setTimeout(onComplete, 400);
@@ -1546,6 +1889,179 @@ progressDots.innerHTML = '';
       const e = el(tag, cls);
       e.textContent = text;
       return e;
+    }
+
+    // ── Build-a-word task ──────────────────────────────────────────────────────
+    function renderBuildAWord(sub, container, onComplete, onMistake, refreshHintBtn = () => {}) {
+      let selectedMorpheme = null;
+      let lockedCount = 0;
+      const totalBlanks = sub.words.reduce(
+        (sum, w) => sum + w.parts.filter(p => p.blank !== undefined).length, 0);
+
+      const wrapper = el('div', 'baw-wrapper');
+      const grid = el('div', 'baw-grid');
+      const allSlots = [];
+
+      const isSep = g => g.every(p => p.text !== undefined && (/^[\s,;.!?]+$/.test(p.text) || p.sep));
+
+      sub.words.forEach(word => {
+        const row = el('div', 'baw-word-row');
+        row.appendChild(elText('div', 'baw-definition', word.definition));
+        const partsCol = el('div', 'baw-parts');
+
+        // Group parts: join:true parts attach to the previous group
+        const groups = [];
+        word.parts.forEach(part => {
+          if (!part.join || groups.length === 0) groups.push([part]);
+          else groups[groups.length - 1].push(part);
+        });
+
+        // Split groups into semantic words at separator boundaries;
+        // consecutive non-separator groups accumulate into the same semantic word
+        const swUnits = [];
+        let pendingSeps = [];
+        let currentUnit = null;
+        groups.forEach(group => {
+          if (isSep(group)) {
+            pendingSeps.push(group);
+          } else {
+            if (currentUnit === null || pendingSeps.length > 0) {
+              currentUnit = { groups: [], sepsBefore: pendingSeps };
+              pendingSeps = [];
+              swUnits.push(currentUnit);
+            }
+            currentUnit.groups.push(group);
+          }
+        });
+
+        swUnits.forEach((unit, ui) => {
+          // Render preceding separators
+          unit.sepsBefore.forEach(sg => {
+            const sepEl = el('span', 'baw-word-sep');
+            sg.forEach(p => sepEl.appendChild(elText('span', 'baw-part-text', p.text)));
+            partsCol.appendChild(sepEl);
+          });
+
+          // Dot between semantic words (when no separator in between)
+          if (ui > 0 && unit.sepsBefore.length === 0) {
+            partsCol.appendChild(elText('span', 'baw-separator', '·'));
+          }
+
+          const swEl = el('span', 'baw-semantic-word');
+          const swBlanks = [];
+
+          unit.groups.forEach((group, gi) => {
+            if (gi > 0) swEl.appendChild(elText('span', 'baw-separator', '·'));
+            const groupEl = el('span', 'baw-word-group');
+            group.forEach((part, pi) => {
+              if (pi > 0) groupEl.appendChild(elText('span', 'baw-separator', '·'));
+              if (part.text !== undefined) {
+                groupEl.appendChild(elText('span', 'baw-part-text', part.text));
+              } else {
+                const slot = el('button', 'baw-slot');
+                slot.dataset.answer = part.blank.toLowerCase();
+                const slotInfo = { el: slot, answer: part.blank, match: part.match || part.blank, locked: false, swBlanks, swEl };
+                swBlanks.push(slotInfo);
+                allSlots.push(slotInfo);
+                slot.addEventListener('click', () => {
+                  if (slotInfo.locked || !selectedMorpheme) return;
+                  attemptPlace(slotInfo, selectedMorpheme);
+                });
+                slot.addEventListener('dragover', e => {
+                  e.preventDefault();
+                  slot.classList.add('baw-drag-over');
+                });
+                slot.addEventListener('dragleave', () => slot.classList.remove('baw-drag-over'));
+                slot.addEventListener('drop', e => {
+                  e.preventDefault();
+                  slot.classList.remove('baw-drag-over');
+                  const morph = e.dataTransfer.getData('text/plain');
+                  if (morph) attemptPlace(slotInfo, morph);
+                });
+                groupEl.appendChild(slot);
+              }
+            });
+            swEl.appendChild(groupEl);
+          });
+          partsCol.appendChild(swEl);
+        });
+
+        pendingSeps.forEach(sg => {
+          const sepEl = el('span', 'baw-word-sep');
+          sg.forEach(p => sepEl.appendChild(elText('span', 'baw-part-text', p.text)));
+          partsCol.appendChild(sepEl);
+        });
+
+        row.appendChild(partsCol);
+        grid.appendChild(row);
+      });
+
+      wrapper.appendChild(grid);
+
+      const bank = el('div', 'baw-bank word-bank');
+      const shuffledBank = shuffle([...sub.bank]);
+      shuffledBank.forEach(morph => {
+        const tile = elText('button', 'baw-bank-tile', morph);
+        tile.draggable = true;
+        tile.addEventListener('click', () => {
+          selectedMorpheme = (selectedMorpheme === morph) ? null : morph;
+          bank.querySelectorAll('.baw-bank-tile').forEach(t =>
+            t.classList.toggle('baw-bank-tile-selected', t.textContent === selectedMorpheme));
+        });
+        tile.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', morph);
+        });
+        bank.appendChild(tile);
+      });
+      wrapper.appendChild(bank);
+      container.appendChild(wrapper);
+
+      function deselect() {
+        selectedMorpheme = null;
+        bank.querySelectorAll('.baw-bank-tile').forEach(t => t.classList.remove('baw-bank-tile-selected'));
+      }
+
+      function attemptPlace(slotInfo, morph) {
+        if (slotInfo.locked) return;
+        deselect();
+        if (morph.toLowerCase() === slotInfo.match.toLowerCase()) {
+          slotInfo.locked = true;
+          slotInfo.el.textContent = slotInfo.answer;
+          slotInfo.el.classList.add('baw-slot-correct');
+          slotInfo.el.disabled = true;
+          lockedCount++;
+          refreshHintBtn();
+          if (slotInfo.swBlanks.every(s => s.locked)) {
+            slotInfo.swEl.classList.add('baw-word-complete');
+          }
+          if (lockedCount === totalBlanks) onComplete();
+        } else {
+          onMistake();
+          slotInfo.el.textContent = morph;
+          slotInfo.el.classList.add('baw-slot-wrong');
+          setTimeout(() => {
+            slotInfo.el.textContent = '';
+            slotInfo.el.classList.remove('baw-slot-wrong');
+          }, 600);
+        }
+      }
+
+      return () => {
+        allSlots.forEach(s => {
+          if (!s.locked) {
+            s.locked = true;
+            s.el.textContent = s.answer;
+            s.el.classList.add('baw-slot-correct');
+            s.el.disabled = true;
+          }
+        });
+        allSlots.forEach(s => {
+          if (s.swBlanks.every(b => b.locked)) {
+            s.swEl.classList.add('baw-word-complete');
+          }
+        });
+        onComplete();
+      };
     }
 
     // ── Match task ─────────────────────────────────────────────────────────────
@@ -1713,42 +2229,18 @@ progressDots.innerHTML = '';
         setTimeout(onDone, 400);
       }
 
-      // Intro screen — shown before the timer starts
-      const intro = el('div', 'match-intro');
-      const introLines = [
-        'Drag each word onto its cognate to dismiss the pair.',
-        `Each pair is worth ${sub.points ?? 5} points.`,
-        "We'll start with word pairs you've already seen, then expand to unseen pairs that display the same letter correspondences.",
-        mode === 'casual'
-          ? 'Take your time — there\'s no timer in Casual mode.'
-          : `You have ${timeLimit} seconds to match all ${sub.pairs.length} pairs.`
-      ];
-      introLines.forEach(line => intro.appendChild(elText('p', '', line)));
-      const startBtn = elText('button', 'match-start-btn', 'Start ⏎');
-      intro.appendChild(startBtn);
-      container.appendChild(intro);
-
-      function startGame() {
-        intro.remove();
-        container.closest('.sub-level-card')?.classList.add('match-playing');
-        container.appendChild(area);
-        if (timerEl) container.insertBefore(timerEl, area);
-        if (mode !== 'casual' && timeLimit) {
-          timerInterval = setInterval(() => {
-            timeLeft--;
-            timerEl.textContent = fmtTime(timeLeft);
-            if (timeLeft <= 10) timerEl.classList.add('warning');
-            if (timeLeft <= 0) endMatch();
-          }, 1000);
-        }
-        addBatch(INITIAL);
+      container.closest('.sub-level-card')?.classList.add('match-playing');
+      container.appendChild(area);
+      if (timerEl) container.insertBefore(timerEl, area);
+      if (mode !== 'casual' && timeLimit) {
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerEl.textContent = fmtTime(timeLeft);
+          if (timeLeft <= 10) timerEl.classList.add('warning');
+          if (timeLeft <= 0) endMatch();
+        }, 1000);
       }
-
-      startBtn.addEventListener('click', startGame);
-      document.addEventListener('keydown', function onEnter(e) {
-        if (e.key === 'Enter') { document.removeEventListener('keydown', onEnter); startGame(); }
-      });
-      setTimeout(() => startBtn.focus(), 50);
+      addBatch(INITIAL);
     }
 
     // ── Boot ───────────────────────────────────────────────────────────────────
@@ -2182,6 +2674,10 @@ progressDots.innerHTML = '';
     flex-shrink: 0;
     white-space: nowrap;
   }
+  .slot-label-emoji {
+    font-size: 1.5rem;
+    font-style: normal;
+  }
 
   .slot-drop {
     font-family: 'IM Fell English', serif;
@@ -2270,6 +2766,102 @@ progressDots.innerHTML = '';
     border-style: solid;
   }
 
+  /* ── Arrange task ───────────────────────────────────────────────────────── */
+  .arrange-tray {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 3.5rem;
+    padding: 0.75rem;
+    border: 2px dashed #c8d8da;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .arrange-tray.drag-over {
+    border-color: #15616d;
+    background: #e0f5f7;
+    border-style: solid;
+  }
+  .arrange-tray:empty::before {
+    content: 'Tap words below to add them here';
+    color: #aaa;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    align-self: center;
+  }
+  .arrange-tile {
+    cursor: pointer;
+  }
+  .arrange-tile.correct {
+    border-color: #2d7a3a;
+    background: #eaf5ec;
+    color: #2d7a3a;
+  }
+  .arrange-tile.misplaced {
+    border-color: #b07d00;
+    background: #fdf6e3;
+    color: #7a5500;
+  }
+  .arrange-tile.wrong {
+    border-color: #c0392b;
+    background: #fdecea;
+    color: #c0392b;
+    text-decoration: line-through;
+  }
+  .arrange-tile.revealed {
+    border-color: #aaa;
+    background: #f5f5f0;
+    color: #555;
+  }
+  .arrange-tile.locked {
+    cursor: default;
+  }
+  .arrange-check-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 0.5rem 1.5rem;
+    background: #15616d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.15s;
+  }
+  .arrange-check-btn:hover:not(:disabled) { background: #0e4a54; }
+  .arrange-check-btn:disabled { background: #ccc; cursor: default; }
+  .arrange-action-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .arrange-should-use {
+    border-color: #c0392b !important;
+    background: #fdecea !important;
+    color: #c0392b !important;
+  }
+  .arrange-retry-btn {
+    background: transparent;
+    color: #15616d;
+    border: 1px solid #15616d;
+  }
+  .arrange-retry-btn:hover { background: #f0f8f9; color: #15616d; }
+  .arrange-next-btn { background: #15616d; }
+  .arrange-english-feedback {
+    margin-top: 0.75rem;
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.4;
+  }
+  .arrange-bank {
+    margin-top: 0.25rem;
+  }
+
   /* ── Word order task ────────────────────────────────────────────────────── */
   .wordorder-surface {
     display: flex;
@@ -2301,9 +2893,14 @@ progressDots.innerHTML = '';
     transition: border-color 0.15s;
   }
 
-.wordorder-slot-drop.wordorder-drag-over {
+  .wordorder-slot-drop.wordorder-drag-over {
     border-color: #15616d;
     border-style: dashed;
+  }
+
+  .wordorder-slot-drop.wordorder-slot-given {
+    border-bottom-color: transparent;
+    min-width: unset;
   }
 
   .wordorder-separator {
@@ -2364,6 +2961,20 @@ progressDots.innerHTML = '';
     background: rgba(21,97,109,0.07);
     color: #15616d;
     cursor: default;
+  }
+
+  .wordorder-tile-silent {
+    border-color: #bbb;
+    background: repeating-linear-gradient(
+      -45deg,
+      #d8d8d8,
+      #d8d8d8 4px,
+      #f0f0f0 4px,
+      #f0f0f0 8px
+    );
+    color: #777;
+    cursor: default;
+    min-width: 3.5rem;
   }
 
   .wordorder-tile-wrong {
@@ -2577,11 +3188,17 @@ progressDots.innerHTML = '';
     color: #1a1a2e;
   }
   .memory-entry-compact .memory-en {
+    font-family: 'Jost', sans-serif;
     font-size: 0.95rem;
     font-weight: 400;
     color: #555;
   }
 
+  .memory-baw-group {
+    padding: 0.5rem 0;
+    border-top: 1px solid #ddd;
+  }
+  .memory-baw-group:first-child { border-top: none; padding-top: 0; }
   .memory-entry {
     padding: 0.6rem 0;
     border-bottom: 1px solid #f0f0f0;
@@ -2626,10 +3243,15 @@ progressDots.innerHTML = '';
 
   .explanation-text {
     margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background: #fffbeb;
+    border-left: 3px solid #d97706;
+    border-radius: 6px;
     font-family: 'Jost', sans-serif;
     font-size: 0.95rem;
     font-weight: 400;
-    color: #111;
+    color: #333;
     line-height: 1.5;
   }
 
@@ -2639,6 +3261,8 @@ progressDots.innerHTML = '';
     padding-top: 1rem;
     border-top: 1px solid #eee;
   }
+  .buildaword-card .task-area { margin-bottom: 0; }
+  .buildaword-card .hints-area { margin-top: 0.5rem; }
 
   .btn-pts {
     white-space: nowrap;
@@ -2704,12 +3328,117 @@ progressDots.innerHTML = '';
     margin-bottom: 1rem;
   }
 
+  /* ── Build-a-word task ──────────────────────────────────────────────────── */
+  .baw-wrapper { display: flex; flex-direction: column; gap: 1.25rem; }
+  .baw-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+  .baw-word-row { display: flex; align-items: flex-start; gap: 1rem; }
+  .baw-definition {
+    color: #555;
+    width: 8rem;
+    flex-shrink: 0;
+    padding-top: 0.2rem;
+  }
+  .baw-parts { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+  .baw-word-group { display: inline-flex; align-items: center; flex-wrap: nowrap; }
+  .baw-semantic-word { display: inline-flex; align-items: center; flex-wrap: wrap; }
+  .baw-word-sep { display: inline-flex; align-items: center; margin: 0 0.35rem; }
+  .baw-word-sep + .baw-word-sep { margin-left: 0; }
+  .baw-parts > .baw-word-sep:first-child { margin-left: 0; }
+  .baw-word-complete {
+    background: #e8f6eb;
+    border: 2px solid #2d7a3a;
+    border-radius: 4px;
+    padding: 0.15rem 0.3rem;
+    animation: baw-word-pop 0.5s ease-out;
+  }
+  @keyframes baw-word-pop {
+    0%   { background-color: #6fcf84; }
+    100% { background-color: #e8f6eb; }
+  }
+  .baw-word-complete .baw-separator { display: none; }
+  .baw-word-complete .baw-part-text { color: #2d7a3a; }
+  .baw-word-complete .baw-slot-correct {
+    background: transparent !important;
+    border: none !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    color: #2d7a3a !important;
+  }
+  .baw-word-complete .baw-word-sep { margin: 0 0.2rem; }
+  .baw-separator { color: #ccc; font-size: 0.85rem; line-height: 1; user-select: none; }
+  .baw-part-text {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #001524;
+  }
+  .baw-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4rem;
+    min-height: 2rem;
+    border: 2px dashed #aaa;
+    border-radius: 4px;
+    background: #fafafa;
+    cursor: pointer;
+    font-family: 'IM Fell English', serif;
+    font-size: 1.1rem;
+    color: #001524;
+    padding: 0.15rem 0.4rem;
+    margin: 0;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .baw-slot:hover:not(:disabled) { border-color: #15616d; }
+  .baw-slot.baw-drag-over { border-color: #15616d; background: #e8f4f5; }
+  .baw-slot-correct {
+    border: 2px solid #2d7a3a !important;
+    border-style: solid !important;
+    background: #e8f6eb !important;
+    color: #2d7a3a !important;
+    cursor: default;
+    min-width: 0 !important;
+    padding-left: 0.2rem !important;
+    padding-right: 0.2rem !important;
+  }
+  .baw-slot-wrong {
+    border: 2px solid #c0392b !important;
+    border-style: solid !important;
+    animation: baw-flash 0.6s ease-out;
+  }
+  @keyframes baw-flash {
+    0%   { background: #f88; color: #fff; }
+    100% { background: #fafafa; color: #001524; }
+  }
+  .baw-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #ddd;
+  }
+  .baw-bank-tile {
+    padding: 0.3rem 0.75rem;
+    border: 2px solid #15616d;
+    border-radius: 4px;
+    background: #fff;
+    color: #15616d;
+    font-family: 'IM Fell English', serif;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .baw-bank-tile:hover { background: #e8f4f5; }
+  .baw-bank-tile-selected { background: #15616d !important; color: #fff !important; }
+
   .reveal-text {
     font-size: 0.95rem;
     font-weight: 400;
     color: #444;
     margin: 0;
     font-style: italic;
+  }
+  .reveal-text + .reveal-text {
+    margin-top: 0.75rem;
   }
   .reveal-text em {
     font-style: normal;
@@ -2740,40 +3469,18 @@ progressDots.innerHTML = '';
   .next-btn:hover { background: #0f4a55; }
 
   /* ── Match game ─────────────────────────────────────────────────────────── */
-  .match-intro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 1.5rem;
-    background: #fafaf8;
-    border: 1px solid #eee;
-    border-radius: 10px;
-  }
-  .match-intro p {
+  .info-paragraph {
     font-size: 0.95rem;
     font-weight: 300;
     color: #444;
-    margin: 0;
+    margin: 0 0 0.5rem;
     line-height: 1.5;
   }
-  .match-intro p:last-of-type {
+  .info-paragraph:last-of-type {
     font-weight: 400;
     color: #15616d;
+    margin-bottom: 1rem;
   }
-  .match-start-btn {
-    align-self: flex-start;
-    margin-top: 0.5rem;
-    font-family: 'Jost', sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    padding: 0.5rem 1.5rem;
-    background: #15616d;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .match-start-btn:hover { background: #0f4a55; }
 
   .match-timer {
     font-family: 'Jost', sans-serif;
