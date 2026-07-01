@@ -1,0 +1,321 @@
+{
+  "id": 8,
+  "subLevels": [
+    {
+      "kind": "info",
+      "paragraphs": [
+        "We're going to play <span lang=\"de\">Zwanzig Fragen</span> (20 Questions).",
+        "The object the player is guessing is: <span lang=\"de\">eine Katze</span> 🐈",
+        "Complete the exercises with this in mind."
+      ],
+      "buttonText": "Start ⏎"
+    },
+    {
+      "kind": "choice",
+      "points": 5,
+      "german": "Tier, Pflanze, oder Mineral?",
+      "choices": [
+        {"label": "Tier", "correct": true},
+        {"label": "Pflanze"},
+        {"label": "Mineral"}
+      ],
+      "hints": [],
+      "reveal": "<span lang=\"de\">Pflanze</span> ~ \"plant\", and it means plants in general. \"Vegetables\" are more specifically <span lang=\"de\">Gemüse</span>."
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "It's an animal.",
+      "clauses": [
+        {
+          "elements": [
+            {"id": "subj1", "text": "es"},
+            {"id": "obj1",  "text": "ein Tier"},
+            {"id": "verb1", "text": "ist", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "subj1", "slot2": "verb1"},
+          "separator": "."
+        }
+      ],
+      "hints": [],
+      "reveal": "Just checking whether you remember our word order lessons from way back in Level 1!"
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "Is it an animal?",
+      "clauses": [
+        {
+          "slotConfig": { "slot1": "tensed", "slot2": "!tensed" },
+          "elements": [
+            {"id": "subj1", "text": "es"},
+            {"id": "obj1",  "text": "ein Tier"},
+            {"id": "verb1", "text": "ist", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "verb1", "slot2": "subj1"},
+          "separator": "?"
+        }
+      ],
+      "explanation": "For yes-no questions, the order of the slots is inverted: verb/auxiliary first, then subject. Just like in English! Give it a try.",
+      "hints": []
+    },
+    {
+      "kind": "arrange",
+      "points": 5,
+      "english": "Can it fly?",
+      "showEnglishAtStart": true,
+      "showEnglishAtEnd": false,
+      "bank": ["kann", "es", "fliegen", "?"],
+      "answer": ["Kann", "es", "fliegen", "?"],
+      "hints": []
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Kann es fliegen?",
+      "target": [
+        {"word": "Nein", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "kann"},
+        {"word": "nicht"},
+        {"word": "fliegen", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "You'll need a negative, <span lang=\"de\">nicht</span>, in there somewhere.",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "kind": "arrange",
+      "points": 5,
+      "english": "Does it live in water?",
+      "showEnglishAtStart": true,
+      "showEnglishAtEnd": false,
+      "bank": ["lebt", "es", "im", "Wasser", "?"],
+      "answer": ["Lebt", "es", "im", "Wasser", "?"],
+      "hints": [],
+      "reveal": "Notice how when it's a non-auxiliary verb, English doesn't move it to the front — instead it inserts the verb \"to do\" and conjugates it accordingly. German, on the other hand, is perfectly happy moving a non-auxiliary verb into the first slot. \"English verbs can't jump\", as my syntax professor Molly Diesing memorably put it."
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Lebt es im Wasser?",
+      "target": [
+        {"word": "Nein", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "lebt"},
+        {"word": "nicht"},
+        {"word": "im"},
+        {"word": "Wasser", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": []
+    },
+    {
+      "kind": "arrange",
+      "points": 5,
+      "english": "Does it walk on four legs?",
+      "showEnglishAtStart": true,
+      "showEnglishAtEnd": false,
+      "bank": ["geht", "es", "auf", "vier", "Beinen", "?"],
+      "answer": ["Geht", "es", "auf", "vier", "Beinen", "?"],
+      "hints": []
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Geht es auf vier Beinen?",
+      "target": [
+        {"word": "Ja", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "geht"},
+        {"word": "auf"},
+        {"word": "vier"},
+        {"word": "Beinen", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "<span lang=\"de\">Bein</span> \"leg\" ~ English \"bone\"."
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Dann ist es kein Insekt und kein Känguru.",
+      "target": [
+        {"word": "Then"},
+        {"word": ",", "given": true},
+        {"word": "it", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "s"},
+        {"word": "not"},
+        {"word": "an"},
+        {"word": "insect"},
+        {"word": "and"},
+        {"word": "not"},
+        {"word": "a"},
+        {"word": "kangaroo", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "Guess we're not in Australia. (Austria's still on the table!)"
+    },
+    {
+      "kind": "choice",
+      "points": 5,
+      "german": "Ist es größer als ein Bär?",
+      "choices": [
+        {"label": "Ja"},
+        {"label": "Nein", "correct": true}
+      ],
+      "hints": []
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Ist es kleiner als eine Maus?",
+      "target": [
+        {"word": "Nein", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "ist"},
+        {"word": "nicht"},
+        {"word": "kleiner"},
+        {"word": "als"},
+        {"word": "eine"},
+        {"word": "Maus", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "Mozart's <span lang=\"de\">Eine kleine Nachtmusik</span> = ?",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Ist es ein Haustier?",
+      "target": [
+        {"word": "Ja", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "ist"},
+        {"word": "ein"},
+        {"word": "Haustier", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Haustier = 🏠 + 🦌</span>",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Frisst es Fleisch?",
+      "target": [
+        {"word": "Ja", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "frisst"},
+        {"word": "Fleisch", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">fressen</span> = <span lang=\"de\">essen</span>, but for <span lang=\"de\">Tiere</span>",
+          "points": 1
+        }
+      ],
+      "reveal": "German makes a distinction between humans eating (<span lang=\"de\">essen, isst</span>) and animals eating (<span lang=\"de\">fressen, frisst</span>). If a person <span lang=\"de\">frisst</span>, that would mean they were scarfing down their food — <span lang=\"de\">wie ein Tier</span>."
+    },
+    {
+      "kind": "arrange",
+      "points": 5,
+      "english": "Does it hunt mice?",
+      "showEnglishAtStart": true,
+      "showEnglishAtEnd": false,
+      "bank": ["jagt", "es", "Mäuse", "?"],
+      "answer": ["Jagt", "es", "Mäuse", "?"],
+      "hints": [],
+      "reveal": "You may be familiar with the verb <span lang=\"de\">jagen</span> \"to hunt\" via the liqueur <span lang=\"de\">Jägermeister</span> (\"master of the hunt\") or the Jaegers in Pacific Rim (2013), used to hunt kaiju, but these are loaned names. The verb root also shows up in \"yacht\", from the Dutch word for \"hunt(ing ship)\"."
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Jagt es Mäuse?",
+      "target": [
+        {"word": "Ja", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "jagt"},
+        {"word": "Mäuse", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": []
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Arbeitet es?",
+      "target": [
+        {"word": "Nein", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "arbeitet"},
+        {"word": "nicht", "also": ["nie"], "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [],
+      "reveal": "That's right — <span lang=\"de\">wir arbeiten für Katzen</span>, not the other way round."
+    },
+    {
+      "kind": "produce",
+      "points": 5,
+      "instruction": "Answer the question correctly for your object",
+      "german": "Schnurrt es?",
+      "target": [
+        {"word": "Ja", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "es"},
+        {"word": "schnurrt", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "The English translation for <span lang=\"de\">schnurren</span> also has \"urr\".",
+          "points": 1
+        }
+      ],
+      "reveal": "<span lang=\"de\">Schnurren</span> is onomatopoeic, of course, indicating a humming or buzzing sound. The verb also shows up in <span lang=\"de\">Schnurrbart</span> (\"moustache\", literally \"purr-beard\"), possibly because a moustache vibrates when its wearer hums or talks. Its cognate isn't \"purr\", though — it's \"snarl\"! A very different cat sound."
+    },
+    {
+      "kind": "choice",
+      "points": 5,
+      "german": "Ist es dann eine Katze?",
+      "choices": [
+        {"label": "Ja", "correct": true},
+        {"label": "Nein"}
+      ],
+      "hints": [],
+      "reveal": "<span lang=\"de\">Ja, es ist eine Katze!</span> 🎉🐱 Congratulations — you've successfully played 20 Questions in German, and practised a lot of word order along the way!"
+    }
+  ]
+}

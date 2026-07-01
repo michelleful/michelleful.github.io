@@ -1,0 +1,267 @@
+{
+  "id": 10,
+  "subLevels": [
+    {
+      "kind": "info",
+      "paragraphs": [
+        "Welcome to our Build-a-Word workshop!",
+        "Fill in the blanks by tapping on a morpheme (a word piece), then the blank. Some morphemes will be used more than once.",
+        "-1 pt per incorrect placement."
+      ],
+      "buttonText": "Start ⏎"
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "childhood", "parts": [{"blank": "Kind"}, {"text": "heit"}] },
+        { "definition": "health", "parts": [{"blank": "Gesund"}, {"blank": "heit"}] },
+        { 
+          "definition": "Truth and Beauty", 
+          "parts": [
+            {"blank": "Wahr"}, {"blank": "heit", "join": true},
+            {"text": "und", "sep": true},
+            {"blank": "Schön"}, {"text": "heit", "join": true}
+          ]
+        },
+        { "definition": "deity", "parts": [{"blank": "Gott"}, {"blank": "heit"}] },
+        { "definition": "novelty", "parts": [{"blank": "Neu"}, {"text": "heit"}] }
+      ],
+      "bank": ["gesund", "Kind", "heit", "wahr", "schön", "neu", "Gott"],
+      "hints": [
+        {
+          "hint": "We saw in the Snow White level that <span lang=\"de\">der Spiegel sprach die Wahrheit</span>, so the queen knew that Snow White had to be alive.",
+          "hintFor": ["Wahr"],
+          "points": 2
+        },
+        {
+          "hint": "<span lang=\"de\">Die böse Königin</span> kept asking: <span lang=\"de\">Wer ist die Schönste im ganzen Land?</span>.",
+          "hintFor": ["Schön"],
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">-heit</span> is English \"-hood\", although as you can see, it can correspond to other English nominalizing suffixes.\n\nWe haven't talked a lot about gender so far, because it can be tricky to predict. However, words ending in <span lang=\"de\">-heit</span> are without exception feminine, which is a nice bonus for recognising this suffix!"
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "windy", "parts": [{"blank": "wind"}, {"blank": "ig"}] },
+        { "definition": "foggy", "parts": [{"blank": "nebl", "match": "Nebel"}, {"text": "ig"}] },
+        { "definition": "blood(il)y", "parts": [{"blank": "blut"}, {"blank": "ig"}] },
+        { "definition": "thirst(il)y", "parts": [{"blank": "durst"}, {"text": "ig"}] },
+        { "definition": "hungr(il)y", "parts": [{"blank": "hungr", "match": "Hunger"}, {"blank": "ig"}] },
+        { "definition": "restless(ly)", "parts": [{"blank": "un"}, {"blank": "ruh", "match": "Ruhe"}, {"text": "ig"}] }
+    ],
+      "bank": ["Wind", "Sonne", "Nebel", "ig", "Blut", "Durst", "Hunger", "un", "Ruhe"],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Nebel</span> ~ \"nebula\", but rather than cloud, it means something else that obscures the light.",
+          "hintFor": ["nebl"],
+          "points": 1
+        },
+        {
+          "hint": "You'll need to find a way to add the negation of -less into \"restlessly\"!",
+          "hintFor": ["un"],
+          "points": 2
+        },
+        {
+          "hint": "We saw <span lang=\"de\">Ruhe</span> in <span lang=\"de\">Sonntagsruhe</span>, the sacred \"Sunday rest\".",
+          "hintFor": ["ruh"],
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">-ig</span> ~ -y in English, as we noted when we were puzzling out weather words! Adverbs and adjectives have the same form in German, except that adjectives change to agree with nouns, for example in <span lang=\"de\">eine neblige Nacht</span> \"a foggy night\". Did you also notice that some words changed form when the suffix was added? <span lang=\"de\">Nebel</span> \"fog\" became <span lang=\"de\">nebl-ig</span>, losing an <span lang=\"de\">e</span>. By the way, this word has the same source as our word \"nebula\"!"
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "happ(il)y", "parts": [{"blank": "glück"}, {"text": "lich"}] },
+        { "definition": "kingly", "parts": [{"blank": "könig"}, {"blank": "lich"}] },
+        { "definition": "daily", "parts": [{"blank": "täg", "match": "Tag"}, {"blank": "lich"}] },
+        { "definition": "natural(ly), of course", "parts": [{"blank": "natür", "match": "Natur"}, {"blank": "lich"}] },
+        { "definition": "motherly", "parts": [{"blank": "mütter", "match": "Mutter"}, {"blank": "lich"}] },
+        { "definition": "publicly", "parts": [{"blank": "öffent", "match": "offen"}, {"blank": "lich"}] }
+    ],
+      "bank": ["Glück", "lich", "König", "Tag", "Natur", "Mutter", "Vater", "offen"],
+      "hints": [
+        {
+          "hint": "If <span lang=\"de\">hoffen</span> ~ \"hope\", then <span lang=\"de\">offen</span> ~ ? What's a synonym for this adjective?",
+          "hintFor": ["öffent"],
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">-lich</span> ~ -ly in English. Here, the main changes when we added the suffix was that an umlaut got added to the stem vowel if it didn't already have one. Also, in <span lang=\"de\">öffentlich</span> another <span lang=\"de\">-t</span> crept in for historical reasons. German is full of surprises!"
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "unfriendliness", "parts": [{"blank": "Un"}, {"blank": "freund"}, {"blank": "lich"}, {"text": "keit"}] },
+        { "definition": "liquidity", "parts": [{"blank": "Flüss", "match": "Fluss"}, {"text": "ig"}, {"blank": "keit"}]},
+        { "definition": "breeziness", "parts": [{"blank": "Wind"}, {"blank": "ig"}, {"blank": "keit"}]},
+        { "definition": "unpunctuality", "parts": [{"blank": "Un"}, {"blank": "pünkt", "match": "Punkt"}, {"blank": "lich"}, {"blank": "keit"}]},
+        { "definition": "unity", "parts": [{"blank": "Ein"}, {"text": "ig"}, {"blank": "keit"}] },
+        { "definition": "the public sphere/eye", "parts": [{"blank": "Öffent", "match": "offen"}, {"text": "lich"}, {"blank": "keit"}] }
+    ],
+      "bank": ["Punkt", "un", "Freund", "lich", "ig", "ein", "Wind", "keit", "Fluss", "offen"],
+      "hints": [
+        {
+          "hint": "We saw <span lang=\"de\">Fluss</span> in <span lang=\"de\">Der Nil ist ein Fluss in Ägypten</span>. Which English word is most relevant?",
+          "hintFor": ["Flüss"],
+          "points": 2
+        },
+        {
+          "hint": "\"ein\" = 1",
+          "hintFor": ["Ein"],
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">-keit</span> is the same suffix as <span lang=\"de\">-heit</span> \"-hood\", except that it's used when there's another suffix preceding it. Also 100% feminine!"
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "hope", "parts": [{"blank": "Hoffn", "match": "hoffen"}, {"text": "ung"}] },
+        { "definition": "warning", "parts": [{"blank": "Warn", "match": "warnen"}, {"blank": "ung"}] },
+        { "definition": "clothing", "parts": [{"blank": "Kleid", "match": "kleiden"}, {"blank": "ung"}] },
+        { "definition": "reckoning", "parts": [{"blank": "Rechn", "match": "rechnen"}, {"blank": "ung"}] },
+        { "definition": "order", "parts": [{"blank": "Ordn", "match": "ordnen"}, {"blank": "ung"}] },
+        { "definition": "movement", "parts": [{"text": "Be"}, {"blank": "weg"}, {"blank": "ung"}] }
+      ],
+      "bank": ["hoffen", "warnen", "rechnen", "ordnen", "Weg", "ung", "kleiden"],
+      "hints": [
+        {
+          "hint": "If <span lang=\"de\">Tag</span> ~ \"day\", then <span lang=\"de\">Weg</span> ~ X. What does \"be on your X\" mean?",
+          "hintFor": ["weg"],
+          "points": 2
+        }
+      ],
+      "reveal": "The suffix <span lang=\"de\">-ung</span> turns verbs into abstract nouns, cognate with English \"-ing\" (and guess what? It's also 100% feminine!). Notice how German drops the verb's <span lang=\"de\">-en</span> ending when <span lang=\"de\">-ung</span> attaches.\n\n<span lang=\"de\">Weg</span> ~ \"way\". To <span lang=\"de\">beweg(en)</span> is to \"be on your way\", i.e. \"to move\". An even more surprising cognate is \"weigh\", with the meaning possibly evolving from \"move\" → \"lift\" → \"assess weight by lifting\". The original meaning is preserved in the phrase \"Anchors aweigh!\" ⚓"
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "hopeful", "parts": [{"blank": "hoffn", "match": "hoffen"}, {"blank": "ungs", "match": "ung"}, {"blank": "voll"}] },
+        { "definition": "hopeless", "parts": [{"blank": "hoffn", "match": "hoffen"}, {"blank": "ungs", "match": "ung"}, {"blank": "los"}] },
+        { "definition": "unemployed", "parts": [{"blank": "arbeits", "match": "Arbeit"}, {"blank": "los"}] },
+        { "definition": "wonderful", "parts": [{"blank": "wunder"}, {"blank": "voll"}]},
+        { "definition": "loving", "parts": [{"blank": "liebe"}, {"blank": "voll"}]},
+        { "definition": "motionless", "parts": [{"blank": "beweg", "match": "bewegen"}, {"blank": "ung"}, {"blank": "los"}] }
+      ],
+      "bank": ["hoffen", "ung", "voll", "los", "Arbeit", "Wunder", "Liebe", "bewegen"],
+      "reveal": "<span lang=\"de\">-los</span> ~ \"-less\" and <span lang=\"de\">-voll</span> ~ \"-full\", as you've doubtless worked out! Rather than losing letters as with other prefixes, here we're adding a linking <span lang=\"de\">-s-</span> on occasion.\n\nHere's another fun <span lang=\"de\">-los</span> word: <span lang=\"de\">zweifellos</span> \"doubtless\". Breaking the <span lang=\"de\">Zweifel</span> \"doubt\" part down more, it means something like \"in two minds\" (<span lang=\"de\">zwei</span> ~ \"two\"). The English word \"doubt\" also shows the same connection between doubt and duality — it shares a root with \"double\", via Latin."
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "drinkable, potable", "parts": [{"blank": "trink", "match": "trinken"}, {"text": "bar"}] },
+        { "definition": "edible", "parts": [{"blank": "ess", "match": "essen"}, {"blank": "bar"}] },
+        { "definition": "wonderful", "parts": [{"blank": "wunder"}, {"blank": "bar"}] },
+        { "definition": "visible", "parts": [{"blank": "sicht"}, {"blank": "bar"}] },
+        { "definition": "obvious", "parts": [{"blank": "offen"}, {"blank": "bar"}] },
+        { "definition": "thankful", "parts": [{"blank": "dank", "match": "danken"}, {"text": "bar"}] }
+      ],
+      "bank": ["trinken", "essen", "Wunder", "Sicht", "danken", "offen", "bar"],
+      "reveal": "<span lang=\"de\">-bar</span> ~ \"-able/-ible\" in English. You may be wondering what the difference between <span lang=\"de\">wundervoll</span> and <span lang=\"de\">wunderbar</span> is. It's mainly a matter of mood: <span lang=\"de\">wunderbar</span> is more straightforward, something you might exclaim: <span lang=\"de\">„Wunderbar!“</span>, while <span lang=\"de\">wundervoll</span> is a little more dreamy and poetic."
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        { "definition": "friendship", "parts": [{"blank": "Freund"}, {"text": "schaft"}] },
+        { "definition": "society", "parts": [{"text": "Gesell"}, {"blank": "schaft"}] },
+        { "definition": "scholarship", "parts": [{"blank": "Wissen"}, {"blank": "schaft"}] },
+        { "definition": "science", "parts": [{"text": "Natur"}, {"blank": "wissen"}, {"blank": "schaft"}] },
+        { "definition": "social sciences", "parts": [{"blank": "Gesell", "match": "Geselle"}, {"blank": "schafts", "match": "schaft"}, {"blank": "wissen"}, {"blank": "schaft"}, {"text": "en"}] },
+        { "definition": "linguistics", "parts": [{"blank": "Sprach", "match": "Sprache"}, {"blank": "wissen"}, {"blank": "schaft"}]  }
+      ],
+      "bank": ["Freund", "Geselle", "wissen", "schaft", "Sprache"],
+      "hints": [
+        {
+          "hint": "We saw <span lang=\"de\">Sprach</span> in <span lang=\"de\">Englisch, Deutsch und Mandarin sind Weltsprachen.</span>.",
+          "hintFor": ["Sprach"],
+          "points": 2
+        }
+      ],
+      "reveal": "<span lang=\"de\">-schaft</span> ~ \"-ship\" in English — <span lang=\"de\">Freundschaft</span> and \"friendship\" are literally the same word! (Wanna guess its gender?) I am personally fond of <span lang=\"de\">Wissenschaft</span>, which literally means \"knowing-ship\", or the craft of knowledge. English borrowed \"science\" from Latin (also originally \"knowing\" as in \"omniscient\"); German built its own word from Germanic pieces."
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        {
+          "definition": "Heartlessness is the worst heart defect.",
+          "parts": [
+            {"blank": "Herz"}, {"blank": "los", "join": true}, {"text": "ig", "join": true}, {"blank": "keit", "join": true},
+            {"text": "ist der schlimmste", "sep": true},
+            {"blank": "Herz"}, {"text": "fehler", "join": true},
+            {"text": "."}
+          ]
+        },
+        {
+          "definition": "Order is half of life",
+          "parts": [
+            {"blank": "Ordn", "match": "ordnen"}, {"blank": "ung"},
+            {"text": "ist das halbe Leben", "sep": true}
+          ]
+        },
+        {
+          "definition": "(and disorder the other half).",
+          "parts": [
+            {"text": "(und", "sep": true},
+            {"blank": "Un"}, {"blank": "ordn", "match": "ordnen", "join": true}, {"blank": "ung", "join": true},
+            {"text": "die andere Hälfte.)", "sep": true}
+          ]
+        }
+      ],
+      "bank": ["heit", "keit", "Herz", "los", "ig", "ordnen", "ung", "un"],
+      "hints": [
+      ],
+      "reveal": "\"Order is half of life\" is a proverb showcasing the stereotypical German love of order. It means that by keeping things in order, you save time — up to half a lifetime! The anti-proverb that follows turns it on its head."
+    },
+    {
+      "kind": "buildaword",
+      "points": 10,
+      "words": [
+        {
+          "definition": "In vino veritas.",
+          "parts": [
+            {"text": "Im Wein ist", "sep": true},
+            {"blank": "Wahr"}, {"blank": "heit", "join": true},
+            {"text": "."}
+          ]
+        },
+        {
+          "definition": "French Revolution slogan",
+          "parts": [
+            {"blank": "Frei"}, {"text": "heit", "join": true},
+            {"text": ", "},
+            {"blank": "Gleich"}, {"text": "heit", "join": true},
+            {"text": ", "},
+            {"blank": "Brüder", "match": "Bruder"}, {"blank": "lich", "join": true}, {"blank": "keit", "join": true},
+            {"text": "!"}
+          ]
+        }
+      ],
+      "bank": ["frei", "gleich", "Bruder", "wahr", "heit", "lich", "keit"],
+      "hints": [
+        {
+          "hint": "We saw <span lang=\"de\">gleich</span> in <span lang=\"de\">Keine zwei Schneeflocken sind gleich.</span> Here it means not precisely \"alike\", but another very similar concept.",
+          "hintFor": ["Gleich"],
+          "points": 2
+        },
+        {
+          "hint": "The French Revolution slogan is \"Liberté, Egalité, Fraternité!\"",
+          "hintFor": ["Frei", "Gleich", "Brüder"],
+          "points": 2
+        }
+      ],
+      "reveal": "We've seen many compound words already, but this workshop should have hammered home that German is a Lego brick language that you can stack and stack. The bonus? Each new morpheme you learn unlocks a dozen new words you can make sense of. You just have to take it brick by brick 🧱.\n\nThank you for playing through the entire alpha! If you liked this and would like to see more, you can add your email to the notification list, or follow me on social media (links at bottom of main page). I'd also love your feedback. <span lang=\"de\">Danke schön!</span>"
+    }
+  ]
+}

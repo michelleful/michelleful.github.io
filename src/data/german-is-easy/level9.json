@@ -1,0 +1,415 @@
+{
+  "id": 9,
+  "subLevels": [
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Es war einmal eine böse Königin und ihre Stieftochter Schneewittchen.",
+      "target": [
+        {"word": "Once"},
+        {"word": "upon"},
+        {"word": "a"},
+        {"word": "time", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "there"},
+        {"word": "was"},
+        {"word": "an"},
+        {"word": "evil", "given": true, "challengingInput": true},
+        {"word": "queen"},
+        {"word": "and"},
+        {"word": "her"},
+        {"word": "stepdaughter"},
+        {"word": "Snow"},
+        {"word": "White", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Schneewittchen</span> = <span lang=\"de\">Schnee</span> + an old form of <span lang=\"de\">weiß</span> (a colour) + the diminutive <span lang=\"de\">-chen</span>.",
+          "hintFor": ["Snow", "White"],
+          "points": 1
+        },
+        {
+          "hint": "Same opener as <span lang=\"de\">Es waren einmal drei Bären</span>, just in the singular.",
+          "hintFor": ["Once", "upon", "a", "time"],
+          "points": 2
+        },
+        {
+          "hint": "If <span lang=\"de\">Pfeffer</span> ~ \"pepper\", then <span lang=\"de\">Stief-</span> ~ ?",
+          "points": 2,
+          "hintFor": ["stepdaughter"]
+        },
+        {
+          "hint": "If <span lang=\"de\">Tropfen</span> ~ \"drop\" and <span lang=\"de\">Nacht</span> ~ \"night\", then <span lang=\"de\">Tochter</span> ~ ?",
+          "points": 2,
+          "hintFor": ["stepdaughter"]
+        },
+        {
+          "hint": "<span lang=\"de\">Königin</span> is the feminine form of <span lang=\"de\">König</span> 👑.",
+          "points": 2,
+          "hintFor": ["queen"]
+        }
+      ],
+      "reveal": "Welcome to our abbreviated retelling of the German folktale Snow White, which, as we'll see, underwent massive changes from the Brothers Grimm to Disney."
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "„Spiegel, Spiegel an der Wand, wer ist die Schönste im ganzen Land?“",
+      "target": [
+        {"word": "\u201C", "given": true, "spaceAfter": false},
+        {"word": "Mirror", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "mirror"},
+        {"word": "on"},
+        {"word": "the"},
+        {"word": "wall", "spaceAfter": false},
+        {"word": ",", "given": true},
+        {"word": "who"},
+        {"word": "is"},
+        {"word": "the"},
+        {"word": "fairest"},
+        {"word": "in"},
+        {"word": "the"},
+        {"word": "whole", "given": true, "challengingInput": true},
+        {"word": "land", "spaceAfter": false},
+        {"word": "?", "given": true, "spaceAfter": false},
+        {"word": "\u201D", "given": true}        
+      ],
+      "hints": [
+        {
+          "hint": "You may be tempted to produce the rhyming Disney version, but translate the last phrase a little more literally.",
+          "points": 0
+        },
+        {
+          "hint": "<span lang=\"de\">Spiegel</span> = a reflective surface. <span lang=\"de\">Wand</span> is the surface where it's mounted.",
+          "points": 3,
+          "hintFor": ["mirror", "wall"]
+        },
+        {
+          "hint": "<span lang=\"de\">die Schönste</span> is the superlative of <span lang=\"de\">schön</span> (beautiful). Use the canonical English word for this famous sentence.",
+          "points": 2,
+          "hintFor": ["fairest"]
+        },
+        {
+          "hint": "You may have been tempted to translate \"of them all\", but we're asking for something a bit closer to the German.",
+          "points": 2,
+          "hintFor": ["in", "the", "land"]
+        }
+      ],
+      "reveal": "<span lang=\"de\">Der Spiegel</span>, \"The Mirror\", is one of Germany's most influential news magazines (founded 1947). The Brothers Grimm actually wrote the line with the diminutive form <span lang=\"de\">Spieglein, Spieglein an der Wand</span> (using <span lang=\"de\">-lein</span>, another diminutive suffix)."
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "„Schneewittchen ist tausendmal schöner als Ihr.“",
+      "target": [
+        {"word": "\u201C", "given": true, "spaceAfter": false},
+        {"word": "Snow"},
+        {"word": "White"},
+        {"word": "is"},
+        {"word": "a", "also": ["one"]},
+        {"word": "thousand"},
+        {"word": "times"},
+        {"word": "more"},
+        {"word": "beautiful"},
+        {"word": "than"},
+        {"word": "you", "spaceAfter": false},
+        {"word": ".", "given": true, "spaceAfter": false},
+        {"word": "\u201D", "given": true}        
+      ],
+      "hints": [
+       {
+          "hint": "<span lang=\"de\">tausend + mal</span>, the first part is a numeral",
+          "points": 2,
+          "hintFor": ["thousand", "times"]
+        },
+        {
+          "hint": "This time we're looking for a two-word translation of <span lang=\"de\">schöner</span>, the comparative.",
+          "points": 2,
+          "hintFor": ["more", "beautiful"]
+        },
+        {
+          "hint": "With <span lang=\"de\">Ihr</span>, the mirror is addressing the queen very formally, but the formality will be lost in translation.",
+          "points": 2,
+          "hintFor": ["you"]
+        }
+      ],
+      "reveal": "Ouch! This mirror does not pull its punches."
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "Who is the fairest in the whole land?",
+      "clauses": [
+        {
+          "elements": [
+            {"id": "wh", "text": "wer"},
+            {"id": "verb1", "text": "ist", "category": "verb", "tensed": true},
+            {"id": "np", "text": "die Schönste"},
+            {"id": "pp", "text": "im ganzen Land"}
+          ],
+          "target": {"slot1": "wh", "slot2": "verb1"},
+          "separator": "?"
+        }
+      ],
+      "explanation": "For wh-questions (\"who\", \"where\", \"what\", etc), we're back to the same word order as main clauses, except that the wh-word must go in slot 1.",
+      "hints": []
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Die Königin wollte Schneewittchen tot sehen, aber der Jäger konnte das schöne Kind nicht töten.",
+      "target": [
+        {"word": "The"},
+        {"word": "queen"},
+        {"word": "wanted"},
+        {"word": "Snow"},
+        {"word": "White"},
+        {"word": "dead", "given": true, "spaceAfter": false, "challengingInput": true},
+        {"word": ",", "given": true},
+        {"word": "but"},
+        {"word": "the"},
+        {"word": "hunter", "also": ["huntsman"]},
+        {"word": "couldn", "spaceAfter": false},
+        {"word": "'", "given": true, "spaceAfter": false},
+        {"word": "t"},
+        {"word": "kill"},
+        {"word": "the"},
+        {"word": "beautiful"},
+        {"word": "child", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">wollen</span> ~ \"will\" in English, descending from a proto-Germanic word indicating \"to desire\", or \"to w___\".",
+          "points": 2,
+          "hintFor": ["wanted"]
+        },
+        {
+          "hint": "<span lang=\"de\">Jäger</span> we saw in the last level, what <span lang=\"de\">die Katze</span> is to <span lang=\"de\">die Maus</span>.",
+          "points": 2,
+          "hintFor": ["hunter"]
+        },
+        {
+          "hint": "<span lang=\"de\">konnte</span> is the past tense of <span lang=\"de\">können</span> ~ \"can\".",
+          "points": 2,
+          "hintFor": ["couldn", "t"]
+        },
+        {
+          "hint": "<span lang=\"de\">töten</span> = to make someone <span lang=\"de\">tot</span>.",
+          "points": 2,
+          "hintFor": ["kill"]
+        }
+      ],
+      "reveal": "The German literally says \"The queen wanted to see Snow White dead\", but its meaning is \"wanted her dead\", as we translated. <span lang=\"de\">tot</span> and \"dead\" are cognates. It would have gone better for the queen if she'd insisted on witnessing the deed for herself."
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Die Königin wollte wissen, wer jetzt die Schönste im Land war.",
+      "target": [
+        {"word": "The"},
+        {"word": "queen"},
+        {"word": "wanted"},
+        {"word": "to"},
+        {"word": "know"},
+        {"word": "who"},
+        {"word": "was"},
+        {"word": "now", "given": true, "challengingInput": true},
+        {"word": "the"},
+        {"word": "fairest"},
+        {"word": "in"},
+        {"word": "the"},
+        {"word": "land", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "We saw this verb earlier in <span lang=\"de\">Die Königin wollte Schneewittchen tot sehen</span>, except that the hunter couldn't do the dastardly deed.",
+          "points": 2,
+          "hintFor": ["wanted"]
+        },
+        {
+          "hint": "<span lang=\"de\">wissen</span> is related to \"wisdom\". Think of a very similar noun, then take its verb form.",
+          "points": 2,
+          "hintFor": ["know"]
+        }
+      ],
+      "reveal": "Compare this subordinate clause with the same question in the main clause <span lang=\"de\">Wer ist die Schönste im ganzen Land?</span> Notice any differences in the word order? We'll <span lang=\"de\">wissen</span> why very soon. By the way, <span lang=\"de\">wissen</span>, \"wit\" and \"wisdom\" all trace back to the same proto-Indo-European root."
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "The queen wanted to know where the hunter was.",
+      "clauses": [
+        {
+          "elements": [
+            {"id": "subj", "text": "die Königin"},
+            {"id": "verb1", "text": "wollte", "category": "verb", "tensed": true},
+            {"id": "vp", "text": "wissen"}
+          ],
+          "target": {"slot1": "subj", "slot2": "verb1"},
+          "separator": ","
+        },
+        {
+          "elements": [
+            {"id": "wh", "text": "wo", "category": "wh"},
+            {"id": "subj", "text": "der Jäger"},
+            {"id": "verb1", "text": "war", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "wh", "slot2": ""},
+          "blockedSlots": ["slot2"],
+          "slotConfig": {"slot1": "wh"},
+          "separator": "."
+        }
+      ],
+      "explanation": "In main clauses, slot 1 is fairly free: it can take almost any word besides the tensed verb. In subordinate clauses, however, only wh-words like \"who\" can move there. Additionally, slot 2 is occupied by a subordinator like <span lang=\"de\">dass</span> (English \"that\"), but when the wh-word is present, it doesn't appear.",
+      "hints": [],
+      "reveal": "This explanation may feel rather arbitrary. What's with this mysterious invisible, inaudible <span lang=\"de\">dass</span>? If it weren't there, the verb could happily move to its usual second position just like in main clauses. <em>But</em> we have actual evidence that <span lang=\"de\">dass</span> IS there from a dialect of German, Bavarian, where you can say things like \"The queen wanted to know who THAT the fairest in the land was\", i.e. the <span lang=\"de\">dass</span> <em>is</em> said out loud!\n\nNow that we've simplified the noun phrase to just two words, it's clear that English actually mostly behaves similarly: the most natural (pedants would say the only) translation of this sentence also leaves the verb at the end. This can be overridden by other preferences in English, but German is pretty strict. Verbs at the end of subordinate clauses, please!"
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Die Königin wusste, dass der Spiegel die Wahrheit sprach. Schneewittchen lebte!",
+      "target": [
+        {"word": "The"},
+        {"word": "queen"},
+        {"word": "knew"},
+        {"word": "that"},
+        {"word": "the"},
+        {"word": "mirror"},
+        {"word": "spoke"},
+        {"word": "the"},
+        {"word": "truth", "spaceAfter": false},
+        {"word": ".", "given": true},
+        {"word": "Snow"},
+        {"word": "White"},
+        {"word": "was"},
+        {"word": "alive", "spaceAfter": false},
+        {"word": "!", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">wusste</span> is the past tense of <span lang=\"de\">wissen</span>.",
+          "points": 2,
+          "hintFor": ["knew"]
+        },
+        {
+          "hint": "<span lang=\"de\">Wahrheit und Schönheit</span> = ____ and Beauty. We'll see more of this suffix shortly!",
+          "points": 2,
+          "hintFor": ["truth"]
+        }
+      ],
+      "reveal": "Another type of subordinate clause, this time with an actual <span lang=\"de\">dass</span> \"that\". It blocks the verb <span lang=\"de\">sprach</span> from moving to the V2 position. Let's practise!"
+    },
+    {
+      "kind": "wordorder",
+      "points": 5,
+      "english": "The queen knew that the mirror spoke the truth.",
+      "clauses": [
+        {
+          "elements": [
+            {"id": "subj", "text": "die Königin"},
+            {"id": "verb1", "text": "wusste", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": "subj", "slot2": "verb1"},
+          "separator": ","
+        },
+        {
+          "elements": [
+            {"id": "sub", "text": "dass", "category": "subordinator"},
+            {"id": "subj", "text": "der Spiegel"},
+            {"id": "obj", "text": "die Wahrheit"},
+            {"id": "verb1", "text": "sprach", "category": "verb", "tensed": true}
+          ],
+          "target": {"slot1": null, "slot2": "sub"},
+          "blockedSlots": ["slot1"],
+          "givenSlots": ["slot2"],
+          "separator": "."
+        }
+      ],
+      "explanation": "This time <span lang=\"de\">dass</span> explicitly occupies the V2 position, blocking the verb from moving. There is no wh-word to move to the first slot in the subordinate clause, so it cannot be filled.",
+      "hints": [],
+      "reveal": "Ultimately, whether the subordinator is a wh-word, or another word (typically <span lang=\"de\">dass</span> but also <span lang=\"de\">weil</span> \"because\", <span lang=\"de\">wenn</span> \"if/when\", <span lang=\"de\">ob</span> \"whether\"), the rule is the same: the verb stays at the end. You can either have a subordinator, or a V2 verb. Not both."
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Die Königin gab Schneewittchen einen vergifteten Apfel.",
+      "target": [
+        {"word": "The"},
+        {"word": "queen"},
+        {"word": "gave"},
+        {"word": "Snow"},
+        {"word": "White"},
+        {"word": "a"},
+        {"word": "poisoned"},
+        {"word": "apple", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Gift</span> = 🧪☠️",
+          "points": 2,
+          "hintFor": ["poisoned"]
+        }
+      ],
+      "reveal": "A classic German mistake is to say <span lang=\"de\">Ich habe ein Gift für dich</span>; you're not offering a present, but poison. While they are cognates, German transformed the original sense of \"something given\" to \"the dose given\" to \"the fatal dose\" and thus poison; English kept the general sense. This is probably the most famous \"false friend\" pair between the languages. We've already seen the actual word for \"present\" in German, as brought by <span lang=\"de\">Der Weihnachtsmann</span> — <span lang=\"de\">Geschenke</span>."
+    },
+    {
+      "kind": "translate",
+      "points": 5,
+      "german": "Der Prinz küsste Schneewittchen und sie wachte auf.",
+      "target": [
+        {"word": "The"},
+        {"word": "prince"},
+        {"word": "kissed"},
+        {"word": "Snow"},
+        {"word": "White"},
+        {"word": "and"},
+        {"word": "she"},
+        {"word": "woke"},
+        {"word": "up", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">wachte auf</span> is something that <span lang=\"de\">Goldlöckchen</span> did after being discovered in bed by <span lang=\"de\">die drei Bären</span>.",
+          "points": 1,
+          "hintFor": ["woke", "up"]
+        }
+      ],
+      "reveal": "The kiss is Disney's invention, added in the 1937 animated film. In the original Brothers Grimm story, the prince has the glass coffin carried away by his servants. One stumbles, the piece of poisoned apple is jolted from her throat, and she wakes up. Less problematic with the non-consensual kiss, but then he <em>was</em> gonna marry a corpse, so..."
+    },
+    {
+      "kind": "translate",
+      "points": 10,
+      "german": "Schneewittchen und der Prinz lebten glücklich bis ans Ende ihrer Tage.",
+      "target": [
+        {"word": "Snow"},
+        {"word": "White"},
+        {"word": "and"},
+        {"word": "the"},
+        {"word": "prince"},
+        {"word": "lived"},
+        {"word": "happily"},
+        {"word": "until", "also": ["to", "till"]},
+        {"word": "the"},
+        {"word": "end"},
+        {"word": "of"},
+        {"word": "their"},
+        {"word": "days", "spaceAfter": false},
+        {"word": ".", "given": true}
+      ],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">glück</span> ~ \"luck\" in English. If you have good luck, you're probably ____. Now turn it into an adverb.",
+          "points": 1,
+          "hintFor": ["happily"]
+        }
+      ],
+      "reveal": "This is the traditional German fairytale formula for \"happily ever after\". <span lang=\"de\">Die böse Königin</span> certainly didn't have a <span lang=\"de\">glückliches</span> fate (<span lang=\"de\">Glück</span> \"happiness\" ~ \"luck\" in English) — she had to dance in hot iron shoes until she dropped dead. And this was the <em>wedding entertainment</em>. Talk about Grimm.\n\nWell done on wading through all the linguistic analysis! Bet you're <span lang=\"de\">glücklich</span> that's behind you!"
+    }
+  ]
+}
