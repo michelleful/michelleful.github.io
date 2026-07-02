@@ -13,7 +13,7 @@
     {
       "kind": "choice",
       "points": 5,
-      "german": "Tier, Pflanze, oder Mineral?",
+      "german": "Tier, Pflanze oder Mineral?",
       "choices": [
         {"label": "Tier", "correct": true},
         {"label": "Pflanze"},
