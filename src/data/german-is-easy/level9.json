@@ -145,9 +145,9 @@
         {
           "elements": [
             {"id": "wh", "text": "wer"},
-            {"id": "verb1", "text": "ist", "category": "verb", "tensed": true},
             {"id": "np", "text": "die Schönste"},
-            {"id": "pp", "text": "im ganzen Land"}
+            {"id": "pp", "text": "im ganzen Land"},
+            {"id": "verb1", "text": "ist", "category": "verb", "tensed": true}
           ],
           "target": {"slot1": "wh", "slot2": "verb1"},
           "separator": "?"
@@ -246,8 +246,8 @@
         {
           "elements": [
             {"id": "subj", "text": "die Königin"},
-            {"id": "verb1", "text": "wollte", "category": "verb", "tensed": true},
-            {"id": "vp", "text": "wissen"}
+            {"id": "vp", "text": "wissen"},
+            {"id": "verb1", "text": "wollte", "category": "verb", "tensed": true}
           ],
           "target": {"slot1": "subj", "slot2": "verb1"},
           "separator": ","
