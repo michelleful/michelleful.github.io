@@ -10,8 +10,6 @@ import level7 from '../../../../../data/german-is-easy/level7.json';
 import level8 from '../../../../../data/german-is-easy/level8.json';
 import level9 from '../../../../../data/german-is-easy/level9.json';
 import level10 from '../../../../../data/german-is-easy/level10.json';
-import level11 from '../../../../../data/german-is-easy/level11.json';
-import level12 from '../../../../../data/german-is-easy/level12.json';
 
 export function getStaticPaths() {
   return [
@@ -25,8 +23,6 @@ export function getStaticPaths() {
     { params: { id: '8' }, props: { levelData: level8 } },
     { params: { id: '9' }, props: { levelData: level9 } },
     { params: { id: '10' }, props: { levelData: level10 } },
-    { params: { id: '11' }, props: { levelData: level11 } },
-    { params: { id: '12' }, props: { levelData: level12 } },
   ];
 }
 

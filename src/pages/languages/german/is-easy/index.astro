@@ -299,7 +299,7 @@ const safeJson = JSON.stringify(levels)
 
   // ── Locked state ───────────────────────────────────────────────────────────
   const locked = levelsData.map(level =>
-    !level.available ? true : (manualUnlock ? false : (level.requires ? !isAnyDone(progress[String(level.requires)]) : false))
+    manualUnlock ? false : (!level.available ? true : (level.requires ? !isAnyDone(progress[String(level.requires)]) : false))
   );
 
   // ── Rough drawing ──────────────────────────────────────────────────────────
