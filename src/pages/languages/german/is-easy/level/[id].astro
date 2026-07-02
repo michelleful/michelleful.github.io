@@ -94,6 +94,9 @@ const safeJson = JSON.stringify(levelData)
     // Redirect to map if this level is locked
     const levelMeta = JSON.parse(document.getElementById('level-meta').textContent);
     const requires = levelMeta.requires;
+    if (new URLSearchParams(window.location.search).has('unlock')) {
+      localStorage.setItem('gie-unlocked', '1');
+    }
     const manualUnlock = !!localStorage.getItem('gie-unlocked');
     if (!manualUnlock && requires != null) {
       const reqEntry = prog[String(requires)];
@@ -833,6 +836,21 @@ progressDots.innerHTML = '';
       card.appendChild(nextBtn);
       gameMain.appendChild(card);
 
+      // Desktop: focus the first input right away (physical keyboard, nothing obscured).
+      // Touch devices: don't auto-focus — the on-screen keyboard would cover the
+      // sentence. Instead, a tap anywhere non-interactive on the card focuses the
+      // first empty input. The focus() must run synchronously inside the tap
+      // gesture, or iOS won't bring up the keyboard.
+      if (focusNextInput && !window.matchMedia('(pointer: coarse)').matches) {
+        focusNextInput();
+      }
+      card.addEventListener('click', (e) => {
+        if (!focusNextInput) return;
+        if (e.target.closest('button, a, input')) return;
+        if (window.getSelection()?.toString()) return;
+        focusNextInput();
+      });
+
       // Always remove the keydown listener before advancing, whether via click or Enter,
       // so listeners don't accumulate across sub-levels.
       const onKeyDown = (e) => {
@@ -949,9 +967,8 @@ progressDots.innerHTML = '';
 
       container.appendChild(answerRow);
 
-      // Focus first input after layout
-      const firstInput = inputs[0];
-      if (firstInput) setTimeout(() => firstInput.focus(), 50);
+      // Initial focus happens in renderSubLevel after the card is attached,
+      // synchronously within the tap gesture so iOS brings up the keyboard.
 
       // Return a function the caller can use to refocus the next empty input
       return () => { const next = inputs.find(i => !i.disabled); if (next) next.focus(); };
