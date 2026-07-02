@@ -154,7 +154,8 @@
         }
       ],
       "explanation": "For wh-questions (\"who\", \"where\", \"what\", etc), we're back to the same word order as main clauses, except that the wh-word must go in slot 1.",
-      "hints": []
+      "hints": [],
+      "reveal": "We call them wh-words in English because all of them with the exception of \"how\" start with \"wh\". Happily, all the German equivalents start with <span lang=\"de\">w-</span>: <span lang=\"de\">wer, was, wo...</span>. Of course, this isn't an accident! They're all descendants of the same proto-Germanic words."
     },
     {
       "kind": "translate",
@@ -236,7 +237,7 @@
           "hintFor": ["know"]
         }
       ],
-      "reveal": "Compare this subordinate clause with the same question in the main clause <span lang=\"de\">Wer ist die Schönste im ganzen Land?</span> Notice any differences in the word order? We'll <span lang=\"de\">wissen</span> why very soon. By the way, <span lang=\"de\">wissen</span>, \"wit\" and \"wisdom\" all trace back to the same proto-Indo-European root."
+      "reveal": "Compare this subordinate clause with the same question in the main clause <span lang=\"de\">Wer ist die Schönste im ganzen Land?</span> Notice any differences in the word order? The verb <span lang=\"de\">war</span> \"was\" is now at the end of the subordinate clause! We'll <span lang=\"de\">wissen</span> why very soon.\n\nBy the way, <span lang=\"de\">wissen</span>, \"wit\" and \"wisdom\" all trace back to the same proto-Indo-European root."
     },
     {
       "kind": "wordorder",
@@ -259,14 +260,14 @@
             {"id": "verb1", "text": "war", "category": "verb", "tensed": true}
           ],
           "target": {"slot1": "wh", "slot2": ""},
-          "blockedSlots": ["slot2"],
+          "blockedSlots": {"slot2": "dass"},
           "slotConfig": {"slot1": "wh"},
           "separator": "."
         }
       ],
-      "explanation": "In main clauses, slot 1 is fairly free: it can take almost any word besides the tensed verb. In subordinate clauses, however, only wh-words like \"who\" can move there. Additionally, slot 2 is occupied by a subordinator like <span lang=\"de\">dass</span> (English \"that\"), but when the wh-word is present, it doesn't appear.",
+      "explanation": "In main clauses, slot 1 is fairly free: it can take almost any word besides the tensed verb. In subordinate clauses, slot 1 is reserved for <b>stand-in words</b> — when the subordinate clause is a question, the stand-in words are the wh-words like \"who\" and \"what\", standing in for the thing being asked about. Additionally, slot 2 is occupied by a subordinator like <span lang=\"de\">dass</span> (English \"that\"), but when slot 1 is filled, it isn't said aloud.",
       "hints": [],
-      "reveal": "This explanation may feel rather arbitrary. What's with this mysterious invisible, inaudible <span lang=\"de\">dass</span>? If it weren't there, the verb could happily move to its usual second position just like in main clauses. <em>But</em> we have actual evidence that <span lang=\"de\">dass</span> IS there from a dialect of German, Bavarian, where you can say things like \"The queen wanted to know who THAT the fairest in the land was\", i.e. the <span lang=\"de\">dass</span> <em>is</em> said out loud!\n\nNow that we've simplified the noun phrase to just two words, it's clear that English actually mostly behaves similarly: the most natural (pedants would say the only) translation of this sentence also leaves the verb at the end. This can be overridden by other preferences in English, but German is pretty strict. Verbs at the end of subordinate clauses, please!"
+      "reveal": "With the V2 slot filled by the silent <span lang=\"de\">dass</span>, there is nowhere for the verb to move to, so it stays at the end of the subordinate clause. This explains the difference in verb position between main clauses and subordinate clauses.\n\nOkay, I admit this explanation may feel rather arbitrary. What's with this mysterious invisible, inaudible subordinator? If it weren't there, the verb could have happily moved to its usual second position just like in main clauses. <em>But</em> we have actual evidence that <span lang=\"de\">dass</span> IS there from a dialect of German, Bavarian, where you can say things like \"The queen wanted to know who THAT the fairest in the land was\", i.e. the <span lang=\"de\">dass</span> <em>is</em> said out loud!\n\nNow that we've simplified the noun phrase to just two words (\"the hunter\"), it's clear that English actually mostly behaves similarly: the most natural (pedants would say the only) translation of this sentence also leaves the verb at the end. This can be overridden by other preferences in English, but German is pretty strict. Verbs at the end of subordinate clauses, please!"
     },
     {
       "kind": "translate",
@@ -301,7 +302,7 @@
           "hintFor": ["truth"]
         }
       ],
-      "reveal": "Another type of subordinate clause, this time with an actual <span lang=\"de\">dass</span> \"that\". It blocks the verb <span lang=\"de\">sprach</span> from moving to the V2 position. Let's practise!"
+      "reveal": "Another type of subordinate clause, this time with an explicit <span lang=\"de\">dass</span> \"that\". It blocks the verb <span lang=\"de\">sprach</span> from moving to the V2 position. Let's practise!"
     },
     {
       "kind": "wordorder",
@@ -324,14 +325,14 @@
             {"id": "verb1", "text": "sprach", "category": "verb", "tensed": true}
           ],
           "target": {"slot1": null, "slot2": "sub"},
-          "blockedSlots": ["slot1"],
+          "blockedSlots": {"slot1": ""},
           "givenSlots": ["slot2"],
           "separator": "."
         }
       ],
-      "explanation": "This time <span lang=\"de\">dass</span> explicitly occupies the V2 position, blocking the verb from moving. There is no wh-word to move to the first slot in the subordinate clause, so it cannot be filled.",
+      "explanation": "This time <span lang=\"de\">dass</span> explicitly occupies the V2 position, blocking the verb from moving. There is no stand-in word to move to the first slot in the subordinate clause, so it cannot be filled.",
       "hints": [],
-      "reveal": "Ultimately, whether the subordinator is a wh-word, or another word (typically <span lang=\"de\">dass</span> but also <span lang=\"de\">weil</span> \"because\", <span lang=\"de\">wenn</span> \"if/when\", <span lang=\"de\">ob</span> \"whether\"), the rule is the same: the verb stays at the end. You can either have a subordinator, or a V2 verb. Not both."
+      "reveal": "Ultimately, whether the subordinate clause starts with a stand-in word (accompanied by a silent subordinator) or an explicit subordinator (typically <span lang=\"de\">dass</span> but also <span lang=\"de\">weil</span> \"because\", <span lang=\"de\">wenn</span> \"if/when\", <span lang=\"de\">ob</span> \"whether\"), the rule is the same: the verb stays at the end. You can either have a subordinator, or a V2 verb. Not both."
     },
     {
       "kind": "translate",
@@ -355,7 +356,7 @@
           "hintFor": ["poisoned"]
         }
       ],
-      "reveal": "A classic German mistake is to say <span lang=\"de\">Ich habe ein Gift für dich</span>; you're not offering a present, but poison. While they are cognates, German transformed the original sense of \"something given\" to \"the dose given\" to \"the fatal dose\" and thus poison; English kept the general sense. This is probably the most famous \"false friend\" pair between the languages. We've already seen the actual word for \"present\" in German, as brought by <span lang=\"de\">Der Weihnachtsmann</span> — <span lang=\"de\">Geschenke</span>."
+      "reveal": "A classic German mistake is to say <span lang=\"de\">Ich habe ein Gift für dich</span>; you're not offering a present, but poison. While they are cognates, German transformed the original sense of \"something given\" → \"the dose given\" → \"the fatal dose\" → \"poison\"; English kept the general sense. This is probably the most famous \"false friend\" pair between the languages. We've already seen the actual word for \"present\" in German, as brought by <span lang=\"de\">Der Weihnachtsmann</span> — <span lang=\"de\">Geschenke</span>."
     },
     {
       "kind": "translate",

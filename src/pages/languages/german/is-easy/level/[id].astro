@@ -10,6 +10,8 @@ import level7 from '../../../../../data/german-is-easy/level7.json';
 import level8 from '../../../../../data/german-is-easy/level8.json';
 import level9 from '../../../../../data/german-is-easy/level9.json';
 import level10 from '../../../../../data/german-is-easy/level10.json';
+import level11 from '../../../../../data/german-is-easy/level11.json';
+import level12 from '../../../../../data/german-is-easy/level12.json';
 
 export function getStaticPaths() {
   return [
@@ -23,6 +25,8 @@ export function getStaticPaths() {
     { params: { id: '8' }, props: { levelData: level8 } },
     { params: { id: '9' }, props: { levelData: level9 } },
     { params: { id: '10' }, props: { levelData: level10 } },
+    { params: { id: '11' }, props: { levelData: level11 } },
+    { params: { id: '12' }, props: { levelData: level12 } },
   ];
 }
 
@@ -790,11 +794,11 @@ progressDots.innerHTML = '';
           scoreDisplay.addEventListener('animationend', () => scoreDisplay.classList.remove('score-bump'), { once: true });
           popPoints(pts, card, () => {
             nextBtn.style.display = '';
-            nextBtn.focus();
+            nextBtn.focus({ preventScroll: true });
           });
         } else {
           nextBtn.style.display = '';
-          nextBtn.focus();
+          nextBtn.focus({ preventScroll: true });
         }
       };
 
@@ -815,7 +819,7 @@ progressDots.innerHTML = '';
               taskArea.style.display = 'none';
               if (sub.reveal || sub.revealImage) revealArea.style.display = '';
               nextBtn.style.display = '';
-              nextBtn.focus();
+              nextBtn.focus({ preventScroll: true });
             }
           );
           break;
@@ -1604,7 +1608,10 @@ progressDots.innerHTML = '';
 
       // Per-clause slot state — keys come from each clause's target object.
       // silentSlots: pre-filled with the target word, greyed stripe, locked.
-      // blockedSlots: empty greyed stripe placeholder, won't accept anything.
+      // blockedSlots: {slotKey: word} — greyed stripe placeholder that won't accept
+      //   anything. A non-empty word is shown faint + struck through (a silent
+      //   subordinator that is present but not said aloud); "" renders blank.
+      //   (A legacy array of slot keys is also accepted; those render blank.)
       // givenSlots: pre-filled with the target word, shown as plain inline text, no tile.
       const clauseSlots = clauses.map(clause => {
         const slots = Object.fromEntries(Object.keys(clause.target).map(k => [k, null]));
@@ -1612,7 +1619,8 @@ progressDots.innerHTML = '';
           const targetId = clause.target[key];
           if (targetId) slots[key] = { id: targetId, locked: true, silent: true };
         }
-        for (const key of (clause.blockedSlots || [])) {
+        const blocked = clause.blockedSlots || [];
+        for (const key of (Array.isArray(blocked) ? blocked : Object.keys(blocked))) {
           slots[key] = { locked: true, silent: true, blocked: true };
         }
         for (const key of (clause.givenSlots || [])) {
@@ -1772,7 +1780,14 @@ progressDots.innerHTML = '';
                   (slotState.silent ? ' wordorder-tile-silent' : ''));
                 tile.disabled = true;
                 if (slotState.blocked) {
-                  tile.appendChild(elText('span', '', ' '));
+                  const bs = clauses[ci].blockedSlots;
+                  const ghost = Array.isArray(bs) ? '' : bs?.[slotKey];
+                  if (ghost) {
+                    tile.appendChild(elText('span', 'wordorder-ghost-word', ghost));
+                    tile.title = 'Silent — present, but not said aloud';
+                  } else {
+                    tile.appendChild(elText('span', '', ' '));
+                  }
                 } else {
                   const elem = findElem(ci, slotState.id);
                   tile.appendChild(elText('span', '', displayText(elem.text, ci, slotKey)));
@@ -2975,6 +2990,13 @@ progressDots.innerHTML = '';
     color: #777;
     cursor: default;
     min-width: 3.5rem;
+  }
+
+  .wordorder-ghost-word {
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    font-style: italic;
+    opacity: 0.45;
   }
 
   .wordorder-tile-wrong {
