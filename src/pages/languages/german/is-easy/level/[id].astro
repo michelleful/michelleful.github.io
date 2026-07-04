@@ -2092,6 +2092,28 @@ progressDots.innerHTML = '';
       wrapper.appendChild(bank);
       container.appendChild(wrapper);
 
+      // On mobile, right-align parts that have wrapped to their own line.
+      // If the majority are wrapped, right-align all for visual consistency.
+      const updateRowAlignments = () => {
+        const rows = [...grid.querySelectorAll('.baw-word-row')];
+        const wrappedFlags = rows.map(row => {
+          const def   = row.querySelector('.baw-definition');
+          const parts = row.querySelector('.baw-parts');
+          if (!def || !parts) return false;
+          return parts.getBoundingClientRect().top > def.getBoundingClientRect().top + 2;
+        });
+        const majorityWrapped = wrappedFlags.filter(Boolean).length > rows.length / 2;
+        rows.forEach((row, i) => {
+          const parts = row.querySelector('.baw-parts');
+          const def   = row.querySelector('.baw-definition');
+          const isWrapped = majorityWrapped || wrappedFlags[i];
+          if (parts) parts.style.marginLeft = isWrapped ? 'auto' : '';
+          if (def)   def.style.width = wrappedFlags[i] ? 'auto' : '';
+        });
+      };
+      const ro = new ResizeObserver(updateRowAlignments);
+      ro.observe(wrapper);
+
       function deselect() {
         selectedMorpheme = null;
         bank.querySelectorAll('.baw-bank-tile').forEach(t => t.classList.remove('baw-bank-tile-selected'));
@@ -3432,7 +3454,6 @@ progressDots.innerHTML = '';
     border: 2px solid #2d7a3a;
     border-radius: 4px;
     padding: 0 0.3rem;
-    margin: -2px 0;
     animation: baw-word-pop 0.5s ease-out;
   }
   @keyframes baw-word-pop {
@@ -3679,5 +3700,9 @@ progressDots.innerHTML = '';
     .reveal-img { width: 100%; }
 
     .wordorder-slot-drop { min-width: 18vw; }
+
+    .baw-word-row { flex-wrap: wrap; gap: 0.5rem; }
+    .baw-definition { padding-top: 0; width: 6rem; }
+    .baw-slot { min-width: 3rem; }
   }
 </style>
