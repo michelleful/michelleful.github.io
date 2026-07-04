@@ -239,7 +239,7 @@
         {"word": "re"},
         {"word": "not"},
         {"word": "made"},
-        {"word": "of"},
+        {"word": "of", "also": ["from"]},
         {"word": "sugar", "spaceAfter": false},
         {"word": "!", "given": true}
       ],
