@@ -100,7 +100,7 @@
       "bank": ["lebt", "es", "im", "Wasser", "?"],
       "answer": ["Lebt", "es", "im", "Wasser", "?"],
       "hints": [],
-      "reveal": "Notice how when it's a non-auxiliary verb, English doesn't move it to the front — instead it inserts the verb \"to do\" and conjugates it accordingly. German, on the other hand, is perfectly happy moving a non-auxiliary verb into the first slot. \"English verbs can't jump\", as my syntax professor Molly Diesing memorably put it."
+      "reveal": "Notice how when it's a non-auxiliary verb, English doesn't move it to the front — we don't say \"Lives it in water?\". Instead, English inserts the verb \"do\" and conjugates it accordingly. German, on the other hand, is perfectly happy moving a non-auxiliary verb into the first slot. \"English verbs can't jump\", as my syntax professor Molly Diesing once memorably put it."
     },
     {
       "kind": "produce",
@@ -170,7 +170,12 @@
         {"word": "kangaroo", "spaceAfter": false},
         {"word": ".", "given": true}
       ],
-      "hints": [],
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">Dann</span> = \"in that case\", or more simply, its direct English cognate.",
+          "points": 2
+        }
+      ],
       "reveal": "Guess we're not in Australia. (Austria's still on the table!)"
     },
     {
@@ -181,7 +186,12 @@
         {"label": "Ja"},
         {"label": "Nein", "correct": true}
       ],
-      "hints": []
+      "hints": [
+        {
+          "hint": "<span lang=\"de\">groß</span> and <span lang=\"de\">klein</span> are opposites on the spectrum of size.",
+          "points": 2
+        }
+      ]
     },
     {
       "kind": "produce",
