@@ -52,11 +52,11 @@
       "instruction": "Match the weather words (−1 pt per wrong placement)",
       "slots": [
         {"label": "☀️", "answer": "sonnig"},
+        {"label": "🟦", "answer": "klar"},
         {"label": "⛅", "answer": "wolkig"},
         {"label": "💨", "answer": "windig"},
         {"label": "🌧️", "answer": "regnerisch"},
-        {"label": "⛈️", "answer": "stürmisch"},
-        {"label": "🥶", "answer": "frostig"}
+        {"label": "🥶", "answer": "eisig"}
       ],
       "reveal": "<span lang=\"de\">-ig</span> ~ \"-y\" and <span lang=\"de\">-isch</span> is just \"-ish\", so Germans literally say it's \"rain-ish\"!"
     },

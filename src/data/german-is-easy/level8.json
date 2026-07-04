@@ -4,7 +4,7 @@
     {
       "kind": "info",
       "paragraphs": [
-        "We're going to play <span lang=\"de\">Zwanzig Fragen</span> (20 Questions).",
+        "We're going to play <span lang=\"de\">Zwanzig Fragen</span> (20 Questions)!",
         "The object the player is guessing is: <span lang=\"de\">eine Katze</span> 🐈",
         "Complete the exercises with this in mind."
       ],
@@ -72,6 +72,7 @@
     {
       "kind": "produce",
       "points": 5,
+      "preChoice": {"choices": ["Ja", "Nein"], "correct": "Nein"},
       "instruction": "Answer the question correctly for your object",
       "german": "Kann es fliegen?",
       "target": [
@@ -85,7 +86,7 @@
       ],
       "hints": [
         {
-          "hint": "You'll need a negative, <span lang=\"de\">nicht</span>, in there somewhere.",
+          "hint": "You'll need \"not\", <span lang=\"de\">nicht</span>, in there somewhere.",
           "points": 2
         }
       ]
@@ -126,7 +127,11 @@
       "showEnglishAtEnd": false,
       "bank": ["geht", "es", "auf", "vier", "Beinen", "?"],
       "answer": ["Geht", "es", "auf", "vier", "Beinen", "?"],
-      "hints": []
+      "hints": [
+        {
+          "hint": "The verb here is \"geht\", literally \"goes\"."
+        }
+      ]
     },
     {
       "kind": "produce",
@@ -144,7 +149,7 @@
         {"word": ".", "given": true}
       ],
       "hints": [],
-      "reveal": "<span lang=\"de\">Bein</span> \"leg\" ~ English \"bone\"."
+      "reveal": "<span lang=\"de\">Bein</span> \"leg, bone\" ~ English \"bone\"."
     },
     {
       "kind": "translate",
@@ -256,18 +261,12 @@
       "reveal": "You may be familiar with the verb <span lang=\"de\">jagen</span> \"to hunt\" via the liqueur <span lang=\"de\">Jägermeister</span> (\"master of the hunt\") or the Jaegers in Pacific Rim (2013), used to hunt kaiju, but these are loaned names. The verb root also shows up in \"yacht\", from the Dutch word for \"hunt(ing ship)\"."
     },
     {
-      "kind": "produce",
+      "kind": "arrange",
       "points": 5,
       "instruction": "Answer the question correctly for your object",
       "german": "Jagt es Mäuse?",
-      "target": [
-        {"word": "Ja", "spaceAfter": false},
-        {"word": ",", "given": true},
-        {"word": "es"},
-        {"word": "jagt"},
-        {"word": "Mäuse", "spaceAfter": false},
-        {"word": ".", "given": true}
-      ],
+      "bank": ["ja", ",", "es", "jagt", "Mäuse", ".", "nein", "nicht"],
+      "answer": ["Ja", ",", "es", "jagt", "Mäuse", "."],
       "hints": []
     },
     {
@@ -300,11 +299,11 @@
       ],
       "hints": [
         {
-          "hint": "The English translation for <span lang=\"de\">schnurren</span> also has \"urr\".",
+          "hint": "The English translation for <span lang=\"de\">schnurren</span> also contains the letters \"urr\".",
           "points": 1
         }
       ],
-      "reveal": "<span lang=\"de\">Schnurren</span> is onomatopoeic, of course, indicating a humming or buzzing sound. The verb also shows up in <span lang=\"de\">Schnurrbart</span> (\"moustache\", literally \"purr-beard\"), possibly because a moustache vibrates when its wearer hums or talks. Its cognate isn't \"purr\", though — it's \"snarl\"! A very different cat sound."
+      "reveal": "<span lang=\"de\">Schnurren</span> \"purring\" is onomatopoeic, of course, indicating a humming or buzzing sound. The verb also shows up in <span lang=\"de\">Schnurrbart</span> (\"moustache\", literally \"purr-beard\"), possibly because a moustache vibrates when its wearer hums or talks. Its English cognate isn't \"purr\", though — it's \"snarl\"! A very different cat sound."
     },
     {
       "kind": "choice",

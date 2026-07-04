@@ -150,7 +150,7 @@
         { "definition": "unemployed", "parts": [{"blank": "arbeits", "match": "Arbeit"}, {"blank": "los"}] },
         { "definition": "wonderful", "parts": [{"blank": "wunder"}, {"blank": "voll"}]},
         { "definition": "loving", "parts": [{"blank": "liebe"}, {"blank": "voll"}]},
-        { "definition": "motionless", "parts": [{"blank": "beweg", "match": "bewegen"}, {"blank": "ung"}, {"blank": "los"}] }
+        { "definition": "motionless", "parts": [{"blank": "beweg", "match": "bewegen"}, {"blank": "ungs", "match": "ung"}, {"blank": "los"}] }
       ],
       "bank": ["hoffen", "ung", "voll", "los", "Arbeit", "Wunder", "Liebe", "bewegen"],
       "reveal": "<span lang=\"de\">-los</span> ~ \"-less\" and <span lang=\"de\">-voll</span> ~ \"-full\", as you've doubtless worked out! Rather than losing letters as with other prefixes, here we're adding a linking <span lang=\"de\">-s-</span> on occasion.\n\nHere's another fun <span lang=\"de\">-los</span> word: <span lang=\"de\">zweifellos</span> \"doubtless\". Breaking the <span lang=\"de\">Zweifel</span> \"doubt\" part down more, it means something like \"in two minds\" (<span lang=\"de\">zwei</span> ~ \"two\"). The English word \"doubt\" also shows the same connection between doubt and duality — it shares a root with \"double\", via Latin."

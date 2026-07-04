@@ -871,9 +871,13 @@ progressDots.innerHTML = '';
       const answerRow = el('div', 'answer-row');
       const inputs = [];
 
+      // preChoice: the first non-given target word is shown as a given (the button choice covers it)
+      const preChoiceIdx = sub.preChoice ? sub.target.findIndex(item => !item.given) : -1;
+
       let currentGroup = null;
-      for (const item of sub.target) {
-        const renderAsGiven = item.given && !(mode === 'challenging' && item.challengingInput);
+      for (let ti = 0; ti < sub.target.length; ti++) {
+        const item = sub.target[ti];
+        const renderAsGiven = (ti === preChoiceIdx) || (item.given && !(mode === 'challenging' && item.challengingInput));
         let domEl;
         if (renderAsGiven) {
           domEl = elText('span', 'given-word', item.word);
@@ -925,11 +929,14 @@ progressDots.innerHTML = '';
           // Accept as soon as the typed value matches any accepted word
           input.addEventListener('input', () => {
             if (input.disabled) return;
-            // Strip spaces — mobile keyboards bypass keydown so the space key handler doesn't fire
-            if (input.value.includes(' ')) {
+            // Strip non-letters — mobile keyboards bypass keydown so the key handler doesn't fire
+            const val = input.value;
+            const cleaned = val.replace(/[^\p{L}]/gu, '');
+            if (cleaned !== val) {
               const sel = input.selectionStart;
-              input.value = input.value.replace(/ /g, '');
-              input.setSelectionRange(sel - 1, sel - 1);
+              const removedBefore = (val.slice(0, sel).match(/[^\p{L}]/gu) || []).length;
+              input.value = cleaned;
+              input.setSelectionRange(sel - removedBefore, sel - removedBefore);
             }
             const typed = input.value.trim().toLowerCase();
             const match = acceptedWords.find(w => w.toLowerCase() === typed);
@@ -938,7 +945,7 @@ progressDots.innerHTML = '';
 
           // Enter/Tab: explicit submit — reject with feedback if wrong
           input.addEventListener('keydown', (e) => {
-            if (e.key === ' ') { e.preventDefault(); return; }
+            if (e.key.length === 1 && !/^\p{L}$/u.test(e.key)) { e.preventDefault(); return; }
             if (e.key === 'Enter' || e.key === 'Tab') {
               e.preventDefault();
               if (!input.disabled) rejectExplicit();
@@ -966,6 +973,34 @@ progressDots.innerHTML = '';
       }
 
       container.appendChild(answerRow);
+
+      if (sub.preChoice) {
+        answerRow.style.display = 'none';
+        const choiceRow = el('div', 'choice-row');
+        for (const label of sub.preChoice.choices) {
+          const btn = elText('button', 'choice-btn', label);
+          btn.addEventListener('click', () => {
+            if (label === sub.preChoice.correct) {
+              choiceRow.style.display = 'none';
+              answerRow.style.display = '';
+              const first = inputs.find(i => !i.disabled);
+              if (first) first.focus();
+            } else {
+              onMistake();
+              choiceRow.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+              btn.classList.add('wrong');
+              setTimeout(() => {
+                choiceRow.querySelectorAll('.choice-btn').forEach(b => {
+                  b.disabled = false;
+                  b.classList.remove('wrong');
+                });
+              }, 600);
+            }
+          });
+          choiceRow.appendChild(btn);
+        }
+        container.insertBefore(choiceRow, answerRow);
+      }
 
       // Initial focus happens in renderSubLevel after the card is attached,
       // synchronously within the tap gesture so iOS brings up the keyboard.
@@ -3383,7 +3418,8 @@ progressDots.innerHTML = '';
     background: #e8f6eb;
     border: 2px solid #2d7a3a;
     border-radius: 4px;
-    padding: 0.15rem 0.3rem;
+    padding: 0 0.3rem;
+    margin: -2px 0;
     animation: baw-word-pop 0.5s ease-out;
   }
   @keyframes baw-word-pop {
