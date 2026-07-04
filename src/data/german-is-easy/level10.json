@@ -5,7 +5,7 @@
       "kind": "info",
       "paragraphs": [
         "Welcome to our Build-a-Word workshop!",
-        "Fill in the blanks by tapping on a morpheme (a word piece), then the blank. Some morphemes will be used more than once.",
+        "Fill in the blanks by tapping on a morpheme (a word piece), then the blank. Some tiles can be used more than once.",
         "-1 pt per incorrect placement."
       ],
       "buttonText": "Start ⏎"
@@ -27,7 +27,8 @@
         { "definition": "deity", "parts": [{"blank": "Gott"}, {"blank": "heit"}] },
         { "definition": "novelty", "parts": [{"blank": "Neu"}, {"text": "heit"}] }
       ],
-      "bank": ["gesund", "Kind", "heit", "wahr", "schön", "neu", "Gott"],
+      "bank": ["heit"],
+      "bankOnce": ["gesund", "Kind", "wahr", "schön", "neu", "Gott"],
       "hints": [
         {
           "hint": "We saw in the Snow White level that <span lang=\"de\">der Spiegel sprach die Wahrheit</span>, so the queen knew that Snow White had to be alive.",
@@ -53,7 +54,8 @@
         { "definition": "hungr(il)y", "parts": [{"blank": "hungr", "match": "Hunger"}, {"blank": "ig"}] },
         { "definition": "restless(ly)", "parts": [{"blank": "un"}, {"blank": "ruh", "match": "Ruhe"}, {"text": "ig"}] }
     ],
-      "bank": ["Wind", "Sonne", "Nebel", "ig", "Blut", "Durst", "Hunger", "un", "Ruhe"],
+      "bank": ["ig"],
+      "bankOnce": ["Wind", "Sonne", "Nebel", "Blut", "Durst", "Hunger", "un", "Ruhe"],
       "hints": [
         {
           "hint": "<span lang=\"de\">Nebel</span> ~ \"nebula\", but rather than cloud, it means something else that obscures the light.",
@@ -84,7 +86,8 @@
         { "definition": "motherly", "parts": [{"blank": "mütter", "match": "Mutter"}, {"blank": "lich"}] },
         { "definition": "publicly", "parts": [{"blank": "öffent", "match": "offen"}, {"blank": "lich"}] }
     ],
-      "bank": ["Glück", "lich", "König", "Tag", "Natur", "Mutter", "Vater", "offen"],
+      "bank": ["lich"],
+      "bankOnce": ["Glück", "König", "Tag", "Natur", "Mutter", "Vater", "offen"],
       "hints": [
         {
           "hint": "If <span lang=\"de\">hoffen</span> ~ \"hope\", then <span lang=\"de\">offen</span> ~ ? What's a synonym for this adjective?",
@@ -105,7 +108,8 @@
         { "definition": "unity", "parts": [{"blank": "Ein"}, {"text": "ig"}, {"blank": "keit"}] },
         { "definition": "the public sphere/eye", "parts": [{"blank": "Öffent", "match": "offen"}, {"text": "lich"}, {"blank": "keit"}] }
     ],
-      "bank": ["Punkt", "un", "Freund", "lich", "ig", "ein", "Wind", "keit", "Fluss", "offen"],
+      "bank": ["un", "lich", "keit"],
+      "bankOnce": ["Punkt", "Freund", "ig", "ein", "Wind", "Fluss", "offen"],
       "hints": [
         {
           "hint": "We saw <span lang=\"de\">Fluss</span> in <span lang=\"de\">Der Nil ist ein Fluss in Ägypten</span>. Which English word is most relevant?",
@@ -131,7 +135,8 @@
         { "definition": "order", "parts": [{"blank": "Ordn", "match": "ordnen"}, {"blank": "ung"}] },
         { "definition": "movement", "parts": [{"text": "Be"}, {"blank": "weg"}, {"blank": "ung"}] }
       ],
-      "bank": ["hoffen", "warnen", "rechnen", "ordnen", "Weg", "ung", "kleiden"],
+      "bank": ["ung"],
+      "bankOnce": ["hoffen", "warnen", "rechnen", "ordnen", "Weg", "kleiden"],
       "hints": [
         {
           "hint": "If <span lang=\"de\">Tag</span> ~ \"day\", then <span lang=\"de\">Weg</span> ~ X. What does \"be on your X\" mean?",
@@ -152,7 +157,8 @@
         { "definition": "loving", "parts": [{"blank": "liebe"}, {"blank": "voll"}]},
         { "definition": "motionless", "parts": [{"blank": "beweg", "match": "bewegen"}, {"blank": "ungs", "match": "ung"}, {"blank": "los"}] }
       ],
-      "bank": ["hoffen", "ung", "voll", "los", "Arbeit", "Wunder", "Liebe", "bewegen"],
+      "bank": ["hoffen", "ung", "voll", "los"],
+      "bankOnce": ["Arbeit", "Wunder", "Liebe", "bewegen"],
       "reveal": "<span lang=\"de\">-los</span> ~ \"-less\" and <span lang=\"de\">-voll</span> ~ \"-full\", as you've doubtless worked out! Rather than losing letters as with other prefixes, here we're adding a linking <span lang=\"de\">-s-</span> on occasion.\n\nHere's another fun <span lang=\"de\">-los</span> word: <span lang=\"de\">zweifellos</span> \"doubtless\". Breaking the <span lang=\"de\">Zweifel</span> \"doubt\" part down more, it means something like \"in two minds\" (<span lang=\"de\">zwei</span> ~ \"two\"). The English word \"doubt\" also shows the same connection between doubt and duality — it shares a root with \"double\", via Latin."
     },
     {
@@ -166,7 +172,8 @@
         { "definition": "obvious", "parts": [{"blank": "offen"}, {"blank": "bar"}] },
         { "definition": "thankful", "parts": [{"blank": "dank", "match": "danken"}, {"text": "bar"}] }
       ],
-      "bank": ["trinken", "essen", "Wunder", "Sicht", "danken", "offen", "bar"],
+      "bank": ["bar"],
+      "bankOnce": ["trinken", "essen", "Wunder", "Sicht", "danken", "offen"],
       "reveal": "<span lang=\"de\">-bar</span> ~ \"-able/-ible\" in English. You may be wondering what the difference between <span lang=\"de\">wundervoll</span> and <span lang=\"de\">wunderbar</span> is. It's mainly a matter of mood: <span lang=\"de\">wunderbar</span> is more straightforward, something you might exclaim: <span lang=\"de\">„Wunderbar!“</span>, while <span lang=\"de\">wundervoll</span> is a little more dreamy and poetic."
     },
     {
@@ -180,7 +187,8 @@
         { "definition": "social sciences", "parts": [{"blank": "Gesell", "match": "Geselle"}, {"blank": "schafts", "match": "schaft"}, {"blank": "wissen"}, {"blank": "schaft"}, {"text": "en"}] },
         { "definition": "linguistics", "parts": [{"blank": "Sprach", "match": "Sprache"}, {"blank": "wissen"}, {"blank": "schaft"}]  }
       ],
-      "bank": ["Freund", "Geselle", "wissen", "schaft", "Sprache"],
+      "bank": ["wissen", "schaft"],
+      "bankOnce": ["Freund", "Geselle", "Sprache"],
       "hints": [
         {
           "hint": "We saw <span lang=\"de\">Sprach</span> in <span lang=\"de\">Englisch, Deutsch und Mandarin sind Weltsprachen.</span>.",
@@ -219,7 +227,8 @@
           ]
         }
       ],
-      "bank": ["heit", "keit", "Herz", "los", "ig", "ordnen", "ung", "un"],
+      "bank": ["Herz", "ordnen", "ung"],
+      "bankOnce": ["heit", "keit", "los", "ig", "un"],
       "hints": [
       ],
       "reveal": "\"Order is half of life\" is a proverb showcasing the stereotypical German love of order. It means that by keeping things in order, you save time — up to half a lifetime! The anti-proverb that follows turns it on its head."
@@ -248,7 +257,7 @@
           ]
         }
       ],
-      "bank": ["frei", "gleich", "Bruder", "wahr", "heit", "lich", "keit"],
+      "bankOnce": ["frei", "gleich", "Bruder", "wahr", "heit", "lich", "keit"],
       "hints": [
         {
           "hint": "We saw <span lang=\"de\">gleich</span> in <span lang=\"de\">Keine zwei Schneeflocken sind gleich.</span> Here it means not precisely \"alike\", but another very similar concept.",

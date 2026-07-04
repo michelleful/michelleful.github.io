@@ -2075,9 +2075,13 @@ progressDots.innerHTML = '';
       wrapper.appendChild(grid);
 
       const bank = el('div', 'baw-bank word-bank');
-      const shuffledBank = shuffle([...sub.bank]);
-      shuffledBank.forEach(morph => {
+      const allBankItems = shuffle([
+        ...(sub.bank     || []).map(m => ({ morph: m, once: false })),
+        ...(sub.bankOnce || []).map(m => ({ morph: m, once: true  })),
+      ]);
+      allBankItems.forEach(({ morph, once }) => {
         const tile = elText('button', 'baw-bank-tile', morph);
+        if (once) tile.dataset.once = '1';
         tile.draggable = true;
         tile.addEventListener('click', () => {
           selectedMorpheme = (selectedMorpheme === morph) ? null : morph;
@@ -2102,7 +2106,7 @@ progressDots.innerHTML = '';
           if (!def || !parts) return false;
           return parts.getBoundingClientRect().top > def.getBoundingClientRect().top + 2;
         });
-        const majorityWrapped = wrappedFlags.filter(Boolean).length > rows.length / 2;
+        const majorityWrapped = wrappedFlags.some(Boolean);
         rows.forEach((row, i) => {
           const parts = row.querySelector('.baw-parts');
           const def   = row.querySelector('.baw-definition');
@@ -2135,6 +2139,9 @@ progressDots.innerHTML = '';
           slotInfo.el.disabled = true;
           lockedCount++;
           refreshHintBtn();
+          const onceTile = [...bank.querySelectorAll('.baw-bank-tile[data-once]')]
+            .find(t => t.textContent.toLowerCase() === morph.toLowerCase());
+          if (onceTile) onceTile.remove();
           if (slotInfo.swBlanks.every(s => s.locked)) {
             slotInfo.swEl.classList.add('baw-word-complete');
           }
