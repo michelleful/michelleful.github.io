@@ -851,16 +851,26 @@ progressDots.innerHTML = '';
         focusNextInput();
       });
 
+      // On touch devices, also focus when tapping the background area outside the card.
+      const onBodyClick = focusNextInput ? (e) => {
+        if (e.target.closest('button, a, input, .sub-level-card')) return;
+        if (window.getSelection()?.toString()) return;
+        focusNextInput();
+      } : null;
+      if (onBodyClick) document.body.addEventListener('click', onBodyClick);
+
       // Always remove the keydown listener before advancing, whether via click or Enter,
       // so listeners don't accumulate across sub-levels.
       const onKeyDown = (e) => {
         if (e.key === 'Enter' && nextBtn.style.display !== 'none' && !(document.activeElement instanceof HTMLInputElement)) {
           document.removeEventListener('keydown', onKeyDown);
+          if (onBodyClick) document.body.removeEventListener('click', onBodyClick);
           advanceSubLevel();
         }
       };
       nextBtn.addEventListener('click', () => {
         document.removeEventListener('keydown', onKeyDown);
+        if (onBodyClick) document.body.removeEventListener('click', onBodyClick);
         advanceSubLevel();
       });
       document.addEventListener('keydown', onKeyDown);
