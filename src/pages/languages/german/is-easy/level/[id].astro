@@ -2111,7 +2111,13 @@ progressDots.innerHTML = '';
           if (def)   def.style.width = wrappedFlags[i] ? 'auto' : '';
         });
       };
-      const ro = new ResizeObserver(updateRowAlignments);
+      let lastObservedWidth = -1;
+      const ro = new ResizeObserver(entries => {
+        const w = Math.round(entries[0].contentRect.width);
+        if (w === lastObservedWidth) return;
+        lastObservedWidth = w;
+        requestAnimationFrame(updateRowAlignments);
+      });
       ro.observe(wrapper);
 
       function deselect() {
