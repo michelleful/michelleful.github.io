@@ -97,7 +97,8 @@
         },
         {
           "hint": "<span lang=\"de\">gleich</span> ~ \"alike, equal\".",
-          "hintFor": ["alike"]
+          "hintFor": ["alike"],
+          "points": 2
         }
       ],
       "reveal": "<span lang=\"de\">gleich</span> and \"(a)like\" are direct cognates! The g- came from a prefix that English dropped (but retained in some words as a fossilized a-, as in \"alike\")."
@@ -135,7 +136,8 @@
         },
         {
           "hint": "<span lang=\"de\">ganz</span> = \"all\", \"whole\"",
-          "hintFor": ["whole"]
+          "hintFor": ["whole"],
+          "points": 1
         }
       ],
       "reveal": "<span lang=\"de\">sie</span> is actually the feminine pronoun \"she\", but this particular <span lang=\"de\">Katze</span> happens to be a boy, and that's okay! It's purely because <span lang=\"de\">Katze</span> is a feminine noun, so the pronoun follows suit. Grammatical gender doesn't have to match the sex of the referent. The most famous example: <span lang=\"de\">das Mädchen</span> (\"the girl, maiden\") is actually a third category called neuter, not feminine!",
@@ -220,10 +222,11 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">nur</span> = \"only\"",
-          "hintFor": ["only"]
+          "hintFor": ["only"],
+          "points": 2
         }
       ],
-      "reveal": "This is probably not German in origin, but it's a sentiment that Germans have definitely embraced."
+      "reveal": "This saying is probably not German in origin, but it's a sentiment that Germans have definitely embraced."
     },
     {
       "kind": "translate",
@@ -243,11 +246,12 @@
       "explanation": "<span lang=\"de\">doch</span> is a famously untranslatable emphatic particle, and can be rendered in many ways — here its emphasis is represented by \"C'mon\".",
       "hints": [
         {
-          "hint": "This exhortation follows naturally from <span lang=\"de\">Es gibt kein schlechtes Wetter, nur schlechte Kleidung.</span>"
+          "hint": "This exhortation follows naturally from <span lang=\"de\">Es gibt kein schlechtes Wetter, nur schlechte Kleidung.</span>",
+          "points": 1
         },
         {
           "hint": "<span lang=\"de\">Zucker</span> has a direct cognate in English, and both words were borrowed ultimately from Arabic \"sukkar\".",
-          "points": 1
+          "points": 2
         }
       ],
       "reveal": "And that's the whole German philosophy of weather: stop complaining, grab your <span lang=\"de\">Regenmantel</span>, and get outside. Take a break and I'll see you in the next level!"
