@@ -48,7 +48,7 @@
         { "german": "zwölf", "english": "twelve", "groupings": ["z ~ t"] },
         { "german": "Wetter", "english": "weather", "groupings": ["t(t) ~ th"] }
       ],
-      "reveal": "<p>A couple of examples of semantic drift here, as with <span lang=\"de\">Tier</span> (\"animal\") and \"deer\". <span lang=\"de\">Vogel</span> is birds generally in German, while \"fowl\" is generally reserved for domesticated and game birds in modern English. <span lang=\"de\">schmutzig</span> is more general \"dirty\" and \"messy\", while English \"smutty\" has evolved to mean \"obscene\".</p><p>Thank you for playing through the entire alpha! I'm trying to gauge interest in more levels. If you liked this and would like to see more, you can add your email to the notification list, or follow me on social media (links at bottom of main page). I'd also love your feedback. <span lang=\"de\">Danke schön!</span></p>"
+      "reveal": "<p>A couple of examples of semantic drift here, as with <span lang=\"de\">Tier</span> (\"animal\") and \"deer\". <span lang=\"de\">Vogel</span> is birds generally in German, while \"fowl\" is generally reserved for domesticated and game birds in modern English. <span lang=\"de\">schmutzig</span> is more general \"dirty\" and \"messy\", while English \"smutty\" has evolved to mean \"obscene\".</p><p>You now have a working toolkit for spotting cognates and working out simple sentences. Let's put them to work with ever more complicated stuff!</p>"
     }
   ]
 }
