@@ -87,6 +87,7 @@
       "hints": [
         {
           "hint": "You'll need \"not\", <span lang=\"de\">nicht</span>, in there somewhere.",
+          "hintFor": "nicht",
           "points": 2
         }
       ]
@@ -173,6 +174,7 @@
       "hints": [
         {
           "hint": "<span lang=\"de\">Dann</span> = \"in that case\", or more simply, its direct English cognate.",
+          "hintFor": "Then",
           "points": 2
         }
       ],
