@@ -217,7 +217,7 @@ const progressDots = document.getElementById('progress-dots');
 
       pop.appendChild(svg);
       pop.appendChild(textEl);
-      card.appendChild(pop);
+      document.body.appendChild(pop);
       pop.addEventListener('animationend', (e) => {
         if (e.target === pop) { pop.remove(); onDone(); }
       });
@@ -784,7 +784,10 @@ progressDots.innerHTML = '';
         if (sub.kind === 'categorize' || sub.kind === 'reorder' || sub.kind === 'compass' || sub.kind === 'arrange') {
           taskArea.querySelector('.word-bank')?.remove();
         }
-        if (sub.reveal || sub.revealImage) revealArea.style.display = '';
+        if (sub.reveal || sub.revealImage) {
+          revealArea.style.display = '';
+          revealArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
         const pts = taskFailed ? 0 : Math.max(0, maxPts - hintDeduction - mistakeCount);
         score += pts;
         if (mode !== 'casual') {
@@ -3116,7 +3119,7 @@ progressDots.innerHTML = '';
   }
 
   .pts-pop {
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     width: 0;
