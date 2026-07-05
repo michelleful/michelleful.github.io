@@ -944,10 +944,10 @@ progressDots.innerHTML = '';
             if (input.disabled) return;
             // Strip non-letters — mobile keyboards bypass keydown so the key handler doesn't fire
             const val = input.value;
-            const cleaned = val.replace(/[^\p{L}]/gu, '');
+            const cleaned = val.replace(/[^\p{L}\d]/gu, '');
             if (cleaned !== val) {
               const sel = input.selectionStart;
-              const removedBefore = (val.slice(0, sel).match(/[^\p{L}]/gu) || []).length;
+              const removedBefore = (val.slice(0, sel).match(/[^\p{L}\d]/gu) || []).length;
               input.value = cleaned;
               input.setSelectionRange(sel - removedBefore, sel - removedBefore);
             }
@@ -958,7 +958,7 @@ progressDots.innerHTML = '';
 
           // Enter/Tab: explicit submit — reject with feedback if wrong
           input.addEventListener('keydown', (e) => {
-            if (e.key.length === 1 && !/^\p{L}$/u.test(e.key)) { e.preventDefault(); return; }
+            if (e.key.length === 1 && !/^[\p{L}\d]$/u.test(e.key)) { e.preventDefault(); return; }
             if (e.key === 'Enter' || e.key === 'Tab') {
               e.preventDefault();
               if (!input.disabled) rejectExplicit();

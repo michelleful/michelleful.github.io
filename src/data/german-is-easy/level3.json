@@ -36,7 +36,7 @@
         {"word": "the"},
         {"word": "world"},
         {"word": "(", "given": true, "spaceAfter": false},
-        {"word": "7,088", "also": ["7088"]},
+        {"word": "7088"},
         {"word": "km", "spaceAfter": false},
         {"word": ")", "given": true, "spaceAfter": false},
         {"word": ".", "given": true}
