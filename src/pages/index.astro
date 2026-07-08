@@ -16,6 +16,12 @@ import Layout from '../layouts/Layout.astro';
 <h2 id="languages">Languages</h2>
 
 <div>
+<h3><a href="/languages/german/is-easy/" class="gie-title-link" aria-label="German is Awful, I mean, Easy">German is <span class="crayon-strike">Awful<svg class="crayon-line" aria-hidden="true" viewBox="0 0 100 12" preserveAspectRatio="none"></svg></span> Easy</a> <span class="in-progress-tag">in progress</span></h3>
+<p>
+  A puzzle game of linguistic decipherment. No German knowledge necessary.
+</p>
+
+<div>
 <h3><a href="/languages/arabic/fuzzy/">Fuzzy Arabic Dictionary</a></h3>
 <p>
   Look up Arabic words, even when you don't know how to spell them.
@@ -185,9 +191,52 @@ This received some media coverage on <a href="https://www.theverge.com/2014/11/2
     border-color: #15616d;
     color: #fff;
   }
+
+  /* Crayon strikethrough (matches the German Is Easy game) */
+  /* .crayon-strike is inline-block, which drops the parent link's underline,
+     so restore it explicitly to keep the whole title underlined. */
+  .gie-title-link .crayon-strike { text-decoration: underline; }
+
+  .crayon-strike {
+    position: relative;
+    display: inline-block;
+  }
+  .crayon-line {
+    position: absolute;
+    left: -3px;
+    width: calc(100% + 6px);
+    height: 0.45em;
+    top: 50%;
+    transform: translateY(-60%);
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .in-progress-tag {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+    padding: 0.12rem 0.5rem;
+    background: #FFD84D;
+    color: #5a4600;
+    font-family: 'Jost', sans-serif;
+    font-variant: small-caps;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    border-radius: 4px;
+  }
 </style>
 
 <script>
+  import rough from 'roughjs';
+
+  // Red rough.js strikeout through "Awful" (same as the game header)
+  document.querySelectorAll('.crayon-line').forEach(svg => {
+    const rc = rough.svg(svg);
+    svg.appendChild(rc.line(1, 6, 99, 6, { stroke: '#b91c1c', strokeWidth: 2, roughness: 2.5, seed: 12 }));
+  });
+
   const btnVideo = document.getElementById('twide-btn-video');
   const btnText = document.getElementById('twide-btn-text');
   const divVideo = document.getElementById('twide-video');
